@@ -121,6 +121,8 @@ DecalBox::DecalBox(float width, float height, float length, Camera& camera) :_ca
 		&_decalTexture, &result);
 
 	int j = 0;
+	int jj = 0;
+	int jjj = 0;
 
 }
 
