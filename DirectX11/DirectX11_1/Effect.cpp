@@ -8,8 +8,8 @@
 #include"Define.h"
 
 #if _DEBUG
-#pragma comment(lib,"VS2015/Debug/Effekseer.lib")
-#pragma comment(lib,"VS2015/Debug/EffekseerRendererDX11.lib")
+#pragma comment(lib,"VS2013/Debug/Effekseer.lib")
+#pragma comment(lib,"VS2013/Debug/EffekseerRendererDX11.lib")
 #else
 #pragma comment(lib,"VS2013/Release/Effekseer.lib")
 #pragma comment(lib,"VS2013/Release/EffekseerRendererDX11.lib")

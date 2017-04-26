@@ -1,47 +1,198 @@
-﻿  PlayingScene.cpp
-c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2662): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
-c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2663): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
-c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2664): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
-c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2665): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
-c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2666): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
-c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2667): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
-c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2668): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
-c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2689): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
-c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2690): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
-c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2691): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
-c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2694): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
-c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2695): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
-c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2698): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
-c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2702): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
-c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2712): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
-c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2713): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
-c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2715): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
-c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2716): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
-c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2717): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
-c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2727): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
-c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2728): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
-c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2729): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
-c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2730): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
-c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2731): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
-c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2732): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
-c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2742): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
-c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2743): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
-c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2754): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
-c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamathconvert.inl(2254): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
-c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamathconvert.inl(4523): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
-c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamathconvert.inl(4577): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
-c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamathconvert.inl(4639): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
-c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamathconvert.inl(4707): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
-c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamathconvert.inl(4770): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
-c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamathconvert.inl(4832): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
-c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamathvector.inl(1269): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
-c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamathmisc.inl(518): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
-c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamathmisc.inl(519): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
-c:\users\1401349\desktop\directx11_35\directx11_1\playingscene.cpp(33): warning C4552: '/': 演算子にプログラム上の作用がありません。作用を伴う演算子を使用してください
-c:\users\1401349\desktop\directx11_35\directx11_1\playingscene.cpp(34): warning C4552: '+': 演算子にプログラム上の作用がありません。作用を伴う演算子を使用してください
-c:\users\1401349\desktop\directx11_35\directx11_1\playingscene.cpp(35): warning C4552: '/': 演算子にプログラム上の作用がありません。作用を伴う演算子を使用してください
-c:\users\1401349\desktop\directx11_35\directx11_1\playingscene.cpp(36): warning C4552: '+': 演算子にプログラム上の作用がありません。作用を伴う演算子を使用してください
-c:\users\1401349\desktop\directx11_35\directx11_1\playingscene.cpp(257): warning C4101: 'result': ローカル変数は 1 度も使われていません。
-c:\users\1401349\desktop\directx11_35\directx11_1\playingscene.cpp(469): warning C4244: '引数': 'LONG' から 'float' への変換です。データが失われる可能性があります。
-  DirectX11_1.vcxproj -> C:\Users\1401349\Desktop\DirectX11_35\Debug\DirectX11_1.exe
-  DirectX11_1.vcxproj -> C:\Users\1401349\Desktop\DirectX11_35\Debug\DirectX11_1.pdb (Full PDB)
+﻿2017/04/26 22:32:46 にビルドを開始しました。
+     1>ノード 2 上のプロジェクト "C:\WorkingGames\SlimeGame\DirectX11\DirectX11_1\DirectX11_1.vcxproj" (Build ターゲット)。
+     1>FxCompile:
+         C:\Program Files (x86)\Windows Kits\8.1\bin\x86\fxc.exe /nologo /E"main" /T fx_5_0 /Fo "C:\WorkingGames\SlimeGame\DirectX11\Debug\BaseShader.cso" /Od /Zi BaseShader.hlsl 
+     1>FXC : warning X4717: Effects deprecated for D3DCompiler_47
+     1>C:\WorkingGames\SlimeGame\DirectX11\DirectX11_1\BaseShader.hlsl(211,19-49): warning X3206: 'mul': implicit truncation of vector type
+     1>C:\WorkingGames\SlimeGame\DirectX11\DirectX11_1\BaseShader.hlsl(211,9-49): warning X3206: implicit truncation of vector type
+     1>C:\WorkingGames\SlimeGame\DirectX11\DirectX11_1\BaseShader.hlsl(214,15-41): warning X3206: 'reflect': implicit truncation of vector type
+     1>C:\WorkingGames\SlimeGame\DirectX11\DirectX11_1\BaseShader.hlsl(249,24-50): warning X3206: 'dot': implicit truncation of vector type
+     1>C:\WorkingGames\SlimeGame\DirectX11\DirectX11_1\BaseShader.hlsl(262,10-98): warning X3206: implicit truncation of vector type
+     1>C:\WorkingGames\SlimeGame\DirectX11\DirectX11_1\BaseShader.hlsl(292,9-35): warning X3206: implicit truncation of vector type
+     1>C:\WorkingGames\SlimeGame\DirectX11\DirectX11_1\BaseShader.hlsl(315,9-60): warning X3206: implicit truncation of vector type
+         compilation object save succeeded; see C:\WorkingGames\SlimeGame\DirectX11\Debug\BaseShader.cso
+     1>C:\WorkingGames\SlimeGame\DirectX11\DirectX11_1\BaseShader.hlsl(373,8-55): warning X3206: implicit truncation of vector type
+         
+         C:\Program Files (x86)\Windows Kits\8.1\bin\x86\fxc.exe /nologo /T fx_5_0 /Fo "C:\WorkingGames\SlimeGame\DirectX11\Debug\Decal.cso" /Od /Zi Decal.hlsl 
+     1>FXC : warning X4717: Effects deprecated for D3DCompiler_47
+     1>C:\WorkingGames\SlimeGame\DirectX11\DirectX11_1\Decal.hlsl(104,2-26): warning X3206: implicit truncation of vector type
+     1>C:\WorkingGames\SlimeGame\DirectX11\DirectX11_1\Decal.hlsl(125,2-30): warning X3206: implicit truncation of vector type
+     1>C:\WorkingGames\SlimeGame\DirectX11\DirectX11_1\Decal.hlsl(179,8-55): warning X3206: implicit truncation of vector type
+     1>C:\WorkingGames\SlimeGame\DirectX11\DirectX11_1\Decal.hlsl(183,9-57): warning X3206: implicit truncation of vector type
+         
+         compilation object save succeeded; see C:\WorkingGames\SlimeGame\DirectX11\Debug\Decal.cso
+         C:\Program Files (x86)\Windows Kits\8.1\bin\x86\fxc.exe /nologo /T fx_5_0 /Fo "C:\WorkingGames\SlimeGame\DirectX11\Debug\lightview.cso" /Od /Zi lightview.hlsl 
+     1>FXC : warning X4717: Effects deprecated for D3DCompiler_47
+         
+         compilation object save succeeded; see C:\WorkingGames\SlimeGame\DirectX11\Debug\lightview.cso
+         C:\Program Files (x86)\Windows Kits\8.1\bin\x86\fxc.exe /nologo /T fx_5_0 /Fo "C:\WorkingGames\SlimeGame\DirectX11\Debug\PBR_Test.cso" /Od /Zi PBR_Test.hlsl 
+     1>FXC : warning X4717: Effects deprecated for D3DCompiler_47
+         
+         compilation object save succeeded; see C:\WorkingGames\SlimeGame\DirectX11\Debug\PBR_Test.cso
+         C:\Program Files (x86)\Windows Kits\8.1\bin\x86\fxc.exe /nologo /T fx_5_0 /Fo "C:\WorkingGames\SlimeGame\DirectX11\Debug\SlimeShader.cso" /Od /Zi SlimeShader.hlsl 
+     1>FXC : warning X4717: Effects deprecated for D3DCompiler_47
+     1>C:\WorkingGames\SlimeGame\DirectX11\DirectX11_1\SlimeShader.hlsl(203,26-63): warning X3206: 'dot': implicit truncation of vector type
+     1>C:\WorkingGames\SlimeGame\DirectX11\DirectX11_1\SlimeShader.hlsl(231,9-97): warning X3206: implicit truncation of vector type
+         
+         compilation object save succeeded; see C:\WorkingGames\SlimeGame\DirectX11\Debug\SlimeShader.cso
+         C:\Program Files (x86)\Windows Kits\8.1\bin\x86\fxc.exe /nologo /E"main" /T fx_5_0 /Fo "C:\WorkingGames\SlimeGame\DirectX11\Debug\Tessellation.cso" /Od /Zi Tessellation.hlsl 
+     1>FXC : warning X4717: Effects deprecated for D3DCompiler_47
+     1>C:\WorkingGames\SlimeGame\DirectX11\DirectX11_1\Tessellation.hlsl(57,2-18): warning X3206: implicit truncation of vector type
+     1>C:\WorkingGames\SlimeGame\DirectX11\DirectX11_1\Tessellation.hlsl(58,2-18): warning X3206: implicit truncation of vector type
+     1>C:\WorkingGames\SlimeGame\DirectX11\DirectX11_1\Tessellation.hlsl(142,8-63): warning X3206: implicit truncation of vector type
+         
+         compilation object save succeeded; see C:\WorkingGames\SlimeGame\DirectX11\Debug\Tessellation.cso
+       ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I"C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include" /IC:\EffekseerRuntime\EffekseerRuntime122\Compiled\include /IC:\cri_adx2le_sdk_v202\cri\pc\include /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _WINDOWS /D _MBCS /Gm /EHsc /RTC1 /MTd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /wd4005 /wd4996 /analyze- /errorReport:prompt Billboard.cpp Camera.cpp ClearScene.cpp Cylinder.cpp DecalBox.cpp DecalPlane.cpp DeviceDx11.cpp Effect.cpp GameMain.cpp GameOverScene.cpp Geometry.cpp Main.cpp OBJLoader.cpp OBJMesh.cpp Plane.cpp Player.cpp PlayingScene.cpp PMDLoader.cpp PMDMesh.cpp PMXLoader.cpp PMXMesh.cpp Primitive.cpp Renderer.cpp Scene.cpp ShaderGenarator.cpp SkyBox.cpp SoundManager.cpp Sphere.cpp TessPlane.cpp TitleScene.cpp VMDData.cpp VMDLoader.cpp
+         VMDLoader.cpp
+         VMDData.cpp
+         TitleScene.cpp
+         TessPlane.cpp
+         Sphere.cpp
+     1>c:\workinggames\slimegame\directx11\directx11_1\sphere.cpp(28): warning C4018: '<' : signed と unsigned の数値を比較しようとしました。
+     1>c:\workinggames\slimegame\directx11\directx11_1\sphere.cpp(31): warning C4018: '<' : signed と unsigned の数値を比較しようとしました。
+     1>c:\workinggames\slimegame\directx11\directx11_1\sphere.cpp(41): warning C4018: '>' : signed と unsigned の数値を比較しようとしました。
+     1>c:\workinggames\slimegame\directx11\directx11_1\sphere.cpp(77): warning C4018: '<' : signed と unsigned の数値を比較しようとしました。
+     1>c:\workinggames\slimegame\directx11\directx11_1\sphere.cpp(79): warning C4018: '<' : signed と unsigned の数値を比較しようとしました。
+     1>c:\workinggames\slimegame\directx11\directx11_1\sphere.cpp(395): warning C4244: '引数' : 'int' から 'float' への変換です。データが失われる可能性があります。
+     1>c:\workinggames\slimegame\directx11\directx11_1\sphere.cpp(396): warning C4244: '引数' : 'int' から 'float' への変換です。データが失われる可能性があります。
+         SoundManager.cpp
+         SkyBox.cpp
+         ShaderGenarator.cpp
+         Scene.cpp
+         Renderer.cpp
+         Primitive.cpp
+         PMXMesh.cpp
+         PMXLoader.cpp
+         PMDMesh.cpp
+         PMDLoader.cpp
+     1>c:\workinggames\slimegame\directx11\directx11_1\pmdloader.cpp(352): warning C4018: '<' : signed と unsigned の数値を比較しようとしました。
+     1>c:\workinggames\slimegame\directx11\directx11_1\pmdloader.cpp(408): warning C4244: '=' : 'double' から 'float' への変換です。データが失われる可能性があります。
+     1>c:\workinggames\slimegame\directx11\directx11_1\pmdloader.cpp(409): warning C4244: '=' : 'double' から 'float' への変換です。データが失われる可能性があります。
+     1>c:\workinggames\slimegame\directx11\directx11_1\pmdloader.cpp(410): warning C4244: '=' : 'double' から 'float' への変換です。データが失われる可能性があります。
+     1>c:\workinggames\slimegame\directx11\directx11_1\pmdloader.cpp(413): warning C4244: '=' : 'double' から 'float' への変換です。データが失われる可能性があります。
+     1>c:\workinggames\slimegame\directx11\directx11_1\pmdloader.cpp(414): warning C4244: '=' : 'double' から 'float' への変換です。データが失われる可能性があります。
+     1>c:\workinggames\slimegame\directx11\directx11_1\pmdloader.cpp(415): warning C4244: '=' : 'double' から 'float' への変換です。データが失われる可能性があります。
+         PlayingScene.cpp
+     1>c:\workinggames\slimegame\directx11\directx11_1\playingscene.cpp(33): warning C4552: '/' : 演算子にプログラム上の作用がありません。作用を伴う演算子を使用してください
+     1>c:\workinggames\slimegame\directx11\directx11_1\playingscene.cpp(34): warning C4552: '+' : 演算子にプログラム上の作用がありません。作用を伴う演算子を使用してください
+     1>c:\workinggames\slimegame\directx11\directx11_1\playingscene.cpp(35): warning C4552: '/' : 演算子にプログラム上の作用がありません。作用を伴う演算子を使用してください
+     1>c:\workinggames\slimegame\directx11\directx11_1\playingscene.cpp(36): warning C4552: '+' : 演算子にプログラム上の作用がありません。作用を伴う演算子を使用してください
+     1>c:\workinggames\slimegame\directx11\directx11_1\playingscene.cpp(257): warning C4101: 'result' : ローカル変数は 1 度も使われていません。
+     1>c:\workinggames\slimegame\directx11\directx11_1\playingscene.cpp(469): warning C4244: '引数' : 'LONG' から 'float' への変換です。データが失われる可能性があります。
+         Player.cpp
+         Plane.cpp
+         OBJMesh.cpp
+         OBJLoader.cpp
+         コードを生成中...
+         コンパイル中...
+         Main.cpp
+         Geometry.cpp
+         GameOverScene.cpp
+         GameMain.cpp
+     1>c:\workinggames\slimegame\directx11\directx11_1\gamemain.cpp(65): warning C4316: 'PlayingScene' : ヒープで割り当てられたオブジェクトが 16 にアラインメントされていない可能性があります
+         Effect.cpp
+         DeviceDx11.cpp
+         DecalPlane.cpp
+         DecalBox.cpp
+         Cylinder.cpp
+         ClearScene.cpp
+         Camera.cpp
+         Billboard.cpp
+     1>c:\workinggames\slimegame\directx11\directx11_1\billboard.cpp(21): warning C4552: '/' : 演算子にプログラム上の作用がありません。作用を伴う演算子を使用してください
+     1>c:\workinggames\slimegame\directx11\directx11_1\billboard.cpp(22): warning C4552: '+' : 演算子にプログラム上の作用がありません。作用を伴う演算子を使用してください
+     1>c:\workinggames\slimegame\directx11\directx11_1\billboard.cpp(23): warning C4552: '/' : 演算子にプログラム上の作用がありません。作用を伴う演算子を使用してください
+     1>c:\workinggames\slimegame\directx11\directx11_1\billboard.cpp(24): warning C4552: '+' : 演算子にプログラム上の作用がありません。作用を伴う演算子を使用してください
+         コードを生成中...
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\WorkingGames\SlimeGame\DirectX11\Debug\DirectX11_1.exe" /INCREMENTAL /NOLOGO /LIBPATH:"C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Lib\x86" /LIBPATH:C:\EffekseerRuntime\EffekseerRuntime122\Compiled\lib /LIBPATH:C:\cri_adx2le_sdk_v202\cri\pc\libs\x86 d3d11.lib d3dx11.lib cri_ware_pcx86_le_import.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\WorkingGames\SlimeGame\DirectX11\Debug\DirectX11_1.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\WorkingGames\SlimeGame\DirectX11\Debug\DirectX11_1.lib" /MACHINE:X86 Debug\Billboard.obj
+         Debug\Camera.obj
+         Debug\ClearScene.obj
+         Debug\Cylinder.obj
+         Debug\DecalBox.obj
+         Debug\DecalPlane.obj
+         Debug\DeviceDx11.obj
+         Debug\Effect.obj
+         Debug\GameMain.obj
+         Debug\GameOverScene.obj
+         Debug\Geometry.obj
+         Debug\Main.obj
+         Debug\OBJLoader.obj
+         Debug\OBJMesh.obj
+         Debug\Plane.obj
+         Debug\Player.obj
+         Debug\PlayingScene.obj
+         Debug\PMDLoader.obj
+         Debug\PMDMesh.obj
+         Debug\PMXLoader.obj
+         Debug\PMXMesh.obj
+         Debug\Primitive.obj
+         Debug\Renderer.obj
+         Debug\Scene.obj
+         Debug\ShaderGenarator.obj
+         Debug\SkyBox.obj
+         Debug\SoundManager.obj
+         Debug\Sphere.obj
+         Debug\TessPlane.obj
+         Debug\TitleScene.obj
+         Debug\VMDData.obj
+         Debug\VMDLoader.obj
+     1>Effekseer.lib(Effekseer.Color.obj) : warning LNK4099: PDB 'vc120.pdb' が 'Effekseer.lib(Effekseer.Color.obj)' で、または 'C:\WorkingGames\SlimeGame\DirectX11\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>Effekseer.lib(Effekseer.CriticalSection.obj) : warning LNK4099: PDB 'vc120.pdb' が 'Effekseer.lib(Effekseer.CriticalSection.obj)' で、または 'C:\WorkingGames\SlimeGame\DirectX11\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>Effekseer.lib(Effekseer.DefaultEffectLoader.obj) : warning LNK4099: PDB 'vc120.pdb' が 'Effekseer.lib(Effekseer.DefaultEffectLoader.obj)' で、または 'C:\WorkingGames\SlimeGame\DirectX11\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>Effekseer.lib(Effekseer.DefaultFile.obj) : warning LNK4099: PDB 'vc120.pdb' が 'Effekseer.lib(Effekseer.DefaultFile.obj)' で、または 'C:\WorkingGames\SlimeGame\DirectX11\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>Effekseer.lib(Effekseer.Effect.obj) : warning LNK4099: PDB 'vc120.pdb' が 'Effekseer.lib(Effekseer.Effect.obj)' で、または 'C:\WorkingGames\SlimeGame\DirectX11\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>Effekseer.lib(Effekseer.EffectNode.obj) : warning LNK4099: PDB 'vc120.pdb' が 'Effekseer.lib(Effekseer.EffectNode.obj)' で、または 'C:\WorkingGames\SlimeGame\DirectX11\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>Effekseer.lib(Effekseer.EffectNodeModel.obj) : warning LNK4099: PDB 'vc120.pdb' が 'Effekseer.lib(Effekseer.EffectNodeModel.obj)' で、または 'C:\WorkingGames\SlimeGame\DirectX11\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>Effekseer.lib(Effekseer.EffectNodeRibbon.obj) : warning LNK4099: PDB 'vc120.pdb' が 'Effekseer.lib(Effekseer.EffectNodeRibbon.obj)' で、または 'C:\WorkingGames\SlimeGame\DirectX11\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>Effekseer.lib(Effekseer.EffectNodeRing.obj) : warning LNK4099: PDB 'vc120.pdb' が 'Effekseer.lib(Effekseer.EffectNodeRing.obj)' で、または 'C:\WorkingGames\SlimeGame\DirectX11\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>Effekseer.lib(Effekseer.EffectNodeSprite.obj) : warning LNK4099: PDB 'vc120.pdb' が 'Effekseer.lib(Effekseer.EffectNodeSprite.obj)' で、または 'C:\WorkingGames\SlimeGame\DirectX11\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>Effekseer.lib(Effekseer.EffectNodeTrack.obj) : warning LNK4099: PDB 'vc120.pdb' が 'Effekseer.lib(Effekseer.EffectNodeTrack.obj)' で、または 'C:\WorkingGames\SlimeGame\DirectX11\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>Effekseer.lib(Effekseer.FCurves.obj) : warning LNK4099: PDB 'vc120.pdb' が 'Effekseer.lib(Effekseer.FCurves.obj)' で、または 'C:\WorkingGames\SlimeGame\DirectX11\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>Effekseer.lib(Effekseer.Instance.obj) : warning LNK4099: PDB 'vc120.pdb' が 'Effekseer.lib(Effekseer.Instance.obj)' で、または 'C:\WorkingGames\SlimeGame\DirectX11\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>Effekseer.lib(Effekseer.InstanceContainer.obj) : warning LNK4099: PDB 'vc120.pdb' が 'Effekseer.lib(Effekseer.InstanceContainer.obj)' で、または 'C:\WorkingGames\SlimeGame\DirectX11\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>Effekseer.lib(Effekseer.InstanceGlobal.obj) : warning LNK4099: PDB 'vc120.pdb' が 'Effekseer.lib(Effekseer.InstanceGlobal.obj)' で、または 'C:\WorkingGames\SlimeGame\DirectX11\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>Effekseer.lib(Effekseer.InstanceGroup.obj) : warning LNK4099: PDB 'vc120.pdb' が 'Effekseer.lib(Effekseer.InstanceGroup.obj)' で、または 'C:\WorkingGames\SlimeGame\DirectX11\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>Effekseer.lib(Effekseer.Manager.obj) : warning LNK4099: PDB 'vc120.pdb' が 'Effekseer.lib(Effekseer.Manager.obj)' で、または 'C:\WorkingGames\SlimeGame\DirectX11\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>Effekseer.lib(Effekseer.Matrix43.obj) : warning LNK4099: PDB 'vc120.pdb' が 'Effekseer.lib(Effekseer.Matrix43.obj)' で、または 'C:\WorkingGames\SlimeGame\DirectX11\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>Effekseer.lib(Effekseer.Matrix44.obj) : warning LNK4099: PDB 'vc120.pdb' が 'Effekseer.lib(Effekseer.Matrix44.obj)' で、または 'C:\WorkingGames\SlimeGame\DirectX11\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>Effekseer.lib(Effekseer.RectF.obj) : warning LNK4099: PDB 'vc120.pdb' が 'Effekseer.lib(Effekseer.RectF.obj)' で、または 'C:\WorkingGames\SlimeGame\DirectX11\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>Effekseer.lib(Effekseer.Setting.obj) : warning LNK4099: PDB 'vc120.pdb' が 'Effekseer.lib(Effekseer.Setting.obj)' で、または 'C:\WorkingGames\SlimeGame\DirectX11\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>Effekseer.lib(Effekseer.Vector2D.obj) : warning LNK4099: PDB 'vc120.pdb' が 'Effekseer.lib(Effekseer.Vector2D.obj)' で、または 'C:\WorkingGames\SlimeGame\DirectX11\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>Effekseer.lib(Effekseer.Vector3D.obj) : warning LNK4099: PDB 'vc120.pdb' が 'Effekseer.lib(Effekseer.Vector3D.obj)' で、または 'C:\WorkingGames\SlimeGame\DirectX11\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>Effekseer.lib(Culling3D.Grid.obj) : warning LNK4099: PDB 'vc120.pdb' が 'Effekseer.lib(Culling3D.Grid.obj)' で、または 'C:\WorkingGames\SlimeGame\DirectX11\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>Effekseer.lib(Culling3D.Layer.obj) : warning LNK4099: PDB 'vc120.pdb' が 'Effekseer.lib(Culling3D.Layer.obj)' で、または 'C:\WorkingGames\SlimeGame\DirectX11\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>Effekseer.lib(Culling3D.Matrix44.obj) : warning LNK4099: PDB 'vc120.pdb' が 'Effekseer.lib(Culling3D.Matrix44.obj)' で、または 'C:\WorkingGames\SlimeGame\DirectX11\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>Effekseer.lib(Culling3D.ObjectInternal.obj) : warning LNK4099: PDB 'vc120.pdb' が 'Effekseer.lib(Culling3D.ObjectInternal.obj)' で、または 'C:\WorkingGames\SlimeGame\DirectX11\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>Effekseer.lib(Culling3D.ReferenceObject.obj) : warning LNK4099: PDB 'vc120.pdb' が 'Effekseer.lib(Culling3D.ReferenceObject.obj)' で、または 'C:\WorkingGames\SlimeGame\DirectX11\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>Effekseer.lib(Culling3D.Vector3DF.obj) : warning LNK4099: PDB 'vc120.pdb' が 'Effekseer.lib(Culling3D.Vector3DF.obj)' で、または 'C:\WorkingGames\SlimeGame\DirectX11\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>Effekseer.lib(Culling3D.WorldInternal.obj) : warning LNK4099: PDB 'vc120.pdb' が 'Effekseer.lib(Culling3D.WorldInternal.obj)' で、または 'C:\WorkingGames\SlimeGame\DirectX11\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>EffekseerRendererDX11.lib(EffekseerRendererDX11.DeviceObject.obj) : warning LNK4099: PDB 'vc120.pdb' が 'EffekseerRendererDX11.lib(EffekseerRendererDX11.DeviceObject.obj)' で、または 'C:\WorkingGames\SlimeGame\DirectX11\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>EffekseerRendererDX11.lib(EffekseerRendererDX11.IndexBuffer.obj) : warning LNK4099: PDB 'vc120.pdb' が 'EffekseerRendererDX11.lib(EffekseerRendererDX11.IndexBuffer.obj)' で、または 'C:\WorkingGames\SlimeGame\DirectX11\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>EffekseerRendererDX11.lib(EffekseerRendererDX11.ModelLoader.obj) : warning LNK4099: PDB 'vc120.pdb' が 'EffekseerRendererDX11.lib(EffekseerRendererDX11.ModelLoader.obj)' で、または 'C:\WorkingGames\SlimeGame\DirectX11\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>EffekseerRendererDX11.lib(EffekseerRendererDX11.ModelRenderer.obj) : warning LNK4099: PDB 'vc120.pdb' が 'EffekseerRendererDX11.lib(EffekseerRendererDX11.ModelRenderer.obj)' で、または 'C:\WorkingGames\SlimeGame\DirectX11\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>EffekseerRendererDX11.lib(EffekseerRendererDX11.Renderer.obj) : warning LNK4099: PDB 'vc120.pdb' が 'EffekseerRendererDX11.lib(EffekseerRendererDX11.Renderer.obj)' で、または 'C:\WorkingGames\SlimeGame\DirectX11\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>EffekseerRendererDX11.lib(EffekseerRendererDX11.RenderState.obj) : warning LNK4099: PDB 'vc120.pdb' が 'EffekseerRendererDX11.lib(EffekseerRendererDX11.RenderState.obj)' で、または 'C:\WorkingGames\SlimeGame\DirectX11\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>EffekseerRendererDX11.lib(EffekseerRendererDX11.RibbonRenderer.obj) : warning LNK4099: PDB 'vc120.pdb' が 'EffekseerRendererDX11.lib(EffekseerRendererDX11.RibbonRenderer.obj)' で、または 'C:\WorkingGames\SlimeGame\DirectX11\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>EffekseerRendererDX11.lib(EffekseerRendererDX11.RingRenderer.obj) : warning LNK4099: PDB 'vc120.pdb' が 'EffekseerRendererDX11.lib(EffekseerRendererDX11.RingRenderer.obj)' で、または 'C:\WorkingGames\SlimeGame\DirectX11\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>EffekseerRendererDX11.lib(EffekseerRendererDX11.Shader.obj) : warning LNK4099: PDB 'vc120.pdb' が 'EffekseerRendererDX11.lib(EffekseerRendererDX11.Shader.obj)' で、または 'C:\WorkingGames\SlimeGame\DirectX11\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>EffekseerRendererDX11.lib(EffekseerRendererDX11.SpriteRenderer.obj) : warning LNK4099: PDB 'vc120.pdb' が 'EffekseerRendererDX11.lib(EffekseerRendererDX11.SpriteRenderer.obj)' で、または 'C:\WorkingGames\SlimeGame\DirectX11\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>EffekseerRendererDX11.lib(EffekseerRendererDX11.TextureLoader.obj) : warning LNK4099: PDB 'vc120.pdb' が 'EffekseerRendererDX11.lib(EffekseerRendererDX11.TextureLoader.obj)' で、または 'C:\WorkingGames\SlimeGame\DirectX11\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>EffekseerRendererDX11.lib(EffekseerRendererDX11.TrackRenderer.obj) : warning LNK4099: PDB 'vc120.pdb' が 'EffekseerRendererDX11.lib(EffekseerRendererDX11.TrackRenderer.obj)' で、または 'C:\WorkingGames\SlimeGame\DirectX11\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>EffekseerRendererDX11.lib(EffekseerRendererDX11.VertexBuffer.obj) : warning LNK4099: PDB 'vc120.pdb' が 'EffekseerRendererDX11.lib(EffekseerRendererDX11.VertexBuffer.obj)' で、または 'C:\WorkingGames\SlimeGame\DirectX11\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>EffekseerRendererDX11.lib(EffekseerRenderer.IndexBufferBase.obj) : warning LNK4099: PDB 'vc120.pdb' が 'EffekseerRendererDX11.lib(EffekseerRenderer.IndexBufferBase.obj)' で、または 'C:\WorkingGames\SlimeGame\DirectX11\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>EffekseerRendererDX11.lib(EffekseerRenderer.ModelRendererBase.obj) : warning LNK4099: PDB 'vc120.pdb' が 'EffekseerRendererDX11.lib(EffekseerRenderer.ModelRendererBase.obj)' で、または 'C:\WorkingGames\SlimeGame\DirectX11\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>EffekseerRendererDX11.lib(EffekseerRenderer.RenderStateBase.obj) : warning LNK4099: PDB 'vc120.pdb' が 'EffekseerRendererDX11.lib(EffekseerRenderer.RenderStateBase.obj)' で、または 'C:\WorkingGames\SlimeGame\DirectX11\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>EffekseerRendererDX11.lib(EffekseerRenderer.RibbonRendererBase.obj) : warning LNK4099: PDB 'vc120.pdb' が 'EffekseerRendererDX11.lib(EffekseerRenderer.RibbonRendererBase.obj)' で、または 'C:\WorkingGames\SlimeGame\DirectX11\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>EffekseerRendererDX11.lib(EffekseerRenderer.RingRendererBase.obj) : warning LNK4099: PDB 'vc120.pdb' が 'EffekseerRendererDX11.lib(EffekseerRenderer.RingRendererBase.obj)' で、または 'C:\WorkingGames\SlimeGame\DirectX11\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>EffekseerRendererDX11.lib(EffekseerRenderer.SpriteRendererBase.obj) : warning LNK4099: PDB 'vc120.pdb' が 'EffekseerRendererDX11.lib(EffekseerRenderer.SpriteRendererBase.obj)' で、または 'C:\WorkingGames\SlimeGame\DirectX11\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>EffekseerRendererDX11.lib(EffekseerRenderer.TrackRendererBase.obj) : warning LNK4099: PDB 'vc120.pdb' が 'EffekseerRendererDX11.lib(EffekseerRenderer.TrackRendererBase.obj)' で、または 'C:\WorkingGames\SlimeGame\DirectX11\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>EffekseerRendererDX11.lib(EffekseerRenderer.VertexBufferBase.obj) : warning LNK4099: PDB 'vc120.pdb' が 'EffekseerRendererDX11.lib(EffekseerRenderer.VertexBufferBase.obj)' で、または 'C:\WorkingGames\SlimeGame\DirectX11\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>EffekseerRendererDX11.lib(EffekseerRenderer.DXTK.DDSTextureLoader.obj) : warning LNK4099: PDB 'vc120.pdb' が 'EffekseerRendererDX11.lib(EffekseerRenderer.DXTK.DDSTextureLoader.obj)' で、または 'C:\WorkingGames\SlimeGame\DirectX11\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+     1>EffekseerRendererDX11.lib(EffekseerRenderer.PngTextureLoader.obj) : warning LNK4099: PDB 'vc120.pdb' が 'EffekseerRendererDX11.lib(EffekseerRenderer.PngTextureLoader.obj)' で、または 'C:\WorkingGames\SlimeGame\DirectX11\Debug\vc120.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+         DirectX11_1.vcxproj -> C:\WorkingGames\SlimeGame\DirectX11\Debug\DirectX11_1.exe
+     1>プロジェクト "C:\WorkingGames\SlimeGame\DirectX11\DirectX11_1\DirectX11_1.vcxproj" (Build ターゲット) のビルドが完了しました。
+
+ビルドに成功しました。
+
+経過時間 00:00:22.19
