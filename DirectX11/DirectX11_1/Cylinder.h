@@ -48,5 +48,9 @@ public:
 	void DrawCameraDepth();
 
 	void Update();
+
+	XMMATRIX testView;
+	XMMATRIX testProj;
+	int frame;
 };
 

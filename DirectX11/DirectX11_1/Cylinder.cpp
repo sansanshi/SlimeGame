@@ -8,6 +8,7 @@
 
 Cylinder::Cylinder(float radius, float height, unsigned int div, Camera& camera) :_cameraRef(camera)
 {
+	frame = 0;
 	angle = 0.0f;
 	_height = height;
 	_radius = radius;
@@ -150,6 +151,14 @@ Cylinder::Draw()
 	DeviceDx11& dev = DeviceDx11::Instance();
 	dev.Context()->VSSetConstantBuffers(0, 1, &_matrixBuffer);
 
+	XMMATRIX view = _cameraRef.CameraView();
+	XMMATRIX proj = _cameraRef.CameraProjection();
+	_worldAndCamera.cameraView = view;
+	_worldAndCamera.cameraProj = proj;
+	view = _cameraRef.LightView();
+	proj = _cameraRef.LightProjection();
+	_worldAndCamera.lightView = view;
+	_worldAndCamera.lightProj = proj;
 	//_worldAndCamera.lightView = _cameraRef.LightView();
 	//_worldAndCamera.lightProj = _cameraRef.LightProjection();
 
@@ -171,6 +180,10 @@ Cylinder::Draw()
 
 	dev.Context()->IASetVertexBuffers(0, 1, &_hatchBuffer, &stride, &offset);
 	dev.Context()->Draw(_hatchVertCnt, 0);
+
+	testView = _worldAndCamera.lightView;
+
+
 }
 void
 Cylinder::DrawLightView()//å„ÅXÉvÉåÉCÉÑÅ[Ç©ÇÁÉJÉÅÉâÇòMÇ¡ÇΩèÍçáÇÕÇ±Ç±Ç≈Ç‡ÉJÉÅÉâÇ©ÇÁïœçXå„ÇÃçsóÒÇéÊÇ¡ÇƒÇ≠ÇÈ
@@ -178,8 +191,6 @@ Cylinder::DrawLightView()//å„ÅXÉvÉåÉCÉÑÅ[Ç©ÇÁÉJÉÅÉâÇòMÇ¡ÇΩèÍçáÇÕÇ±Ç±Ç≈Ç‡ÉJÉÅÉâÇ
 	DeviceDx11& dev = DeviceDx11::Instance();
 	dev.Context()->VSSetConstantBuffers(0, 1, &_matrixBuffer);
 
-	//_worldAndCamera.lightView = _cameraRef.LightView();
-	//_worldAndCamera.lightProj = _cameraRef.LightProjection();
 
 
 	dev.Context()->Map(_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &_mappedMatrixies);
@@ -199,6 +210,15 @@ Cylinder::DrawLightView()//å„ÅXÉvÉåÉCÉÑÅ[Ç©ÇÁÉJÉÅÉâÇòMÇ¡ÇΩèÍçáÇÕÇ±Ç±Ç≈Ç‡ÉJÉÅÉâÇ
 	dev.Context()->Draw(_vertexCnt, 0);
 	dev.Context()->IASetVertexBuffers(0, 1, &_hatchBuffer, &stride, &offset);
 	dev.Context()->Draw(_hatchVertCnt, 0);
+
+	testView = _worldAndCamera.lightView;
+	testProj = _worldAndCamera.lightProj;
+
+	frame++;
+	if (frame == 20)
+	{
+		int j = 0;
+	}
 }
 
 void
@@ -207,9 +227,10 @@ Cylinder::DrawCameraDepth()
 	DeviceDx11& dev = DeviceDx11::Instance();
 	dev.Context()->VSSetConstantBuffers(0, 1, &_matrixBuffer);
 
-
-	_worldAndCamera.lightView = _cameraRef.CameraView();
-	_worldAndCamera.lightProj = _cameraRef.CameraProjection();
+	XMMATRIX view = _cameraRef.CameraView();
+	XMMATRIX proj = _cameraRef.CameraProjection();
+	_worldAndCamera.lightView = view;
+	_worldAndCamera.lightProj = proj;
 
 	dev.Context()->Map(_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &_mappedMatrixies);
 	//Ç±Ç±Ç≈Ç±ÇÃÉÅÉÇÉäÇÃâÚÇ…ÅAÉ}ÉgÉäÉbÉNÉXÇÃílÇÉRÉsÅ[ÇµÇƒÇ‚ÇÈ
@@ -247,8 +268,12 @@ Cylinder::Update()
 	_modelMatrix = modelMatrix;
 
 	_worldAndCamera.world = _modelMatrix;
-	_worldAndCamera.cameraView = _cameraRef.CameraView();
-	_worldAndCamera.cameraProj = _cameraRef.CameraProjection();
-	_worldAndCamera.lightView = _cameraRef.LightView();
-	_worldAndCamera.lightProj = _cameraRef.LightProjection();
+	XMMATRIX camView = _cameraRef.CameraView();
+	XMMATRIX camProj = _cameraRef.CameraProjection();
+	XMMATRIX lightView = _cameraRef.LightView();
+	XMMATRIX lightProj = _cameraRef.LightProjection();
+	_worldAndCamera.cameraView = camView;// _cameraRef.CameraView();
+	_worldAndCamera.cameraProj = camProj;// _cameraRef.CameraProjection();
+	_worldAndCamera.lightView = lightView;// _cameraRef.LightView();
+	_worldAndCamera.lightProj = lightProj;// _cameraRef.LightProjection();
 }

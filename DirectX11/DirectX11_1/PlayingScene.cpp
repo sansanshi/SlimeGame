@@ -286,7 +286,7 @@ PlayingScene::PlayingScene(HWND hwnd)
 	_cylinder(3, 20, 20,_camera),
 	_sphere(100,5,_camera),
 	_tessPlane(100,100,Vector3(0,1,0),_camera),
-	_decalBox(20,20,20,_camera),
+	_decalBox(16,16,16,_camera),
 	_decalPlane(4, 4, XMFLOAT3(0,1,0),_camera)
 {
 	//InitDirect3D(_hwnd);//初期化子で既に呼んでいる
@@ -569,7 +569,7 @@ PlayingScene::Update()
 
 	//_renderer.ZWriteOff();
 	_renderer.ChangePTForPrimitive();
-	//_cylinder.DrawLightView();
+	_cylinder.DrawLightView();
 	_plane.DrawLightView();
 
 	_renderer.ChangePTForPMD();
@@ -583,7 +583,7 @@ PlayingScene::Update()
 	_renderer.ChangeRT_CameraDepth();
 	_player.DrawCameraDepth();
 	_plane.DrawCameraDepth();
-	//_cylinder.DrawCameraDepth();
+	_cylinder.DrawCameraDepth();
 	_sphere.DrawCameraDepth();
 
 #pragma endregion
@@ -624,9 +624,11 @@ PlayingScene::Update()
 	//カメラからの深度バッファテクスチャ
 	resource = _renderer.CameraDepthShaderResource();
 	dev.Context()->PSSetShaderResources(12, 1, &resource);
+	_renderer.CullNone();
 	_decalBox.Draw();//デカールボックス
 	_decalPlane.Draw();
 	_renderer.ZWriteOn();
+	_renderer.CullBack();
 
 
 #pragma endregion

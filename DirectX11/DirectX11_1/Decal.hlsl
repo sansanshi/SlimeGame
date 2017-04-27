@@ -217,7 +217,7 @@ float4 DecalBoxPS(Output o):SV_Target
 
 
 
-	float depth = _cameraDepthTex.Sample(_samplerState, coord).r;
+	float depth = _cameraDepthTex.Sample(_samplerState, coord);
 	//x=0~1 y=0~1のテクスチャ座標（？）から
 	//x=-1~1 y=-1~1のクリッピング空間の座標にする
 	//zの値はサンプリングした深度値を使う
@@ -255,8 +255,12 @@ float4 DecalBoxPS(Output o):SV_Target
 		//col = float4(0, 0, 0, 1);
 
 	float2 uv = localPos.xz / float2(16.0f, -16.0f) + 0.5f;
-	col = _cameraDepthTex.Sample(_samplerState, uv);//_decalTex.Sample(_samplerState, uv);
-	col.r = pow(col.r, 100);
+	col = _decalTex.Sample(_samplerState, uv);//_decalTex.Sample(_samplerState, uv);
+	if (localPos.x > 0.0f)
+	{
+		col.g = 1.0f;
+	}
+
 	//return float4(1, 0, 0, 0.7f);
 	if (uv.x<1.0f&&uv.x>0.0f
 		&&uv.y<1.0f&&uv.y>0.0f)
