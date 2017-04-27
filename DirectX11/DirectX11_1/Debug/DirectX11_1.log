@@ -1,2 +1,5 @@
-﻿  DirectX11_1.vcxproj -> C:\WorkingGames\SlimeGame\DirectX11\Debug\DirectX11_1.exe
+﻿FXC : warning X4717: Effects deprecated for D3DCompiler_47
+  
+  compilation object save succeeded; see C:\WorkingGames\SlimeGame\DirectX11\Debug\lightview.cso
+  DirectX11_1.vcxproj -> C:\WorkingGames\SlimeGame\DirectX11\Debug\DirectX11_1.exe
   DirectX11_1.vcxproj -> C:\WorkingGames\SlimeGame\DirectX11\Debug\DirectX11_1.pdb (Full PDB)
