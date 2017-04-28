@@ -37,7 +37,7 @@ Camera::Init()
 	 XMMATRIX cameraProjection = XMMatrixPerspectiveFovLH(
 		(45.0f*(XM_PI / 180)),
 		WINDOW_WIDTH / WINDOW_HEIGHT,
-		0.01f,
+		1.0f,
 		100.0f);
 	 _cameraProjection = cameraProjection;//構造体アライメント対策
 
@@ -46,7 +46,7 @@ Camera::Init()
 	 XMMATRIX lightProjection = XMMatrixPerspectiveFovLH(
 		 (45.0f*(XM_PI / 180)),
 		 WINDOW_WIDTH / WINDOW_HEIGHT,
-		 1.00f,
+		 1.0f,
 		 100.0f);
 	 /*XMMATRIX lightProjection = XMMatrixOrthographicLH(
 		 50, 50, 1.10f, 100.0f);*/

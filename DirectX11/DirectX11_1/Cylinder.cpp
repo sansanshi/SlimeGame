@@ -181,7 +181,14 @@ Cylinder::Draw()
 	dev.Context()->IASetVertexBuffers(0, 1, &_hatchBuffer, &stride, &offset);
 	dev.Context()->Draw(_hatchVertCnt, 0);
 
-	testView = _worldAndCamera.lightView;
+	if (frame == 20)
+	{
+		int j = 0;
+	}
+	if (frame == 21)
+	{
+		int j = 0;
+	}
 
 
 }
@@ -191,7 +198,8 @@ Cylinder::DrawLightView()//ŒãXƒvƒŒƒCƒ„[‚©‚çƒJƒƒ‰‚ð˜M‚Á‚½ê‡‚Í‚±‚±‚Å‚àƒJƒƒ‰‚
 	DeviceDx11& dev = DeviceDx11::Instance();
 	dev.Context()->VSSetConstantBuffers(0, 1, &_matrixBuffer);
 
-
+	_worldAndCamera.lightView = _cameraRef.LightView();
+	_worldAndCamera.lightProj = _cameraRef.LightProjection();
 
 	dev.Context()->Map(_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &_mappedMatrixies);
 	//‚±‚±‚Å‚±‚Ìƒƒ‚ƒŠ‚Ì‰ò‚ÉAƒ}ƒgƒŠƒbƒNƒX‚Ì’l‚ðƒRƒs[‚µ‚Ä‚â‚é
@@ -216,6 +224,10 @@ Cylinder::DrawLightView()//ŒãXƒvƒŒƒCƒ„[‚©‚çƒJƒƒ‰‚ð˜M‚Á‚½ê‡‚Í‚±‚±‚Å‚àƒJƒƒ‰‚
 
 	frame++;
 	if (frame == 20)
+	{
+		int j = 0;
+	}
+	if (frame == 21)
 	{
 		int j = 0;
 	}
@@ -249,6 +261,15 @@ Cylinder::DrawCameraDepth()
 	dev.Context()->Draw(_vertexCnt, 0);
 	dev.Context()->IASetVertexBuffers(0, 1, &_hatchBuffer, &stride, &offset);
 	dev.Context()->Draw(_hatchVertCnt, 0);
+
+	if (frame == 20)
+	{
+		int j = 0;
+	}
+	if (frame == 21)
+	{
+		int j = 0;
+	}
 }
 
 void
@@ -268,12 +289,9 @@ Cylinder::Update()
 	_modelMatrix = modelMatrix;
 
 	_worldAndCamera.world = _modelMatrix;
-	XMMATRIX camView = _cameraRef.CameraView();
-	XMMATRIX camProj = _cameraRef.CameraProjection();
-	XMMATRIX lightView = _cameraRef.LightView();
-	XMMATRIX lightProj = _cameraRef.LightProjection();
-	_worldAndCamera.cameraView = camView;// _cameraRef.CameraView();
-	_worldAndCamera.cameraProj = camProj;// _cameraRef.CameraProjection();
-	_worldAndCamera.lightView = lightView;// _cameraRef.LightView();
-	_worldAndCamera.lightProj = lightProj;// _cameraRef.LightProjection();
+	_worldAndCamera.cameraView = _cameraRef.CameraView();
+	_worldAndCamera.cameraProj = _cameraRef.CameraProjection();
+	_worldAndCamera.lightView = _cameraRef.LightView();
+	_worldAndCamera.lightProj = _cameraRef.LightProjection();
+	
 }

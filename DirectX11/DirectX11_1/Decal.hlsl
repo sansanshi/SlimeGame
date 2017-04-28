@@ -218,12 +218,17 @@ float4 DecalBoxPS(Output o):SV_Target
 
 
 	float depth = _cameraDepthTex.Sample(_samplerState, coord);
+
+	//デプスバッファからLinearizedDepthを求めてみる
+	//float z = (2.0f*1.0f) / (100.0f*1.0f - depth*(100.0f - 1.0f));
+
 	//x=0~1 y=0~1のテクスチャ座標（？）から
 	//x=-1~1 y=-1~1のクリッピング空間の座標にする
 	//zの値はサンプリングした深度値を使う
 	//深度値はカメラ座標からFarPlaneまでの距離を1.0として正規化したもの
 	//正規化された座標が出てくる
 	float4 screenPos = float4(coord*2.0f - 1.0f, depth, 1.0f);
+
 
 		//WVP行列の逆行列をかけていってオブジェクト空間の座標にする
 		//float4 localPos = mul(o.invWVP, screenPos);
@@ -255,17 +260,14 @@ float4 DecalBoxPS(Output o):SV_Target
 		//col = float4(0, 0, 0, 1);
 
 	float2 uv = localPos.xz / float2(16.0f, -16.0f) + 0.5f;
-	col = _decalTex.Sample(_samplerState, uv);//_decalTex.Sample(_samplerState, uv);
-	if (localPos.x > 0.0f)
-	{
-		col.g = 1.0f;
-	}
+	col = _cameraDepthTex.Sample(_samplerState, uv);//_decalTex.Sample(_samplerState, uv);
+	
 
 	//return float4(1, 0, 0, 0.7f);
 	if (uv.x<1.0f&&uv.x>0.0f
 		&&uv.y<1.0f&&uv.y>0.0f)
 	{
-		col.b = 1.0f;
+		col.rgb = 1.0f;
 	}
 		return col;
 

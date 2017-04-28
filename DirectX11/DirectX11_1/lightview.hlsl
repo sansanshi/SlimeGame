@@ -144,6 +144,9 @@ Output PrimitiveLightViewVS(float4 pos:POSITION)
 	o.pos = mul(wlp, pos);
 	o.shadowpos = mul(wlp, pos);
 
+	o.shadowpos = mul(_world, pos);
+	o.shadowpos = mul(_lightView, o.shadowpos);
+
 	return o;
 }
 float4 PrimitiveLightViewPS(Output o):SV_Target
@@ -151,7 +154,7 @@ float4 PrimitiveLightViewPS(Output o):SV_Target
 	//return float4(saturate(o.pos.z), saturate(o.shadowpos.z / 100), 0, 1);
 	//return float4(o.pos.z / 2, saturate(o.shadowpos.z / 100), 0, 1);
 	//float2 uv = (float2(1, 1) + (o.shadowpos.xy / o.shadowpos.w)*float2(1, -1))*0.5f;
-	float brightness = o.shadowpos.z / o.shadowpos.w;
+	float brightness = o.shadowpos.z / 100.0f;//o.shadowpos.z / o.shadowpos.w;
 	//brightness=pow(brightness, 100);
 	return float4(brightness, brightness, brightness, 1.0f);
 }
