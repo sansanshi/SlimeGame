@@ -569,7 +569,7 @@ PlayingScene::Update()
 
 	//_renderer.ZWriteOff();
 	_renderer.ChangePTForPrimitive();
-	_cylinder.DrawLightView();
+	//_cylinder.DrawLightView();
 	_plane.DrawLightView();
 
 	_renderer.ChangePTForPMD();
@@ -583,7 +583,7 @@ PlayingScene::Update()
 	_renderer.ChangeRT_CameraDepth();
 	_player.DrawCameraDepth();
 	_plane.DrawCameraDepth();
-	//_cylinder.DrawCameraDepth();
+	_cylinder.DrawCameraDepth();
 	_sphere.DrawCameraDepth();
 
 #pragma endregion
@@ -605,7 +605,7 @@ PlayingScene::Update()
 
 	_renderer.ChangePTForPrimitive();
 	_plane.Draw();//床
-	_cylinder.Draw();//柱
+	//_cylinder.Draw();//柱
 	_renderer.ChangePTForPMD();
 	dev.Context()->DSSetConstantBuffers(5, 1, &_globalBuffer);
 	//_tessPlane.Draw();//テッセレーション平面
