@@ -60,6 +60,8 @@ struct Output{
 	float4x4 tangentMatrix:TANGENTMATRIX;
 	float4x4 noTransMatrix:NOTRANS;*/
 
+	float nearZ : NEAR;
+	float farZ : FAR;
 };
 
 cbuffer boneMatrix:register(b3)
@@ -70,6 +72,8 @@ cbuffer Global2:register(b5){
 	float4 lightVec;
 	float4 eyeVec;
 	int timer;
+	float nearZ;
+	float farZ;
 
 };
 
@@ -116,6 +120,11 @@ Output LightViewVS(float4 pos : POSITION, float2 uv : TEXCOORD,
 
 	o.pos = mul(tmp, posTemp);//lightVecÇÃå„Ç©ÇÁÉYÉåÇƒÇÈÇ¡Ç€Ç¢ÅH
 	o.shadowpos = mul(tmp,posTemp);
+
+	o.shadowpos = mul(worldtemp, pos);
+	o.shadowpos = mul(_lightView, o.shadowpos);
+	o.nearZ = nearZ;
+	o.farZ = farZ;
 	//o.uv = uv;
 
 	//o.lightVec = float4(normalize(lightVec));//float4(normalize(lightVec), 1.0);
@@ -131,7 +140,7 @@ float4 LightViewPS(Output o):SV_Target
 {
 	//return float4(saturate(o.pos.z), saturate(o.shadowpos.z / 100), 0, 1);
 	//return float4(o.pos.z/2,saturate(o.shadowpos.z/100),0,1);
-	float brightness = o.shadowpos.z / o.shadowpos.w;
+	float brightness = o.shadowpos.z / o.farZ;
 	//brightness=pow(brightness, 100);
 	return float4(brightness, brightness, brightness, 1.0f);
 }

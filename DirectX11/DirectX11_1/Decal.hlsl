@@ -14,6 +14,8 @@ cbuffer Global2:register(b5){
 	float4 lightPos;
 	float4 eyePos;
 	int timer;
+	float nearZ;
+	float farZ;
 
 };
 
@@ -36,6 +38,9 @@ struct Output{
 	float4 posi:TEXCOORD1;
 
 	float4 color:COLOR;
+
+	float nearZ : NEAR;
+	float farZ : FAR;
 
 };
 
@@ -115,7 +120,7 @@ Output DecalBoxVS(float4 pos:POSITION)
 	//o.pos = mul(_wvp, pos);
 
 	//directXが右手系なのでpositionVS.zにマイナスは要らない？
-	float3 viewRay = float3(positionVS.xy, 100.0f);//positionVS.xyz*(100.0f / positionVS.z);//(-positionVS.z / 100.0f);//
+	float3 viewRay = float3(positionVS.xy, farZ);//positionVS.xyz*(100.0f / positionVS.z);//(-positionVS.z / 100.0f);//
 
 		float3 viewPosition = float3(viewRay.xy,viewRay.z*sampleDepth);
 		//o.pos = mul( _proj,float4(viewPosition, 1));
@@ -155,6 +160,8 @@ Output DecalBoxVS(float4 pos:POSITION)
 			o.color = float4(0, 1, 1, 1);
 		}
 
+		o.nearZ = nearZ;
+		o.farZ = farZ;
 	return o;
 }
 
@@ -206,7 +213,7 @@ float4 DecalBoxPS(Output o):SV_Target
 	positionVS = float4(positionVS.xyz / positionVS.w, 1.0f);
 	//positionVS = float4(positionVS.xyz / positionVS.w, 1.0f);
 		
-		float3 viewRay = float3(positionVS.xy*(100.0f / positionVS.z),100.0f);
+		float3 viewRay = float3(positionVS.xy*(o.farZ / positionVS.z),100.0f);
 		//viewRay = normalize(positionVS.xyz)*100.0f;
 
 		float3 viewPosition = viewRay*d;
@@ -248,7 +255,7 @@ float4 DecalBoxPS(Output o):SV_Target
 
 	//clip(8.0f-abs(localPos.xz));
 
-
+	
 
 	float4 posv = mul(o.invProj, screenPos);
 		posv = float4(posv.xyz / posv.w, 1);
@@ -263,7 +270,7 @@ float4 DecalBoxPS(Output o):SV_Target
 	float2 uv = positionL.xz / float2(16.0f, -16.0f) + 0.5f;
 	col = _cameraDepthTex.Sample(_samplerState, uv);//_decalTex.Sample(_samplerState, uv);
 	
-
+	
 	//return float4(1, 0, 0, 0.7f);
 	/*if (uv.x<1.0f&&uv.x>0.0f
 		&&uv.y<1.0f&&uv.y>0.0f)

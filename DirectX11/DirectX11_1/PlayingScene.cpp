@@ -387,6 +387,8 @@ PlayingScene::PlayingScene(HWND hwnd)
 	_shaderGlobals.eyePos = _camera.GetEyePos();//XMFLOAT4(eyePoint.x, eyePoint.y, eyePoint.z, 1);//XMFLOAT3(gazePoint.x - eyePoint.x, gazePoint.y - eyePoint.y, gazePoint.z - eyePoint.z);//Vector3(gazePoint.x - eyePoint.x, gazePoint.y - eyePoint.y, gazePoint.z - eyePoint.z).Normalize();
 	_shaderGlobals.lightPos = _camera.GetLightPos();//w要素は1ならポイントライト、0ならディレクショナルライト？
 	_shaderGlobals.timer = 0;
+	_shaderGlobals.nearZ = NEAR_Z;
+	_shaderGlobals.farZ = FAR_Z;
 
 
 	D3D11_BUFFER_DESC globalBuffDesc;
@@ -485,7 +487,7 @@ PlayingScene::Update()
 		//_effect.Emit(pos);
 
 		//デカールプレーンの位置セット
-		//pos.y += 2.0f;
+		//pos.y += 8.0f;
 		//_decalPlane.SetPos(pos);
 		//デカールボックスの位置セット
 		_decalBox.SetPos(pos);

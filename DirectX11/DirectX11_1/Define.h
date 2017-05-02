@@ -7,6 +7,9 @@
 
 #define PI 3.141592
 
+const float NEAR_Z = 1.0f;
+const float FAR_Z = 100.0f;
+
 struct Vector3{
 	float x, y, z;
 
@@ -114,6 +117,8 @@ struct ShaderGlobals
 	XMFLOAT4 lightPos;//16
 	XMFLOAT4 eyePos;//16
 	int timer;//4
+	float nearZ;
+	float farZ;
 
 	//XMFLOAT3 lightVec;//12
 	//int timer;//4

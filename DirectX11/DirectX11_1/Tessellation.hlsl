@@ -9,6 +9,8 @@ cbuffer Global2:register(b5){
 	float4 lightPos;
 	float4 eyePos;
 	int timer;
+	float nearZ;
+	float farZ;
 
 };
 Texture2D _tex:register(t0);

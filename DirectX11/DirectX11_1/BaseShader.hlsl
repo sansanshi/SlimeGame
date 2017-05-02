@@ -31,7 +31,8 @@ cbuffer Global2:register(b5){
 	float4 lightPos;
 	float4 eyePos;
 	int timer;
-
+	float nearZ;
+	float farZ;
 };
 
 
@@ -56,6 +57,8 @@ struct Output{
 	float2 texcoord:TEXCOORD5;//シャドウマップ（テスト用
 
 	int timer : TIMER;
+	float nearZ : NEAR;
+	float farZ : FAR;
 
 };
 
@@ -185,7 +188,11 @@ Output BaseVS(float4 pos : POSITION, float2 uv : TEXCOORD,
 	matrix lightview = mul(_lightVP, worldtemp);//_lightView
 	o.shadowpos = mul(lightview, posTemp);
 
+	o.shadowpos = mul(mul(_lightView, worldtemp), posTemp);
+
 	o.timer = timer;
+	o.nearZ = nearZ;
+	o.farZ = farZ;
 
 	return o;
 }
@@ -226,10 +233,10 @@ float4 BasePS(Output o) :SV_Target
 	//spa→nulltextureb sph→nulltexture
 	//return float4(o.normal.x, o.normal.y, o.normal.z, 1.0f);
 
-	float2 shadowUV = (float2(1, 1) + (o.shadowpos.xy / o.shadowpos.w)*float2(1, -1))*0.5f;
+	float2 shadowUV = (float2(1, 1) + (o.pos.xy )*float2(1, -1))*0.5f;
 	float lightviewDepth = _shadowTex.Sample(_samplerState_clamp, shadowUV).r;
 
-	float ld = o.shadowpos.z / o.shadowpos.w;
+	float ld = o.shadowpos.z / o.farZ;
 	float shadowWeight = 1.0f;
 	if (ld > lightviewDepth+0.01f){
 		shadowWeight = 0.1f;
@@ -299,6 +306,8 @@ float4 tangent:TANGENT,float4 binormal:BINORMAL)
 	o.shadowpos = mul(lightview, pos);
 	o.texcoord = (float2(1, 1) + (o.shadowpos.xy / o.shadowpos.w)*float2(1, -1))*0.5f;
 
+	o.farZ = farZ;
+	o.nearZ = nearZ;
 	return o;
 }
 float4 PrimitivePS(Output o):SV_Target
@@ -319,10 +328,10 @@ float4 PrimitivePS(Output o):SV_Target
 
 	bright = saturate(dot(o.lightVec, o.normal));//saturate(dot(-o.lightVec, normalVec));
 
-	float2 shadowUV = (float2(1, 1) + (o.shadowpos.xy / o.shadowpos.w)*float2(1, -1))*0.5f;
+	float2 shadowUV = (float2(1, 1) + (o.shadowpos.xy )*float2(1, -1))*0.5f;
 		float lightviewDepth = _shadowTex.Sample(_samplerState_clamp, shadowUV).r;
 
-	float ld = o.shadowpos.z / o.shadowpos.w;
+		float ld = o.shadowpos.z / o.farZ;;
 	float2 satUV = saturate(shadowUV);
 	float shadowWeight = 1.0f;
 	if (shadowUV.x==satUV.x&&shadowUV.y==satUV.y&&ld > lightviewDepth+0.001f){
