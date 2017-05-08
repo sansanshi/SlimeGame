@@ -53,7 +53,8 @@ struct Output{
 	float4 binormal:TEXCOORD4;
 
 	float4 postest:POSITION1;
-	float4 shadowpos:POSITION2;
+	float4 shadowposVS:POSITION2;//ライト視点の位置(ViewSpace)
+	float4 shadowposCS:POSITION3;//ライト視点の位置（ClippingSpace)
 	float2 texcoord:TEXCOORD5;//シャドウマップ（テスト用
 
 	int timer : TIMER;
@@ -186,9 +187,9 @@ Output BaseVS(float4 pos : POSITION, float2 uv : TEXCOORD,
 	o.postest = mul(tmp, posTemp);
 	matrix _lightVP = mul(_lightProj, _lightView);
 	matrix lightview = mul(_lightVP, worldtemp);//_lightView
-	o.shadowpos = mul(lightview, posTemp);
+	o.shadowposVS = mul(lightview, posTemp);
 
-	o.shadowpos = mul(mul(_lightView, worldtemp), posTemp);
+	o.shadowposVS = mul(mul(_lightView, worldtemp), posTemp);
 
 	o.timer = timer;
 	o.nearZ = nearZ;
@@ -236,7 +237,7 @@ float4 BasePS(Output o) :SV_Target
 	float2 shadowUV = (float2(1, 1) + (o.pos.xy )*float2(1, -1))*0.5f;
 	float lightviewDepth = _shadowTex.Sample(_samplerState_clamp, shadowUV).r;
 
-	float ld = o.shadowpos.z / o.farZ;
+	float ld = o.shadowposVS.z / o.farZ;
 	float shadowWeight = 1.0f;
 	if (ld > lightviewDepth+0.01f){
 		shadowWeight = 0.1f;
@@ -302,9 +303,16 @@ float4 tangent:TANGENT,float4 binormal:BINORMAL)
 
 	o.postest = mul(pos,m);
 	matrix _lightVP = mul(_lightProj, _lightView);
-	matrix lightview = mul(_lightVP, _world);//_lightView
-	o.shadowpos = mul(lightview, pos);
-	o.texcoord = (float2(1, 1) + (o.shadowpos.xy / o.shadowpos.w)*float2(1, -1))*0.5f;
+	matrix lightview = mul(_lightView, _world);//_lightView
+	o.shadowposCS = mul(mul(_lightVP,_world), pos);
+	o.shadowposCS = mul(_world, pos);
+	o.shadowposCS = mul(_lightView, o.shadowposCS);
+	o.shadowposCS = mul(_lightProj, o.shadowposCS);
+	o.shadowposCS = float4(o.shadowposCS.xyz / o.shadowposCS.w, 1.0f);
+	o.shadowposVS = mul(_world, pos);
+	o.shadowposVS = mul(_lightView, o.shadowposVS);
+	//o.shadowposVS = mul(lightview, pos);
+	o.texcoord = (float2(1, 1) + (o.pos.xy / o.pos.w)*float2(1, -1))*0.5f;
 
 	o.farZ = farZ;
 	o.nearZ = nearZ;
@@ -328,13 +336,15 @@ float4 PrimitivePS(Output o):SV_Target
 
 	bright = saturate(dot(o.lightVec, o.normal));//saturate(dot(-o.lightVec, normalVec));
 
-	float2 shadowUV = (float2(1, 1) + (o.shadowpos.xy )*float2(1, -1))*0.5f;
+	float2 shadowUV = (float2(1, 1) + (o.shadowposCS.xy )*float2(1, -1))*0.5f;
+	shadowUV += float2(0.5f/640.0f, 0.5f/480.0f);
 		float lightviewDepth = _shadowTex.Sample(_samplerState_clamp, shadowUV).r;
 
-		float ld = o.shadowpos.z / o.farZ;;
+		float ld = o.shadowposVS.z / o.farZ;
+		return float4(lightviewDepth, 0, 0, 1);
 	float2 satUV = saturate(shadowUV);
 	float shadowWeight = 1.0f;
-	if (shadowUV.x==satUV.x&&shadowUV.y==satUV.y&&ld > lightviewDepth+0.001f){
+	if (shadowUV.x==satUV.x&&shadowUV.y==satUV.y&&ld > lightviewDepth + 0.01f){
 		shadowWeight = 0.1f;
 	}
 

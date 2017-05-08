@@ -149,18 +149,12 @@ void
 Cylinder::Draw()
 {
 	DeviceDx11& dev = DeviceDx11::Instance();
+	dev.Context()->VSSetShader(_vertexShader, nullptr, 0);
+	dev.Context()->IASetInputLayout(_inputlayout);
+	dev.Context()->PSSetShader(_pixelShader, nullptr, 0);
+
 	dev.Context()->VSSetConstantBuffers(0, 1, &_matrixBuffer);
 
-	XMMATRIX view = _cameraRef.CameraView();
-	XMMATRIX proj = _cameraRef.CameraProjection();
-	_worldAndCamera.cameraView = view;
-	_worldAndCamera.cameraProj = proj;
-	view = _cameraRef.LightView();
-	proj = _cameraRef.LightProjection();
-	_worldAndCamera.lightView = view;
-	_worldAndCamera.lightProj = proj;
-	//_worldAndCamera.lightView = _cameraRef.LightView();
-	//_worldAndCamera.lightProj = _cameraRef.LightProjection();
 
 	dev.Context()->Map(_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &_mappedMatrixies);
 	//‚±‚±‚Å‚±‚Ìƒƒ‚ƒŠ‚Ì‰ò‚ÉAƒ}ƒgƒŠƒbƒNƒX‚Ì’l‚ðƒRƒs[‚µ‚Ä‚â‚é
@@ -168,9 +162,6 @@ Cylinder::Draw()
 	//ª@*(XMMATRIX*)mem.pData = matrix;//ì–ìæ¶‚Ì‘‚«•û@memcpy‚Å”’l‚ðŠÔˆá‚¦‚é‚Æƒƒ‚ƒŠ‚ª‚®‚¿‚á‚®‚¿‚á‚É‚È‚é
 	dev.Context()->Unmap(_matrixBuffer, 0);
 
-	dev.Context()->VSSetShader(_vertexShader, nullptr, 0);
-	dev.Context()->IASetInputLayout(_inputlayout);
-	dev.Context()->PSSetShader(_pixelShader, nullptr, 0);
 	//ƒvƒŠƒ~ƒeƒBƒuƒgƒ|ƒƒW‚ÌØ‚è‘Ö‚¦‚ð–Y‚ê‚È‚¢@Ø‚è‘Ö‚¦‚ð•p”­‚³‚¹‚é‚Ì‚Í—Ç‚­‚È‚¢
 	dev.Context()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 	unsigned int stride = sizeof(float) * 14;
@@ -196,6 +187,11 @@ void
 Cylinder::DrawLightView()//ŒãXƒvƒŒƒCƒ„[‚©‚çƒJƒƒ‰‚ð˜M‚Á‚½ê‡‚Í‚±‚±‚Å‚àƒJƒƒ‰‚©‚ç•ÏXŒã‚Ìs—ñ‚ðŽæ‚Á‚Ä‚­‚é
 {
 	DeviceDx11& dev = DeviceDx11::Instance();
+
+	dev.Context()->VSSetShader(_lightviewVS, nullptr, 0);
+	dev.Context()->IASetInputLayout(_lightviewInputLayout);
+	dev.Context()->PSSetShader(_lightviewPS, nullptr, 0);
+
 	dev.Context()->VSSetConstantBuffers(0, 1, &_matrixBuffer);
 
 	_worldAndCamera.lightView = _cameraRef.LightView();
@@ -207,9 +203,6 @@ Cylinder::DrawLightView()//ŒãXƒvƒŒƒCƒ„[‚©‚çƒJƒƒ‰‚ð˜M‚Á‚½ê‡‚Í‚±‚±‚Å‚àƒJƒƒ‰‚
 	//ª@*(XMMATRIX*)mem.pData = matrix;//ì–ìæ¶‚Ì‘‚«•û@memcpy‚Å”’l‚ðŠÔˆá‚¦‚é‚Æƒƒ‚ƒŠ‚ª‚®‚¿‚á‚®‚¿‚á‚É‚È‚é
 	dev.Context()->Unmap(_matrixBuffer, 0);
 
-	dev.Context()->VSSetShader(_lightviewVS, nullptr, 0);
-	dev.Context()->IASetInputLayout(_lightviewInputLayout);
-	dev.Context()->PSSetShader(_lightviewPS, nullptr, 0);
 	//ƒvƒŠƒ~ƒeƒBƒuƒgƒ|ƒƒW‚ÌØ‚è‘Ö‚¦‚ð–Y‚ê‚È‚¢@Ø‚è‘Ö‚¦‚ð•p”­‚³‚¹‚é‚Ì‚Í—Ç‚­‚È‚¢
 	dev.Context()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 	unsigned int stride = sizeof(float) * 14;
@@ -219,8 +212,6 @@ Cylinder::DrawLightView()//ŒãXƒvƒŒƒCƒ„[‚©‚çƒJƒƒ‰‚ð˜M‚Á‚½ê‡‚Í‚±‚±‚Å‚àƒJƒƒ‰‚
 	dev.Context()->IASetVertexBuffers(0, 1, &_hatchBuffer, &stride, &offset);
 	dev.Context()->Draw(_hatchVertCnt, 0);
 
-	testView = _worldAndCamera.lightView;
-	testProj = _worldAndCamera.lightProj;
 
 	frame++;
 	if (frame == 20)
@@ -237,6 +228,9 @@ void
 Cylinder::DrawCameraDepth()
 {
 	DeviceDx11& dev = DeviceDx11::Instance();
+	dev.Context()->VSSetShader(_lightviewVS, nullptr, 0);
+	dev.Context()->IASetInputLayout(_lightviewInputLayout);
+	dev.Context()->PSSetShader(_lightviewPS, nullptr, 0);
 	dev.Context()->VSSetConstantBuffers(0, 1, &_matrixBuffer);
 
 	XMMATRIX view = _cameraRef.CameraView();
@@ -250,9 +244,6 @@ Cylinder::DrawCameraDepth()
 	//ª@*(XMMATRIX*)mem.pData = matrix;//ì–ìæ¶‚Ì‘‚«•û@memcpy‚Å”’l‚ðŠÔˆá‚¦‚é‚Æƒƒ‚ƒŠ‚ª‚®‚¿‚á‚®‚¿‚á‚É‚È‚é
 	dev.Context()->Unmap(_matrixBuffer, 0);
 
-	dev.Context()->VSSetShader(_lightviewVS, nullptr, 0);
-	dev.Context()->IASetInputLayout(_lightviewInputLayout);
-	dev.Context()->PSSetShader(_lightviewPS, nullptr, 0);
 	//ƒvƒŠƒ~ƒeƒBƒuƒgƒ|ƒƒW‚ÌØ‚è‘Ö‚¦‚ð–Y‚ê‚È‚¢@Ø‚è‘Ö‚¦‚ð•p”­‚³‚¹‚é‚Ì‚Í—Ç‚­‚È‚¢
 	dev.Context()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 	unsigned int stride = sizeof(float) * 14;
@@ -286,7 +277,9 @@ Cylinder::Update()
 	transMatrix = XMMatrixTranslation(10, 5, 10);
 	modelMatrix = XMMatrixMultiply(transMatrix,modelMatrix);
 
+
 	_modelMatrix = modelMatrix;
+	_modelMatrix = XMMatrixIdentity();
 
 	_worldAndCamera.world = _modelMatrix;
 	_worldAndCamera.cameraView = _cameraRef.CameraView();

@@ -105,7 +105,9 @@ Plane::Draw()
 {
 	DeviceDx11& dev = DeviceDx11::Instance();
 	dev.Context()->VSSetConstantBuffers(0, 1, &_matrixBuffer);
-
+	_worldAndCamera.world = _modelMatrix;
+	_worldAndCamera.cameraView = _cameraRef.CameraView();
+	_worldAndCamera.cameraProj = _cameraRef.CameraProjection();
 	_worldAndCamera.lightView = _cameraRef.LightView();
 	_worldAndCamera.lightProj = _cameraRef.LightProjection();
 
@@ -131,7 +133,9 @@ Plane::DrawLightView()
 {
 	DeviceDx11& dev = DeviceDx11::Instance();
 	dev.Context()->VSSetConstantBuffers(0, 1, &_matrixBuffer);
-
+	_worldAndCamera.world = _modelMatrix;
+	_worldAndCamera.cameraView = _cameraRef.CameraView();
+	_worldAndCamera.cameraProj = _cameraRef.CameraProjection();
 	_worldAndCamera.lightView = _cameraRef.LightView();
 	_worldAndCamera.lightProj = _cameraRef.LightProjection();
 

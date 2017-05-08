@@ -86,7 +86,7 @@ Camera::Update()
 		XMLoadFloat3(&XMFLOAT3(0,5,0)),
 		XMLoadFloat3(&upVec));
 	_light = light;
-
+	int jjk = 0;
 
 }
 

@@ -140,7 +140,7 @@ float4 LightViewPS(Output o):SV_Target
 {
 	//return float4(saturate(o.pos.z), saturate(o.shadowpos.z / 100), 0, 1);
 	//return float4(o.pos.z/2,saturate(o.shadowpos.z/100),0,1);
-	float brightness = o.shadowpos.z / o.farZ;
+	float brightness = o.shadowpos.z / 100.0f;
 	//brightness=pow(brightness, 100);
 	return float4(brightness, brightness, brightness, 1.0f);
 }

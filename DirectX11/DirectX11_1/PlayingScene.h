@@ -38,6 +38,8 @@ private:
 
 	SoundManager _soundManager;
 
+	
+
 
 	ID3D11RenderTargetView* _rtvlight;
 	ID3D11DepthStencilView* _lightDSV;

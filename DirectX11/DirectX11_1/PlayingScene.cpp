@@ -571,8 +571,8 @@ PlayingScene::Update()
 
 	//_renderer.ZWriteOff();
 	_renderer.ChangePTForPrimitive();
-	//_cylinder.DrawLightView();
 	_plane.DrawLightView();
+	//_cylinder.DrawLightView();
 
 	_renderer.ChangePTForPMD();
 	_player.DrawLightView();
@@ -585,7 +585,7 @@ PlayingScene::Update()
 	_renderer.ChangeRT_CameraDepth();
 	_player.DrawCameraDepth();
 	_plane.DrawCameraDepth();
-	_cylinder.DrawCameraDepth();
+	//_cylinder.DrawCameraDepth();
 	_sphere.DrawCameraDepth();
 
 #pragma endregion
@@ -631,7 +631,7 @@ PlayingScene::Update()
 	_decalPlane.Draw();
 	_renderer.ZWriteOn();
 	_renderer.CullBack();
-
+	
 
 #pragma endregion
 

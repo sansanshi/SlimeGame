@@ -34,6 +34,11 @@ private:
 	float _height;
 	unsigned int _div;
 
+	XMMATRIX _camView;
+	XMMATRIX _camProj;
+	XMMATRIX _lightView;
+	XMMATRIX _lightProj;
+
 	void CalculateTangentBinormal();
 
 public:
@@ -49,8 +54,6 @@ public:
 
 	void Update();
 
-	XMMATRIX testView;
-	XMMATRIX testProj;
 	int frame;
 };
 
