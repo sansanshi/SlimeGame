@@ -438,10 +438,7 @@ Sphere::Draw()
 	dev.Context()->VSSetShaderResources(8, 1, &_dispMask);
 
 
-	XMMATRIX transMatrix = XMMatrixTranslation(pos.x, pos.y+5.0f, pos.z);
-	_modelMatrix = transMatrix;
-	//_modelMatrix = XMMatrixIdentity();
-	_worldAndCamera.world = _modelMatrix;
+	
 	_worldAndCamera.cameraView = _cameraRef.CameraView();
 	_worldAndCamera.cameraProj = _cameraRef.CameraProjection();
 	_worldAndCamera.lightView = _cameraRef.LightView();
@@ -476,10 +473,7 @@ Sphere::DrawLightView()
 	dev.Context()->VSSetShader(_lightviewVS, nullptr, 0);
 	dev.Context()->PSSetShader(_lightviewPS, nullptr, 0);
 
-	XMMATRIX transMatrix = XMMatrixTranslation(pos.x, pos.y + 5.0f, pos.z);
-	_modelMatrix = transMatrix;
-	//_modelMatrix = XMMatrixIdentity();
-	_worldAndCamera.world = _modelMatrix;
+	
 	_worldAndCamera.cameraView = _cameraRef.CameraView();
 	_worldAndCamera.cameraProj = _cameraRef.CameraProjection();
 	_worldAndCamera.lightView = _cameraRef.LightView();

@@ -308,7 +308,7 @@ float4 tangent:TANGENT,float4 binormal:BINORMAL)
 	o.shadowposCS = mul(_world, pos);
 	o.shadowposCS = mul(_lightView, o.shadowposCS);
 	o.shadowposCS = mul(_lightProj, o.shadowposCS);
-	o.shadowposCS = float4(o.shadowposCS.xyz / o.shadowposCS.w, 1.0f);
+	//o.shadowposCS = float4(o.shadowposCS.xyz / o.shadowposCS.w, 1.0f);
 	o.shadowposVS = mul(_world, pos);
 	o.shadowposVS = mul(_lightView, o.shadowposVS);
 	//o.shadowposVS = mul(lightview, pos);
@@ -335,17 +335,17 @@ float4 PrimitivePS(Output o):SV_Target
 		normalVec = normalize(normalVec);
 
 	bright = saturate(dot(o.lightVec, o.normal));//saturate(dot(-o.lightVec, normalVec));
-
+	o.shadowposCS= float4(o.shadowposCS.xyz / o.shadowposCS.w, 1.0f);
 	float2 shadowUV = (float2(1, 1) + (o.shadowposCS.xy )*float2(1, -1))*0.5f;
 	shadowUV += float2(0.5f/640.0f, 0.5f/480.0f);
 		float lightviewDepth = _shadowTex.Sample(_samplerState_clamp, shadowUV).r;
 
 		float ld = o.shadowposVS.z / o.farZ;
-		return float4(lightviewDepth, 0, 0, 1);
 	float2 satUV = saturate(shadowUV);
 	float shadowWeight = 1.0f;
 	if (shadowUV.x==satUV.x&&shadowUV.y==satUV.y&&ld > lightviewDepth + 0.01f){
 		shadowWeight = 0.1f;
+		//return float4(lightviewDepth, 0, 0, 1);
 	}
 
 	//SSSのテスト　後で球体モデルにして試す

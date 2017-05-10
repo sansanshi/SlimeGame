@@ -566,13 +566,15 @@ PlayingScene::Update()
 	_renderer.CullBack();
 	_renderer.ChangeRT_LightColor();
 	_sphere.DrawLightView_color();
+
+
 #pragma region ライトビュー描画
 	_renderer.ChangeRT_Light();
 
 	//_renderer.ZWriteOff();
 	_renderer.ChangePTForPrimitive();
 	_plane.DrawLightView();
-	//_cylinder.DrawLightView();
+	_cylinder.DrawLightView();
 
 	_renderer.ChangePTForPMD();
 	_player.DrawLightView();
@@ -607,7 +609,7 @@ PlayingScene::Update()
 
 	_renderer.ChangePTForPrimitive();
 	_plane.Draw();//床
-	//_cylinder.Draw();//柱
+	_cylinder.Draw();//柱
 	_renderer.ChangePTForPMD();
 	dev.Context()->DSSetConstantBuffers(5, 1, &_globalBuffer);
 	//_tessPlane.Draw();//テッセレーション平面

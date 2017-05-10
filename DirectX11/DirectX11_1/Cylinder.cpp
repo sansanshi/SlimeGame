@@ -8,7 +8,6 @@
 
 Cylinder::Cylinder(float radius, float height, unsigned int div, Camera& camera) :_cameraRef(camera)
 {
-	frame = 0;
 	angle = 0.0f;
 	_height = height;
 	_radius = radius;
@@ -102,7 +101,7 @@ Cylinder::Cylinder(float radius, float height, unsigned int div, Camera& camera)
 	//ƒJƒƒ‰‚©‚ç‚Ì•`‰æ‚ÉŽg‚Á‚½inputElementDescs‚ðŽg‚Á‚Ä‚à•`‰æ‚Å‚«‚½
 	//–â‘è‚ª‹N‚«‚½Žž‚ÍLightview—p‚ÉV‚µ‚­ƒo[ƒeƒbƒNƒXƒoƒbƒtƒ@ì‚Á‚Ä‚±‚Ì•Ó‚à‘‚«Š·‚¦‚é
 	ShaderGenerator::CreateVertexShader("lightview.hlsl", "PrimitiveLightViewVS", "vs_5_0",
-		_lightviewVS, inputElementDescs, sizeof(inputElementDescs) / sizeof(D3D11_INPUT_ELEMENT_DESC), _lightviewInputLayout);
+		_lightviewVS, lightViewInputElementDescs, sizeof(lightViewInputElementDescs) / sizeof(D3D11_INPUT_ELEMENT_DESC), _lightviewInputLayout);
 	ShaderGenerator::CreatePixelShader("lightview.hlsl", "PrimitiveLightViewPS", "ps_5_0", _lightviewPS);
 
 	_modelMatrix = XMMatrixIdentity();
@@ -155,6 +154,9 @@ Cylinder::Draw()
 
 	dev.Context()->VSSetConstantBuffers(0, 1, &_matrixBuffer);
 
+	_worldAndCamera.lightView = _cameraRef.LightView();
+	_worldAndCamera.lightProj = _cameraRef.LightProjection();
+
 
 	dev.Context()->Map(_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &_mappedMatrixies);
 	//‚±‚±‚Å‚±‚Ìƒƒ‚ƒŠ‚Ì‰ò‚ÉAƒ}ƒgƒŠƒbƒNƒX‚Ì’l‚ðƒRƒs[‚µ‚Ä‚â‚é
@@ -172,14 +174,6 @@ Cylinder::Draw()
 	dev.Context()->IASetVertexBuffers(0, 1, &_hatchBuffer, &stride, &offset);
 	dev.Context()->Draw(_hatchVertCnt, 0);
 
-	if (frame == 20)
-	{
-		int j = 0;
-	}
-	if (frame == 21)
-	{
-		int j = 0;
-	}
 
 
 }
@@ -197,11 +191,11 @@ Cylinder::DrawLightView()//ŒãXƒvƒŒƒCƒ„[‚©‚çƒJƒƒ‰‚ð˜M‚Á‚½ê‡‚Í‚±‚±‚Å‚àƒJƒƒ‰‚
 	_worldAndCamera.lightView = _cameraRef.LightView();
 	_worldAndCamera.lightProj = _cameraRef.LightProjection();
 
-	dev.Context()->Map(_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &_mappedMatrixies);
-	//‚±‚±‚Å‚±‚Ìƒƒ‚ƒŠ‚Ì‰ò‚ÉAƒ}ƒgƒŠƒbƒNƒX‚Ì’l‚ðƒRƒs[‚µ‚Ä‚â‚é
-	memcpy(_mappedMatrixies.pData, (void*)(&_worldAndCamera), sizeof(_worldAndCamera));
-	//ª@*(XMMATRIX*)mem.pData = matrix;//ì–ìæ¶‚Ì‘‚«•û@memcpy‚Å”’l‚ðŠÔˆá‚¦‚é‚Æƒƒ‚ƒŠ‚ª‚®‚¿‚á‚®‚¿‚á‚É‚È‚é
-	dev.Context()->Unmap(_matrixBuffer, 0);
+	//dev.Context()->Map(_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &_mappedMatrixies);
+	////‚±‚±‚Å‚±‚Ìƒƒ‚ƒŠ‚Ì‰ò‚ÉAƒ}ƒgƒŠƒbƒNƒX‚Ì’l‚ðƒRƒs[‚µ‚Ä‚â‚é
+	//memcpy(_mappedMatrixies.pData, (void*)(&_worldAndCamera), sizeof(_worldAndCamera));
+	////ª@*(XMMATRIX*)mem.pData = matrix;//ì–ìæ¶‚Ì‘‚«•û@memcpy‚Å”’l‚ðŠÔˆá‚¦‚é‚Æƒƒ‚ƒŠ‚ª‚®‚¿‚á‚®‚¿‚á‚É‚È‚é
+	//dev.Context()->Unmap(_matrixBuffer, 0);
 
 	//ƒvƒŠƒ~ƒeƒBƒuƒgƒ|ƒƒW‚ÌØ‚è‘Ö‚¦‚ð–Y‚ê‚È‚¢@Ø‚è‘Ö‚¦‚ð•p”­‚³‚¹‚é‚Ì‚Í—Ç‚­‚È‚¢
 	dev.Context()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
@@ -213,15 +207,6 @@ Cylinder::DrawLightView()//ŒãXƒvƒŒƒCƒ„[‚©‚çƒJƒƒ‰‚ð˜M‚Á‚½ê‡‚Í‚±‚±‚Å‚àƒJƒƒ‰‚
 	dev.Context()->Draw(_hatchVertCnt, 0);
 
 
-	frame++;
-	if (frame == 20)
-	{
-		int j = 0;
-	}
-	if (frame == 21)
-	{
-		int j = 0;
-	}
 }
 
 void
@@ -253,14 +238,6 @@ Cylinder::DrawCameraDepth()
 	dev.Context()->IASetVertexBuffers(0, 1, &_hatchBuffer, &stride, &offset);
 	dev.Context()->Draw(_hatchVertCnt, 0);
 
-	if (frame == 20)
-	{
-		int j = 0;
-	}
-	if (frame == 21)
-	{
-		int j = 0;
-	}
 }
 
 void

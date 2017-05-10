@@ -26,7 +26,7 @@ Camera::Init()
 	gazePoint = { 0, 10, 0 };//{ 0.f, 8.f, 0.f };
 	upVec = { 0.f, 1.0f, 0.f };
 
-	lightPoint = { -15.3f, 25.3f, -15.3f };
+	lightPoint = { -15.3f, 35.3f, -15.3f };
 
 	XMMATRIX view = XMMatrixLookAtLH(
 		XMLoadFloat3(&eyePoint),

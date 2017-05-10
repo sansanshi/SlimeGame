@@ -54,6 +54,5 @@ public:
 
 	void Update();
 
-	int frame;
 };
 

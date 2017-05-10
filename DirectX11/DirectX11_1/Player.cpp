@@ -897,9 +897,10 @@ Player::Draw()
 		//world = XMMatrixMultiply(transMatrix, world);
 
 
-		//_worldAndCamera.world = world;
-		//_worldAndCamera.camera = _cameraRef.GetMatrixies().cameraview;
-		//_worldAndCamera.lightview = _cameraRef.GetMatrixies().lightview;
+		_worldAndCamera.cameraView = _cameraRef.CameraView();
+		_worldAndCamera.cameraProj = _cameraRef.CameraProjection();
+		_worldAndCamera.lightView = _cameraRef.LightView();
+		_worldAndCamera.lightProj = _cameraRef.LightProjection();
 
 		dev.Context()->Map(_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &_mem);
 		//ここでこのメモリの塊に、マトリックスの値をコピーしてやる
@@ -980,8 +981,6 @@ Player::Draw()
 void 
 Player::DrawLightView()
 {
-	dev.Context()->VSSetConstantBuffers(0, 1, &_matrixBuffer);
-	dev.Context()->IASetIndexBuffer(_mesh->GetIndexBuffer(), DXGI_FORMAT_R16_UINT, 0);
 
 	ID3D11Buffer* pmdVertBuff = _mesh->GetVertexBuffer();
 	unsigned int stride = _mesh->GetVertexStride();
@@ -991,6 +990,21 @@ Player::DrawLightView()
 	dev.Context()->VSSetShader(_depthVS, nullptr, 0);//ＰＭＤモデル表示用シェーダセット
 	dev.Context()->PSSetShader(_depthPS, nullptr, 0);//PMDモデル表示用シェーダセット
 	dev.Context()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	dev.Context()->VSSetConstantBuffers(0, 1, &_matrixBuffer);
+	dev.Context()->IASetIndexBuffer(_mesh->GetIndexBuffer(), DXGI_FORMAT_R16_UINT, 0);
+
+	XMMATRIX view = _cameraRef.LightView();
+	XMMATRIX proj = _cameraRef.LightProjection();
+	_worldAndCamera.lightView = view;
+	_worldAndCamera.lightProj = proj;
+
+	//バッファの更新してない↑のでする
+	dev.Context()->Map(_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &_mem);
+	//ここでこのメモリの塊に、マトリックスの値をコピーしてやる
+	memcpy(_mem.pData, (void*)(&_worldAndCamera), sizeof(_worldAndCamera));
+	//↑　*(XMMATRIX*)mem.pData = matrix;//川野先生の書き方　memcpyで数値を間違えるとメモリがぐちゃぐちゃになる
+	dev.Context()->Unmap(_matrixBuffer, 0);
 
 	std::vector<PMDMaterial> pmdMaterials = _mesh->GetMaterials();
 	for (int i = 0; i < (int)pmdMaterials.size(); i++)
