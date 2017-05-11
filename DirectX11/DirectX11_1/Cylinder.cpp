@@ -247,22 +247,21 @@ Cylinder::Update()
 	XMMATRIX transMatrix = XMMatrixTranslation(0, -_height/2, 0);
 	XMMATRIX modelMatrix = XMMatrixIdentity();
 	angle += 1.0f * XM_PI / 180.0f;
-	XMMATRIX scaleMat = XMMatrixScaling(1.5f, 0.8f, 1.5f);
+	XMMATRIX scaleMat = XMMatrixScaling(1.5f, 1.0f, 1.5f);
 	XMMATRIX rotMat = XMMatrixRotationZ(angle);
 	rotMat = XMMatrixIdentity();
 	//Å´ìõÇÃíÜêSÇå¥ì_Ç…à⁄ìÆÇ≥ÇπÇƒâÒì]ÅAägëÂ
 	modelMatrix = XMMatrixMultiply(transMatrix,XMMatrixMultiply(rotMat, scaleMat));
-	transMatrix = XMMatrixTranslation(10, 5, 10);
+	transMatrix = XMMatrixTranslation(10, _height/2, 10);
 	modelMatrix = XMMatrixMultiply(transMatrix,modelMatrix);
-
+	
 
 	_modelMatrix = modelMatrix;
-	_modelMatrix = XMMatrixIdentity();
 
 	_worldAndCamera.world = _modelMatrix;
-	/*_worldAndCamera.cameraView = _cameraRef.CameraView();
+	_worldAndCamera.cameraView = _cameraRef.CameraView();
 	_worldAndCamera.cameraProj = _cameraRef.CameraProjection();
 	_worldAndCamera.lightView = _cameraRef.LightView();
-	_worldAndCamera.lightProj = _cameraRef.LightProjection();*/
+	_worldAndCamera.lightProj = _cameraRef.LightProjection();
 	
 }
