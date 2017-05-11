@@ -117,7 +117,7 @@ Cylinder::Cylinder(float radius, float height, unsigned int div, Camera& camera)
 	//mvps—ñ—p‚Ìƒoƒbƒtƒ@ì‚é
 	D3D11_BUFFER_DESC matBuffDesc = {};
 	matBuffDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	matBuffDesc.ByteWidth = sizeof(MATRIXIES);
+	matBuffDesc.ByteWidth = sizeof(WorldAndCamera);
 	matBuffDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;//ƒoƒbƒtƒ@‚Ì’†g‚ÍCPU‚Å‘‚«Š·‚¦‚é
 	matBuffDesc.Usage = D3D11_USAGE_DYNAMIC;//CPU‚É‚æ‚é‘‚«ž‚ÝAGPU‚É‚æ‚é“Ç‚Ýž‚Ý‚ªs‚í‚ê‚é‚Æ‚¢‚¤ˆÓ–¡
 	//matBuffDesc.ByteWidth = sizeof(XMMATRIX);
@@ -191,11 +191,12 @@ Cylinder::DrawLightView()//ŒãXƒvƒŒƒCƒ„[‚©‚çƒJƒƒ‰‚ð˜M‚Á‚½ê‡‚Í‚±‚±‚Å‚àƒJƒƒ‰‚
 	_worldAndCamera.lightView = _cameraRef.LightView();
 	_worldAndCamera.lightProj = _cameraRef.LightProjection();
 
-	//dev.Context()->Map(_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &_mappedMatrixies);
-	////‚±‚±‚Å‚±‚Ìƒƒ‚ƒŠ‚Ì‰ò‚ÉAƒ}ƒgƒŠƒbƒNƒX‚Ì’l‚ðƒRƒs[‚µ‚Ä‚â‚é
-	//memcpy(_mappedMatrixies.pData, (void*)(&_worldAndCamera), sizeof(_worldAndCamera));
-	////ª@*(XMMATRIX*)mem.pData = matrix;//ì–ìæ¶‚Ì‘‚«•û@memcpy‚Å”’l‚ðŠÔˆá‚¦‚é‚Æƒƒ‚ƒŠ‚ª‚®‚¿‚á‚®‚¿‚á‚É‚È‚é
-	//dev.Context()->Unmap(_matrixBuffer, 0);
+	dev.Context()->Map(_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &_mappedMatrixies);
+	//‚±‚±‚Å‚±‚Ìƒƒ‚ƒŠ‚Ì‰ò‚ÉAƒ}ƒgƒŠƒbƒNƒX‚Ì’l‚ðƒRƒs[‚µ‚Ä‚â‚é
+	memcpy(_mappedMatrixies.pData, (void*)(&_worldAndCamera), sizeof(_worldAndCamera));
+	//ª@*(XMMATRIX*)mem.pData = matrix;//ì–ìæ¶‚Ì‘‚«•û@memcpy‚Å”’l‚ðŠÔˆá‚¦‚é‚Æƒƒ‚ƒŠ‚ª‚®‚¿‚á‚®‚¿‚á‚É‚È‚é
+	//*(WorldAndCamera*)_mappedMatrixies.pData=_worldAndCamera;
+	dev.Context()->Unmap(_matrixBuffer, 0);
 
 	//ƒvƒŠƒ~ƒeƒBƒuƒgƒ|ƒƒW‚ÌØ‚è‘Ö‚¦‚ð–Y‚ê‚È‚¢@Ø‚è‘Ö‚¦‚ð•p”­‚³‚¹‚é‚Ì‚Í—Ç‚­‚È‚¢
 	dev.Context()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
@@ -259,9 +260,9 @@ Cylinder::Update()
 	_modelMatrix = XMMatrixIdentity();
 
 	_worldAndCamera.world = _modelMatrix;
-	_worldAndCamera.cameraView = _cameraRef.CameraView();
+	/*_worldAndCamera.cameraView = _cameraRef.CameraView();
 	_worldAndCamera.cameraProj = _cameraRef.CameraProjection();
 	_worldAndCamera.lightView = _cameraRef.LightView();
-	_worldAndCamera.lightProj = _cameraRef.LightProjection();
+	_worldAndCamera.lightProj = _cameraRef.LightProjection();*/
 	
 }

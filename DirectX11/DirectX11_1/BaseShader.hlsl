@@ -294,10 +294,10 @@ float4 tangent:TANGENT,float4 binormal:BINORMAL)
 	o.pos = mul(m,pos);
 	//–@ü‚à‰ñ“]‚·‚éi•½sˆÚ“®¬•ª‚ÍÁ‚·
 	matrix model_noTrans = DisableTranslation(_world);
-	o.normal = normalize(mul(normal,model_noTrans));
+	o.normal = normalize(mul(model_noTrans,normal));
 	o.uv = uv;
 
-	float3 posWorld = mul(pos, _world);
+	float3 posWorld = mul(_world,pos);
 	o.lightVec = float4(normalize(lightPos.xyz-posWorld),0);
 	o.eyeVec = float4(normalize(eyePos.xyz - posWorld),1);
 

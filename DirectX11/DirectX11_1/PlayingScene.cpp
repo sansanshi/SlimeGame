@@ -587,7 +587,7 @@ PlayingScene::Update()
 	_renderer.ChangeRT_CameraDepth();
 	_player.DrawCameraDepth();
 	_plane.DrawCameraDepth();
-	//_cylinder.DrawCameraDepth();
+	_cylinder.DrawCameraDepth();
 	_sphere.DrawCameraDepth();
 
 #pragma endregion

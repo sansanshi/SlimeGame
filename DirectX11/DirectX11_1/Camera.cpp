@@ -72,8 +72,8 @@ Camera::Update()
 	//lightPoint.x = 25.3f*cos(_rotAngle);
 	//lightPoint.z = 25.3f*sin(_rotAngle);
 
-	//lightPoint.x = 15.3f*cos(_rotAngle);
-	//lightPoint.z = 15.3*sin(_rotAngle);
+	lightPoint.x = 15.3f*cos(_rotAngle);
+	lightPoint.z = 15.3*sin(_rotAngle);
 
 
 	XMMATRIX view = XMMatrixLookAtLH(
