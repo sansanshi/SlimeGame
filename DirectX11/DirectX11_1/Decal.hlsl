@@ -220,7 +220,7 @@ float4 DecalBoxPS(Output o):SV_Target
 		float3 positionW = mul(o.invView,float4(viewPosition, 1)).xyz;
 		float4 positionL = mul(o.invWorld,float4(positionW, 1));
 
-		clip(8.0f - abs(positionL.xyz));
+		clip(8.0f - abs(positionL.xy));
 
 
 
@@ -267,8 +267,8 @@ float4 DecalBoxPS(Output o):SV_Target
 
 		//col = float4(0, 0, 0, 1);
 
-	float2 uv = positionL.xz / float2(16.0f, -16.0f) + 0.5f;
-	col = _cameraDepthTex.Sample(_samplerState, uv);//_decalTex.Sample(_samplerState, uv);
+	float2 uv = positionL.xy / float2(16.0f, -16.0f) + 0.5f;
+	col = _decalTex.Sample(_samplerState, uv);//_decalTex.Sample(_samplerState, uv);
 	
 	
 	//return float4(1, 0, 0, 0.7f);

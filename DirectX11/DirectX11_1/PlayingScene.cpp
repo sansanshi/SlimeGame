@@ -283,7 +283,7 @@ PlayingScene::Init()
 PlayingScene::PlayingScene(HWND hwnd) 
 	:_hwnd(hwnd),_result(InitDirect3D(_hwnd)),dev(DeviceDx11::Instance()),
 	_player(_camera), _plane(120, 120, Vector3(0, 1, 0), _camera), 
-	_cylinder(3, 20, 20,_camera),
+	_cylinder(4, 20, 20,_camera),
 	_sphere(100,5,_camera),
 	_tessPlane(100,100,Vector3(0,1,0),_camera),
 	_decalBox(16,16,16,_camera),
@@ -644,7 +644,7 @@ PlayingScene::Update()
 
 		dev.Context()->VSSetConstantBuffers(0, 1, &_matrixBuffer);
 		//world‘‚«Š·‚¦ihudMatrix‚Éj
-		_worldAndCamera.world = XMMatrixTranslation(10, 15, 0);
+		_worldAndCamera.world = XMMatrixTranslation(-10, 15, 0);
 
 		XMMATRIX w = _worldAndCamera.world;
 		XMMATRIX view = _camera.CameraView();

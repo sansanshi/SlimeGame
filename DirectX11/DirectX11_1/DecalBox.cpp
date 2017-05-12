@@ -117,7 +117,7 @@ DecalBox::DecalBox(float width, float height, float length, Camera& camera) :_ca
 	dev.Context()->PSSetSamplers(0, 1, &_samplerState);
 	dev.Context()->VSSetSamplers(1, 1, &_samplerState);
 
-	D3DX11CreateShaderResourceViewFromFile(dev.Device(), "texture/uvCheck.png", nullptr, nullptr,
+	D3DX11CreateShaderResourceViewFromFile(dev.Device(), "texture/uvCheck_transparent.png", nullptr, nullptr,
 		&_decalTexture, &result);
 
 	int j = 0;
@@ -132,8 +132,8 @@ DecalBox::~DecalBox()
 void
 DecalBox::Draw()
 {
-	XMMATRIX transMatrix = XMMatrixTranslation(_pos.x, _pos.y, _pos.z);
-	_modelMatrix = transMatrix;
+	/*XMMATRIX transMatrix = XMMatrixTranslation(_pos.x, _pos.y, _pos.z);
+	_modelMatrix = transMatrix;*/
 
 	_matrixies.world = _modelMatrix;
 	_matrixies.view = _cameraRef.CameraView();
@@ -211,9 +211,10 @@ DecalBox::Draw()
 void 
 DecalBox::Update()
 {
-	XMMATRIX transMatrix = XMMatrixTranslation(_pos.x, _pos.y, _pos.z);
-	_modelMatrix = transMatrix;
+	XMMATRIX transMatrix = XMMatrixTranslation(_pos.x, _pos.y+8.0f, _pos.z);
+	XMMATRIX rotMatrix = XMMatrixRotationRollPitchYaw(90.0f*180.0f / XM_PI, 0, 0);
 
+	_modelMatrix = transMatrix;
 	_matrixies.world = _modelMatrix;
 	_matrixies.view = _cameraRef.CameraView();
 	_matrixies.proj = _cameraRef.CameraProjection();

@@ -193,15 +193,15 @@ Output SlimeLightViewVS(float4 pos:POSITION, float4 normal : NORMAL, float2 uv :
 	matrix _lightVP = mul(_lightProj, _lightView);
 	matrix tmp = mul(_lightVP/*_lightview*/, world);
 
-
 	o.pos = mul(tmp, posTemp);//lightVecÇÃå„Ç©ÇÁÉYÉåÇƒÇÈÇ¡Ç€Ç¢ÅH
+	tmp = mul(_lightView, _world);
 	o.shadowpos = mul(tmp, posTemp);
 	return o;
 }
 
 float4 SlimeLightViewPS(Output o):SV_Target
 {
-	float brightness = o.shadowpos.z / o.shadowpos.w;
+	float brightness = o.shadowpos.z / 100.0f;
 	//brightness=pow(brightness, 100);
 	return float4(brightness, brightness, brightness, 1.0f);
 }

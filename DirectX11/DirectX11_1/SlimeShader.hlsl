@@ -139,10 +139,10 @@ Output SlimeVS(float4 pos:POSITION, float4 normal : NORMAL, float2 uv : TEXCOORD
 	float4 normalTemp = float4(normal.xyz * displaysment, 1.0);
 	float t = cos(timer*(1.0f/60.0f)*6.0f);
 	t = t*0.4f;
-	if (t < -0.2f)
+	/*if (t < -0.2f)
 	{
 		t = t*0.5f;
-	}
+	}*/
 	normalTemp.xyz = normalTemp.xyz + normal.xyz*t;
 
 		//normalTemp.w = 1.0f;
