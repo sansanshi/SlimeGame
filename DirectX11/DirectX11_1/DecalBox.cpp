@@ -120,7 +120,6 @@ DecalBox::DecalBox(float width, float height, float length, Camera& camera) :_ca
 	D3DX11CreateShaderResourceViewFromFile(dev.Device(), "texture/uvCheck_transparent.png", nullptr, nullptr,
 		&_decalTexture, &result);
 
-	int j = 0;
 
 }
 
@@ -178,7 +177,6 @@ DecalBox::Draw()
 	XMStoreFloat3(&ret, v);
 	
 
-	int k = 0;
 
 	DeviceDx11& dev = DeviceDx11::Instance();
 
