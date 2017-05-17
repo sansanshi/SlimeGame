@@ -258,7 +258,7 @@ float4 BasePS(Output o) :SV_Target
 	rand = rand * _dot;
 
 	float4 test = _tex.Sample(_samplerState, o.uv);
-		return float4(test.r*rand, 0.2f, 0.2f, rand+0.4f);
+		//return float4(test.r*rand, 0.2f, 0.2f, rand+0.4f);
 
 	//
 	
@@ -269,7 +269,7 @@ float4 BasePS(Output o) :SV_Target
 	float4 col = _tex.Sample(_samplerState, o.uv);
 		float3 sphCol = _sph.Sample(_samplerState, o.normal.xy / 2 * float2(1, -1) + float2(0.5f, 0.5f));
 		return float4((bright*o.diffuse.rgb + o.ambient.rgb)*col.rgb*sphCol
-		/*+ 0.3f*pow(max(0, dot(ref, o.lightVec)), 8)*/, rand);//VSSetConstantBufferで渡ってきたデータは直接ピクセルシェーダでは使えないっぽい　全部の値が0になっている
+		/*+ 0.3f*pow(max(0, dot(ref, o.lightVec)), 8)*/, 1.0f);//VSSetConstantBufferで渡ってきたデータは直接ピクセルシェーダでは使えないっぽい　全部の値が0になっている
 	col.a = o.diffuse.a;
 }
 

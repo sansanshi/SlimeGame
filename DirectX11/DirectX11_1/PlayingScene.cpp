@@ -644,7 +644,7 @@ PlayingScene::Update()
 
 		dev.Context()->VSSetConstantBuffers(0, 1, &_matrixBuffer);
 		//world‘‚«Š·‚¦ihudMatrix‚Éj
-		_worldAndCamera.world = XMMatrixTranslation(-10, 15, 0);
+		_worldAndCamera.world = XMMatrixTranslation(-10, 15, 10);
 
 		XMMATRIX w = _worldAndCamera.world;
 		XMMATRIX view = _camera.CameraView();

@@ -209,10 +209,10 @@ DecalBox::Draw()
 void 
 DecalBox::Update()
 {
-	XMMATRIX transMatrix = XMMatrixTranslation(_pos.x, _pos.y+8.0f, _pos.z);
-	XMMATRIX rotMatrix = XMMatrixRotationRollPitchYaw(90.0f*180.0f / XM_PI, 0, 0);
+	XMMATRIX transMatrix = XMMatrixTranslation(_pos.x, _pos.y+2.0f, _pos.z);
+	XMMATRIX rotMatrix = XMMatrixRotationRollPitchYaw(30.0f* XM_PI/ 180.0f, 0, 0);
 
-	_modelMatrix = transMatrix;
+	_modelMatrix = XMMatrixMultiply(rotMatrix, transMatrix);
 	_matrixies.world = _modelMatrix;
 	_matrixies.view = _cameraRef.CameraView();
 	_matrixies.proj = _cameraRef.CameraProjection();

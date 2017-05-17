@@ -247,13 +247,13 @@ Cylinder::Update()
 	XMMATRIX transMatrix = XMMatrixTranslation(0, -_height/2, 0);
 	XMMATRIX modelMatrix = XMMatrixIdentity();
 	angle += 1.0f * XM_PI / 180.0f;
-	XMMATRIX scaleMat = XMMatrixScaling(1.5f, 1.0f, 1.5f);
+	XMMATRIX scaleMat = XMMatrixScaling(3.0f, 1.0f, 1.5f);
 	XMMATRIX rotMat = XMMatrixRotationZ(angle);
 	rotMat = XMMatrixIdentity();
 	//«“›‚Ì’†S‚ğŒ´“_‚ÉˆÚ“®‚³‚¹‚Ä‰ñ“]AŠg‘å
 	modelMatrix = XMMatrixMultiply(transMatrix,XMMatrixMultiply(rotMat, scaleMat));
 	transMatrix = XMMatrixTranslation(10, _height/2, 10);
-	modelMatrix = XMMatrixMultiply(transMatrix,modelMatrix);
+	modelMatrix = XMMatrixMultiply(modelMatrix,transMatrix);
 	
 
 	_modelMatrix = modelMatrix;

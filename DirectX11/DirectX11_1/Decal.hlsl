@@ -42,6 +42,8 @@ struct Output{
 	float nearZ : NEAR;
 	float farZ : FAR;
 
+	float4 modelpos:MODELPOS;
+
 };
 
 matrix MatrixIdentity()
@@ -162,6 +164,8 @@ Output DecalBoxVS(float4 pos:POSITION)
 
 		o.nearZ = nearZ;
 		o.farZ = farZ;
+
+		o.modelpos = pos;
 	return o;
 }
 
@@ -220,9 +224,16 @@ float4 DecalBoxPS(Output o):SV_Target
 		float3 positionW = mul(o.invView,float4(viewPosition, 1)).xyz;
 		float4 positionL = mul(o.invWorld,float4(positionW, 1));
 
-		clip(8.0f - abs(positionL.xy));
 
+		float valueXY = abs(o.modelpos.x) +abs(o.modelpos.y);
+		float valueYZ = abs(o.modelpos.y) + abs(o.modelpos.z);
+		float valueXZ = abs(o.modelpos.x) + abs(o.modelpos.z);
+		if (valueXY>15.9f||valueYZ>15.9f||valueXZ>15.9f)
+		{
+			return float4(1, 0, (o.modelpos.z+8.0f)/16.0f, 1);
+		}
 
+		clip(8.0f - abs(positionL.xz));
 
 
 	float depth = _cameraDepthTex.Sample(_samplerState, coord);
@@ -267,10 +278,10 @@ float4 DecalBoxPS(Output o):SV_Target
 
 		//col = float4(0, 0, 0, 1);
 
-	float2 uv = positionL.xy / float2(16.0f, -16.0f) + 0.5f;
+	float2 uv = positionL.xz / float2(16.0f, -16.0f) + 0.5f;
 	col = _decalTex.Sample(_samplerState, uv);//_decalTex.Sample(_samplerState, uv);
 	
-	
+	//col *= (1.0f - max((positionL.z - 0.25f*8.0f) / 0.25f*8.0f, 0.0f));
 	//return float4(1, 0, 0, 0.7f);
 	/*if (uv.x<1.0f&&uv.x>0.0f
 		&&uv.y<1.0f&&uv.y>0.0f)

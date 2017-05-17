@@ -490,9 +490,9 @@ Player::Init()
 	//vmd側にリピートフラグを持たせる
 	//VMDファイルの読み込み
 	VMDLoader vmdLoader;
-	_vmd = vmdLoader.Load("charge.vmd",true);
+	_vmd = vmdLoader.Load("motiontest.vmd",true);
 	RegisterAnim("charge", _vmd);
-	VMDData* run = vmdLoader.Load("run.vmd",false);
+	VMDData* run = vmdLoader.Load("run.vmd",true);
 	RegisterAnim("run", run);
 	VMDData* neutral = vmdLoader.Load("neutral.vmd", true);
 	RegisterAnim("neutral", neutral);
