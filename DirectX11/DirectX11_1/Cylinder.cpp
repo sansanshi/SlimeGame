@@ -244,10 +244,10 @@ Cylinder::DrawCameraDepth()
 void
 Cylinder::Update()
 {
-	XMMATRIX transMatrix = XMMatrixTranslation(0, -_height/2, 0);
+	XMMATRIX transMatrix = XMMatrixTranslation(3, -_height/2, 0);
 	XMMATRIX modelMatrix = XMMatrixIdentity();
 	angle += 1.0f * XM_PI / 180.0f;
-	XMMATRIX scaleMat = XMMatrixScaling(3.0f, 1.0f, 1.5f);
+	XMMATRIX scaleMat = XMMatrixScaling(3.0f, 1.0f, 3.0f);
 	XMMATRIX rotMat = XMMatrixRotationZ(angle);
 	rotMat = XMMatrixIdentity();
 	//«“›‚Ì’†S‚ğŒ´“_‚ÉˆÚ“®‚³‚¹‚Ä‰ñ“]AŠg‘å

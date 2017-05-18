@@ -710,8 +710,9 @@ PlayingScene::Update()
 		dev.Context()->PSSetShader(_hudPS, nullptr, 0);
 		dev.Context()->IASetInputLayout(_hudInputLayout);
 		//ライトからのレンダリング結果（カラー
-		resource = _renderer.LightViewShaderResource();
-		dev.Context()->PSSetShaderResources(11, 1, &resource);
+		//resource = _renderer.LightViewShaderResource();
+		resource = _renderer.CameraDepthShaderResource();
+		dev.Context()->PSSetShaderResources(10, 1, &resource);
 		unsigned int hudstride = sizeof(HUDVertex);
 		unsigned int hudoffset = 0;
 		dev.Context()->IASetVertexBuffers(0, 1, &_hudBuffer, &hudstride, &hudoffset);

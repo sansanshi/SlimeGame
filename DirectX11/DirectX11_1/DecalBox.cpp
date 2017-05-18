@@ -117,7 +117,7 @@ DecalBox::DecalBox(float width, float height, float length, Camera& camera) :_ca
 	dev.Context()->PSSetSamplers(0, 1, &_samplerState);
 	dev.Context()->VSSetSamplers(1, 1, &_samplerState);
 
-	D3DX11CreateShaderResourceViewFromFile(dev.Device(), "texture/uvCheck_transparent.png", nullptr, nullptr,
+	D3DX11CreateShaderResourceViewFromFile(dev.Device(), "texture/bloodhand.png", nullptr, nullptr,
 		&_decalTexture, &result);
 
 
@@ -209,10 +209,10 @@ DecalBox::Draw()
 void 
 DecalBox::Update()
 {
-	XMMATRIX transMatrix = XMMatrixTranslation(_pos.x, _pos.y+2.0f, _pos.z);
+	XMMATRIX transMatrix = XMMatrixTranslation(_pos.x, _pos.y+0.0f, _pos.z);
 	XMMATRIX rotMatrix = XMMatrixRotationRollPitchYaw(30.0f* XM_PI/ 180.0f, 0, 0);
 
-	_modelMatrix = XMMatrixMultiply(rotMatrix, transMatrix);
+	_modelMatrix =  XMMatrixMultiply(rotMatrix, transMatrix);
 	_matrixies.world = _modelMatrix;
 	_matrixies.view = _cameraRef.CameraView();
 	_matrixies.proj = _cameraRef.CameraProjection();
