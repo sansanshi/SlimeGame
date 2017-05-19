@@ -34,7 +34,6 @@ private:
 	TessPlane _tessPlane;
 
 	DecalBox _decalBox;
-	DecalPlane _decalPlane;
 
 	SoundManager _soundManager;
 

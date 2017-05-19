@@ -144,7 +144,7 @@ Output DecalBoxVS(float4 pos:POSITION)
 
 	//o.pos = mul(_proj, float4(viewPosition,1));
 	//o.pos = wpos;
-	o.invWorld = InverseTranslation(_world);
+	o.invWorld = _invWorld;//InverseTranslation(_world);
 	o.invView = _invView;
 	o.invWVP = _invWVP;
 	o.proj = _proj;
@@ -278,8 +278,8 @@ float4 DecalBoxPS(Output o):SV_Target
 
 		//col = float4(0, 0, 0, 1);
 
-	float2 uv = positionL.xz / float2(16.0f, 16.0f) + 0.5f;
-	return float4(uv.x, uv.y, 0, 1);
+	float2 uv = positionL.xy / float2(16.0f, -16.0f) + 0.5f;
+	//return float4(uv.x, uv.y, 0, 1);
 	col = _decalTex.Sample(_samplerState, uv);//_decalTex.Sample(_samplerState, uv);
 	
 	//col *= (1.0f - max((positionL.z - 0.25f*8.0f) / 0.25f*8.0f, 0.0f));

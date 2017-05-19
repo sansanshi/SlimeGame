@@ -286,8 +286,7 @@ PlayingScene::PlayingScene(HWND hwnd)
 	_cylinder(4, 20, 20,_camera),
 	_sphere(100,5,_camera),
 	_tessPlane(100,100,Vector3(0,1,0),_camera),
-	_decalBox(16,16,16,_camera),
-	_decalPlane(4, 4, XMFLOAT3(0,1,0),_camera)
+	_decalBox(16,16,16,_camera)
 {
 	//InitDirect3D(_hwnd);//初期化子で既に呼んでいる
 	Init();
@@ -486,9 +485,6 @@ PlayingScene::Update()
 		
 		//_effect.Emit(pos);
 
-		//デカールプレーンの位置セット
-		//pos.y += 8.0f;
-		//_decalPlane.SetPos(pos);
 		//デカールボックスの位置セット
 		_decalBox.SetPos(pos);
 		int j = 0;
@@ -553,7 +549,6 @@ PlayingScene::Update()
 	_tessPlane.Update();
 	_sphere.Update();
 	_decalBox.Update();
-	_decalPlane.Update();
 
 	_camera.Update();
 
@@ -628,11 +623,10 @@ PlayingScene::Update()
 	//カメラからの深度バッファテクスチャ
 	resource = _renderer.CameraDepthShaderResource();
 	dev.Context()->PSSetShaderResources(12, 1, &resource);
-	_renderer.CullNone();
+	//_renderer.CullNone();
 	_decalBox.Draw();//デカールボックス
-	_decalPlane.Draw();
 	_renderer.ZWriteOn();
-	_renderer.CullBack();
+	//_renderer.CullBack();
 	
 
 #pragma endregion
