@@ -117,7 +117,7 @@ DecalBox::DecalBox(float width, float height, float length, Camera& camera) :_ca
 	dev.Context()->PSSetSamplers(0, 1, &_samplerState);
 	dev.Context()->VSSetSamplers(1, 1, &_samplerState);
 
-	D3DX11CreateShaderResourceViewFromFile(dev.Device(), "texture/uvcheck_transparent.png", nullptr, nullptr,
+	D3DX11CreateShaderResourceViewFromFile(dev.Device(), "texture/bloodhand.png", nullptr, nullptr,
 		&_decalTexture, &result);
 
 
