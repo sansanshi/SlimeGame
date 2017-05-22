@@ -232,9 +232,8 @@ float4 DecalBoxPS(Output o):SV_Target
 		{
 			return float4(1, 0, (o.modelpos.z+8.0f)/16.0f, 1);
 		}
-
 		clip(8.0f - abs(positionL.xyz));
-
+		
 
 	float depth = _cameraDepthTex.Sample(_samplerState, coord);
 

@@ -391,7 +391,7 @@ float4 HUDPS(HUDOut o):SV_Target
 	//return (0,0,0,0);
 	float r = _shadowTex.Sample(_samplerState_clamp, o.uv);
 	//return r;
-	//r = pow(r, 50);
+	r = pow(r, 2);
 	return float4(r,0,0,1);
 }
 
