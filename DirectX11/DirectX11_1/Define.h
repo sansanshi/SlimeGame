@@ -2,8 +2,8 @@
 #include<D3D11.h>
 #include<xnamath.h>
 
-#define WINDOW_WIDTH 640.0f
-#define WINDOW_HEIGHT 480.0f
+#define WINDOW_WIDTH 1280.0f
+#define WINDOW_HEIGHT 720.0f
 
 #define PI 3.141592
 

@@ -76,8 +76,8 @@ Texture2D _heightMap:register(t6);
 Texture2D _dispMap:register(t7);
 Texture2D _dispMask:register(t8);
 Texture2D _decalMap:register(t9);//デカール
-Texture2D _shadowTex:register(t10);//ライトからのレンダリング結果をテクスチャとして受け取る
-Texture2D _lightViewTex:register(t11);
+Texture2D _shadowTex:register(t10);//ライトからの深度値をテクスチャとして受け取る
+Texture2D _lightViewTex:register(t11);//ライトからのレンダリング（カラー）
 SamplerState _samplerState:register(s0);
 SamplerState _samplerStateDisp:register(s1);
 SamplerState _samplerState_clamp:register(s2);
@@ -239,10 +239,10 @@ float4 BasePS(Output o) :SV_Target
 
 	float ld = o.shadowposVS.z / o.farZ;
 	float shadowWeight = 1.0f;
-	if (ld > lightviewDepth+0.01f){
+	if (ld > lightviewDepth+0.0001f){
 		shadowWeight = 0.1f;
 	}
-
+	return float4(lightviewDepth,0,0,1);
 	//SSSのテスト　後で球体モデルにして試す
 	float ed = o.postest.z / o.postest.w;
 	float thickness = abs(ld - lightviewDepth)*100.0f;
@@ -337,7 +337,7 @@ float4 PrimitivePS(Output o):SV_Target
 	bright = saturate(dot(o.lightVec, o.normal));//saturate(dot(-o.lightVec, normalVec));
 	o.shadowposCS= float4(o.shadowposCS.xyz / o.shadowposCS.w, 1.0f);
 	float2 shadowUV = (float2(1, 1) + (o.shadowposCS.xy )*float2(1, -1))*0.5f;
-	shadowUV += float2(0.5f/640.0f, 0.5f/480.0f);
+	shadowUV += float2(0.5f/1280.0f, 0.5f/720.0f);
 		float lightviewDepth = _shadowTex.Sample(_samplerState_clamp, shadowUV).r;
 
 		float ld = o.shadowposVS.z / o.farZ;
@@ -391,7 +391,7 @@ float4 HUDPS(HUDOut o):SV_Target
 	//return (0,0,0,0);
 	float r = _shadowTex.Sample(_samplerState_clamp, o.uv);
 	//return r;
-	r = pow(r, 2);
+	//r = pow(r, 2);
 	return float4(r,0,0,1);
 }
 

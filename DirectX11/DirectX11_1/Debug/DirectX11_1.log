@@ -1,13 +1,59 @@
 ﻿FXC : warning X4717: Effects deprecated for D3DCompiler_47
-C:\Users\1401349\Documents\WorkingGames\SlimeGame\DirectX11\DirectX11_1\Decal.hlsl(111,2-26): warning X3206: implicit truncation of vector type
-C:\Users\1401349\Documents\WorkingGames\SlimeGame\DirectX11\DirectX11_1\Decal.hlsl(132,2-30): warning X3206: implicit truncation of vector type
-C:\Users\1401349\Documents\WorkingGames\SlimeGame\DirectX11\DirectX11_1\Decal.hlsl(190,8-55): warning X3206: implicit truncation of vector type
-C:\Users\1401349\Documents\WorkingGames\SlimeGame\DirectX11\DirectX11_1\Decal.hlsl(194,9-57): warning X3206: implicit truncation of vector type
-C:\Users\1401349\Documents\WorkingGames\SlimeGame\DirectX11\DirectX11_1\Decal.hlsl(238,8-59): warning X3206: implicit truncation of vector type
+C:\Users\1401349\Documents\WorkingGames\SlimeGame\DirectX11\DirectX11_1\BaseShader.hlsl(219,19-49): warning X3206: 'mul': implicit truncation of vector type
+C:\Users\1401349\Documents\WorkingGames\SlimeGame\DirectX11\DirectX11_1\BaseShader.hlsl(219,9-49): warning X3206: implicit truncation of vector type
+C:\Users\1401349\Documents\WorkingGames\SlimeGame\DirectX11\DirectX11_1\BaseShader.hlsl(222,15-41): warning X3206: 'reflect': implicit truncation of vector type
+C:\Users\1401349\Documents\WorkingGames\SlimeGame\DirectX11\DirectX11_1\BaseShader.hlsl(257,24-50): warning X3206: 'dot': implicit truncation of vector type
+C:\Users\1401349\Documents\WorkingGames\SlimeGame\DirectX11\DirectX11_1\BaseShader.hlsl(270,10-98): warning X3206: implicit truncation of vector type
+C:\Users\1401349\Documents\WorkingGames\SlimeGame\DirectX11\DirectX11_1\BaseShader.hlsl(300,9-34): warning X3206: implicit truncation of vector type
+C:\Users\1401349\Documents\WorkingGames\SlimeGame\DirectX11\DirectX11_1\BaseShader.hlsl(332,9-60): warning X3206: implicit truncation of vector type
+C:\Users\1401349\Documents\WorkingGames\SlimeGame\DirectX11\DirectX11_1\BaseShader.hlsl(392,8-55): warning X3206: implicit truncation of vector type
   
-  compilation object save succeeded; see C:\Users\1401349\Documents\WorkingGames\SlimeGame\DirectX11\Debug\Decal.cso
+  compilation object save succeeded; see C:\Users\1401349\Documents\WorkingGames\SlimeGame\DirectX11\Debug\BaseShader.cso
   PlayingScene.cpp
-c:\users\1401349\documents\workinggames\slimegame\directx11\directx11_1\playingscene.cpp : fatal error C1041: プログラム データベース 'C:\Users\1401349\Documents\WorkingGames\SlimeGame\DirectX11\DirectX11_1\Debug\vc140.idb' を開けません。複数の CL.EXE が同じ .PDB ファイルに書き込む場合、/FS を使用してください。
-  DecalBox.cpp
-c:\users\1401349\documents\workinggames\slimegame\directx11\directx11_1\decalbox.cpp : fatal error C1041: プログラム データベース 'C:\Users\1401349\Documents\WorkingGames\SlimeGame\DirectX11\DirectX11_1\Debug\vc140.pdb' を開けません。複数の CL.EXE が同じ .PDB ファイルに書き込む場合、/FS を使用してください。
-  コードを生成中...
+c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2662): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
+c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2663): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
+c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2664): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
+c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2665): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
+c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2666): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
+c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2667): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
+c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2668): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
+c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2689): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
+c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2690): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
+c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2691): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
+c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2694): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
+c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2695): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
+c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2698): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
+c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2702): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
+c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2712): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
+c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2713): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
+c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2715): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
+c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2716): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
+c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2717): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
+c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2727): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
+c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2728): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
+c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2729): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
+c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2730): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
+c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2731): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
+c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2732): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
+c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2742): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
+c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2743): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
+c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2754): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
+c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamathconvert.inl(2254): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
+c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamathconvert.inl(4523): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
+c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamathconvert.inl(4577): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
+c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamathconvert.inl(4639): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
+c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamathconvert.inl(4707): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
+c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamathconvert.inl(4770): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
+c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamathconvert.inl(4832): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
+c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamathvector.inl(1269): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
+c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamathmisc.inl(518): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
+c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamathmisc.inl(519): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
+c:\users\1401349\documents\workinggames\slimegame\directx11\directx11_1\playingscene.cpp(33): warning C4552: '/': 演算子にプログラム上の作用がありません。作用を伴う演算子を使用してください
+c:\users\1401349\documents\workinggames\slimegame\directx11\directx11_1\playingscene.cpp(34): warning C4552: '+': 演算子にプログラム上の作用がありません。作用を伴う演算子を使用してください
+c:\users\1401349\documents\workinggames\slimegame\directx11\directx11_1\playingscene.cpp(35): warning C4552: '/': 演算子にプログラム上の作用がありません。作用を伴う演算子を使用してください
+c:\users\1401349\documents\workinggames\slimegame\directx11\directx11_1\playingscene.cpp(36): warning C4552: '+': 演算子にプログラム上の作用がありません。作用を伴う演算子を使用してください
+c:\users\1401349\documents\workinggames\slimegame\directx11\directx11_1\playingscene.cpp(257): warning C4101: 'result': ローカル変数は 1 度も使われていません。
+c:\users\1401349\documents\workinggames\slimegame\directx11\directx11_1\playingscene.cpp(470): warning C4244: '引数': 'LONG' から 'float' への変換です。データが失われる可能性があります。
+cl : コマンド ライン warning D9028: 簡易リビルド時のエラーです、通常のビルドに戻します
+  DirectX11_1.vcxproj -> C:\Users\1401349\Documents\WorkingGames\SlimeGame\DirectX11\Debug\DirectX11_1.exe
+  DirectX11_1.vcxproj -> C:\Users\1401349\Documents\WorkingGames\SlimeGame\DirectX11\Debug\DirectX11_1.pdb (Full PDB)

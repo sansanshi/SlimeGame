@@ -39,7 +39,7 @@ HWND InitWindow()
 	w.hInstance = GetModuleHandle(0);
 	RegisterClass(&w);//ウィンドウクラス登録
 	//ウィンドウサイズ設定
-	RECT wrc = { 0, 0, 640, 480 };
+	RECT wrc = { 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT };
 	::AdjustWindowRect(&wrc, WS_OVERLAPPEDWINDOW, false);
 
 	//ウィンドウの生成

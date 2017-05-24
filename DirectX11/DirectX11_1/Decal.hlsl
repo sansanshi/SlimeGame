@@ -176,8 +176,8 @@ float4 DecalBoxPS(Output o):SV_Target
 	float2 screenpos = o.postest.xy / o.postest.w;
 
 	float2 coord = float2(
-	(1.0f + screenpos.x) / 2.0f + (0.5f / 640.0f),
-	(1.0f - screenpos.y) / 2.0f + (0.5f / 480.0f));
+	(1.0f + screenpos.x) / 2.0f + (0.5f / 1280.0f),
+	(1.0f - screenpos.y) / 2.0f + (0.5f / 720.0f));
 	//								↑半ピクセルずらす
 	//ピクセルは実際にはドット（点）であり、ピクセル（正方形）の中心にある
 	//(1.0 + screenpos.x)/2.0f,(1.0f - screenpos.y)/2.0f
@@ -315,8 +315,8 @@ float4 DecalPlanePS(Output o):SV_Target
 	float2 screenpos = o.postest.xy / o.postest.w;
 
 	float2 coord = float2(
-		(1.0f + screenpos.x) / 2.0f + (0.5f / 640.0f),
-		(1.0f - screenpos.y) / 2.0f + (0.5f / 480.0f));
+		(1.0f + screenpos.x) / 2.0f + (0.5f / 1280.0f),
+		(1.0f - screenpos.y) / 2.0f + (0.5f / 720.0f));
 
 	float depth = _cameraDepthTex.Sample(_samplerState, coord).r;
 

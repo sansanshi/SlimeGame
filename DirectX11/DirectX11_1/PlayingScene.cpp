@@ -704,8 +704,8 @@ PlayingScene::Update()
 		dev.Context()->PSSetShader(_hudPS, nullptr, 0);
 		dev.Context()->IASetInputLayout(_hudInputLayout);
 		//ライトからのレンダリング結果（カラー
-		//resource = _renderer.LightViewShaderResource();
-		resource = _renderer.CameraDepthShaderResource();
+		resource = _renderer.LightDepthShaderResource();
+		//resource = _renderer.CameraDepthShaderResource();
 		dev.Context()->PSSetShaderResources(10, 1, &resource);
 		unsigned int hudstride = sizeof(HUDVertex);
 		unsigned int hudoffset = 0;
@@ -739,8 +739,8 @@ PlayingScene::Update()
 		ikposCS = XMFLOAT4(ikposCS.x / ikposCS.w, ikposCS.y / ikposCS.w, ikposCS.z / ikposCS.w, ikposCS.w / ikposCS.w);
 
 		XMFLOAT2 ikScreenPos;
-		ikScreenPos.x = (1.0f + ikposCS.x) / 2.0f*640.0f;
-		ikScreenPos.y = (1.0f - ikposCS.y) / 2.0f*480.0f;
+		ikScreenPos.x = (1.0f + ikposCS.x) / 2.0f*WINDOW_WIDTH;
+		ikScreenPos.y = (1.0f - ikposCS.y) / 2.0f*WINDOW_HEIGHT;
 
 		//後でCreateHudMatrixの引数にoffsetX,offsestY追加して作り直す
 		XMMATRIX screenOfsMatrix = XMMatrixTranslation(ikScreenPos.x, ikScreenPos.y, 0);

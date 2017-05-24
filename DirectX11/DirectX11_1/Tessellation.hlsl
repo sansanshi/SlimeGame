@@ -160,7 +160,7 @@ DS_OUTPUT TessDS(HS_CONSTANT_DATA_OUTPUT In, float2 UV:SV_DomainLocation, const 
 float4 TessPS(DS_OUTPUT o):SV_Target
 {
 	float2 shadowUV = (float2(1, 1) + (o.shadowpos.xy / o.shadowpos.w)*float2(1, -1))*0.5f;
-	shadowUV += float2(0.5f / 640.0f, 0.5f / 480.0f);
+	shadowUV += float2(0.5f / 1280.0f, 0.5f / 720.0f);
 	float lightviewDepth = _shadowTex.Sample(_samplerState_clamp, shadowUV).r;
 
 	float4 addCol = _lightViewTex.Sample(_samplerState_clamp, shadowUV);
