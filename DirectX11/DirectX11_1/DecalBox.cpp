@@ -210,7 +210,7 @@ void
 DecalBox::Update()
 {
 	XMMATRIX transMatrix = XMMatrixTranslation(_pos.x, _pos.y+4.0f, _pos.z);
-	XMMATRIX rotMatrix = XMMatrixRotationRollPitchYaw(60.0f* XM_PI/ 180.0f, 0, 0);
+	XMMATRIX rotMatrix = XMMatrixRotationRollPitchYaw(45.0f* XM_PI/ 180.0f, 0, 0);
 
 	_modelMatrix =  XMMatrixMultiply(rotMatrix, transMatrix);
 	_matrixies.world = _modelMatrix;

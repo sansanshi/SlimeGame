@@ -187,9 +187,9 @@ Output BaseVS(float4 pos : POSITION, float2 uv : TEXCOORD,
 	o.postest = mul(tmp, posTemp);
 	matrix _lightVP = mul(_lightProj, _lightView);
 	matrix lightview = mul(_lightVP, worldtemp);//_lightView
-	o.shadowposVS = mul(lightview, posTemp);
 
 	o.shadowposVS = mul(mul(_lightView, worldtemp), posTemp);
+	o.shadowposCS = mul(_lightProj,o.shadowposVS);
 
 	o.timer = timer;
 	o.nearZ = nearZ;
@@ -233,16 +233,16 @@ float4 BasePS(Output o) :SV_Target
 	//float3 sphcol = _sph.Sample(sample, v.normal.xy*float2(0.5f,-0.5f)+ / 2 + 0.5f);//sph適用
 	//spa→nulltextureb sph→nulltexture
 	//return float4(o.normal.x, o.normal.y, o.normal.z, 1.0f);
-
-	float2 shadowUV = (float2(1, 1) + (o.pos.xy )*float2(1, -1))*0.5f;
+	o.shadowposCS = float4(o.shadowposCS.xyz / o.shadowposCS.w, 1.0f);
+	float2 shadowUV = (float2(1, 1) + (o.shadowposCS.xy )*float2(1, -1))*0.5f;
 	float lightviewDepth = _shadowTex.Sample(_samplerState_clamp, shadowUV).r;
 
 	float ld = o.shadowposVS.z / o.farZ;
 	float shadowWeight = 1.0f;
-	if (ld > lightviewDepth+0.0001f){
+	if (ld > lightviewDepth+0.005f){
 		shadowWeight = 0.1f;
+		//return float4(1, 0, 0, 1);
 	}
-	return float4(lightviewDepth,0,0,1);
 	//SSSのテスト　後で球体モデルにして試す
 	float ed = o.postest.z / o.postest.w;
 	float thickness = abs(ld - lightviewDepth)*100.0f;

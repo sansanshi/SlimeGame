@@ -1,15 +1,4 @@
-﻿FXC : warning X4717: Effects deprecated for D3DCompiler_47
-C:\Users\1401349\Documents\WorkingGames\SlimeGame\DirectX11\DirectX11_1\BaseShader.hlsl(219,19-49): warning X3206: 'mul': implicit truncation of vector type
-C:\Users\1401349\Documents\WorkingGames\SlimeGame\DirectX11\DirectX11_1\BaseShader.hlsl(219,9-49): warning X3206: implicit truncation of vector type
-C:\Users\1401349\Documents\WorkingGames\SlimeGame\DirectX11\DirectX11_1\BaseShader.hlsl(222,15-41): warning X3206: 'reflect': implicit truncation of vector type
-C:\Users\1401349\Documents\WorkingGames\SlimeGame\DirectX11\DirectX11_1\BaseShader.hlsl(257,24-50): warning X3206: 'dot': implicit truncation of vector type
-C:\Users\1401349\Documents\WorkingGames\SlimeGame\DirectX11\DirectX11_1\BaseShader.hlsl(270,10-98): warning X3206: implicit truncation of vector type
-C:\Users\1401349\Documents\WorkingGames\SlimeGame\DirectX11\DirectX11_1\BaseShader.hlsl(300,9-34): warning X3206: implicit truncation of vector type
-C:\Users\1401349\Documents\WorkingGames\SlimeGame\DirectX11\DirectX11_1\BaseShader.hlsl(332,9-60): warning X3206: implicit truncation of vector type
-C:\Users\1401349\Documents\WorkingGames\SlimeGame\DirectX11\DirectX11_1\BaseShader.hlsl(392,8-55): warning X3206: implicit truncation of vector type
-  
-  compilation object save succeeded; see C:\Users\1401349\Documents\WorkingGames\SlimeGame\DirectX11\Debug\BaseShader.cso
-  PlayingScene.cpp
+﻿  DecalBox.cpp
 c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2662): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
 c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2663): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
 c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2664): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
@@ -48,12 +37,7 @@ c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamathconvert.
 c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamathvector.inl(1269): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
 c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamathmisc.inl(518): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
 c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamathmisc.inl(519): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
-c:\users\1401349\documents\workinggames\slimegame\directx11\directx11_1\playingscene.cpp(33): warning C4552: '/': 演算子にプログラム上の作用がありません。作用を伴う演算子を使用してください
-c:\users\1401349\documents\workinggames\slimegame\directx11\directx11_1\playingscene.cpp(34): warning C4552: '+': 演算子にプログラム上の作用がありません。作用を伴う演算子を使用してください
-c:\users\1401349\documents\workinggames\slimegame\directx11\directx11_1\playingscene.cpp(35): warning C4552: '/': 演算子にプログラム上の作用がありません。作用を伴う演算子を使用してください
-c:\users\1401349\documents\workinggames\slimegame\directx11\directx11_1\playingscene.cpp(36): warning C4552: '+': 演算子にプログラム上の作用がありません。作用を伴う演算子を使用してください
-c:\users\1401349\documents\workinggames\slimegame\directx11\directx11_1\playingscene.cpp(257): warning C4101: 'result': ローカル変数は 1 度も使われていません。
-c:\users\1401349\documents\workinggames\slimegame\directx11\directx11_1\playingscene.cpp(470): warning C4244: '引数': 'LONG' から 'float' への変換です。データが失われる可能性があります。
+c:\users\1401349\documents\workinggames\slimegame\directx11\directx11_1\define.h(44): warning C4244: 'return': 'double' から 'float' への変換です。データが失われる可能性があります。
 cl : コマンド ライン warning D9028: 簡易リビルド時のエラーです、通常のビルドに戻します
   DirectX11_1.vcxproj -> C:\Users\1401349\Documents\WorkingGames\SlimeGame\DirectX11\Debug\DirectX11_1.exe
   DirectX11_1.vcxproj -> C:\Users\1401349\Documents\WorkingGames\SlimeGame\DirectX11\Debug\DirectX11_1.pdb (Full PDB)

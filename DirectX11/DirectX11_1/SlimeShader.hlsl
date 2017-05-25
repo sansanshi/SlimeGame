@@ -213,7 +213,7 @@ float4 SlimePS(Output o) :SV_Target
 	if (ld > lightviewDepth + 0.01f){
 		shadowWeight = 0.1f;
 	}
-
+	
 	//SSSのテスト　後で球体モデルにして試す
 	float ed = o.postest.z / o.postest.w;
 	float thickness = abs(ld - lightviewDepth)*100.0f;
