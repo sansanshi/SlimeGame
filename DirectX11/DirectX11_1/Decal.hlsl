@@ -212,7 +212,8 @@ float4 DecalBoxPS(Output o):SV_Target
 	//	float3 viewPosition = viewRay*d;
 	//	float3 positionW = mul(o.invView,float4(viewPosition, 1)).xyz;
 	//	float4 positionL = mul(o.invWorld,float4(positionW, 1));
-
+		
+		
 	float4 positionVS = mul(o.invProj, o.postest);//o.viewPos;
 	positionVS = float4(positionVS.xyz / positionVS.w, 1.0f);
 	//positionVS = float4(positionVS.xyz / positionVS.w, 1.0f);
