@@ -279,7 +279,10 @@ float4 DecalBoxPS(Output o):SV_Target
 		//col = float4(0, 0, 0, 1);
 
 	float2 uv = positionL.xy / float2(16.0f, -16.0f) + 0.5f;
-	//return float4(uv.x, uv.y, 0, 1);
+	if (abs(0.5f-uv.x)>0.49f||abs(0.5f-uv.y)>0.49f)
+	{
+		return float4(1, 0, 0, 1);
+	}
 	col = _decalTex.Sample(_samplerState, uv);//_decalTex.Sample(_samplerState, uv);
 	
 	//col *= (1.0f - max((positionL.z - 0.25f*8.0f) / 0.25f*8.0f, 0.0f));

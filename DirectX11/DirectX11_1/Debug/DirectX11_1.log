@@ -1,5 +1,10 @@
 ﻿FXC : warning X4717: Effects deprecated for D3DCompiler_47
+C:\Users\1401349\Documents\WorkingGames\SlimeGame\DirectX11\DirectX11_1\Decal.hlsl(111,2-26): warning X3206: implicit truncation of vector type
+C:\Users\1401349\Documents\WorkingGames\SlimeGame\DirectX11\DirectX11_1\Decal.hlsl(132,2-30): warning X3206: implicit truncation of vector type
+C:\Users\1401349\Documents\WorkingGames\SlimeGame\DirectX11\DirectX11_1\Decal.hlsl(190,8-55): warning X3206: implicit truncation of vector type
+C:\Users\1401349\Documents\WorkingGames\SlimeGame\DirectX11\DirectX11_1\Decal.hlsl(194,9-57): warning X3206: implicit truncation of vector type
+C:\Users\1401349\Documents\WorkingGames\SlimeGame\DirectX11\DirectX11_1\Decal.hlsl(239,8-59): warning X3206: implicit truncation of vector type
   
-  compilation object save succeeded; see C:\Users\1401349\Documents\WorkingGames\SlimeGame\DirectX11\Debug\lightview.cso
+  compilation object save succeeded; see C:\Users\1401349\Documents\WorkingGames\SlimeGame\DirectX11\Debug\Decal.cso
   DirectX11_1.vcxproj -> C:\Users\1401349\Documents\WorkingGames\SlimeGame\DirectX11\Debug\DirectX11_1.exe
   DirectX11_1.vcxproj -> C:\Users\1401349\Documents\WorkingGames\SlimeGame\DirectX11\Debug\DirectX11_1.pdb (Full PDB)
