@@ -760,7 +760,7 @@ Player::Update()
 	//mvpMatrix.worldMatrix = XMMatrixMultiply(mvpMatrix.worldMatrix, transMatrix);
 
 	XMMATRIX scaleMatrix = XMMatrixScaling(0.8f, 0.8f, 0.8f);
-	world = XMMatrixMultiply( world,scaleMatrix);
+	//world = XMMatrixMultiply( world,scaleMatrix);
 
 	//_rotMatrix = XMMatrixRotationY(rotAngle);
 	//world = XMMatrixMultiply(world, _rotMatrix);
