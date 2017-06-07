@@ -26,9 +26,11 @@ cbuffer boneMatrix:register(b3)
 cbuffer Global2:register(b5){
 	float4 lightPos;
 	float4 eyePos;
-	int timer;
+	float4 fogColor;
+	float2 fogCoord;
 	float nearZ;
 	float farZ;
+	int timer;
 
 };
 
@@ -50,9 +52,15 @@ struct Output{
 	float4 binormal:TEXCOORD4;
 
 	float4 postest:POSITION1;
-	float4 shadowpos:POSITION2;
+	float4 shadowposCS:POSITION2;
+	float4 shadowposVS:POSITION3;
 
 	float timer : TIMER;
+	float nearZ : NEAR_Z;
+	float farZ : FAR_Z;
+
+	float fog : TEXCOORD5;
+	float4 fogColor:COLOR3;
 
 };
 
@@ -174,10 +182,17 @@ Output SlimeVS(float4 pos:POSITION, float4 normal : NORMAL, float2 uv : TEXCOORD
 
 	o.postest = mul(tmp, posTemp);
 	matrix _lightVP = mul(_lightProj, _lightView);
-	matrix lightview = mul(_lightVP, _world);//_lightView
-	o.shadowpos = mul(lightview, posTemp);
+	matrix lightWVP = mul(_lightVP, _world);//_lightView
+	o.shadowposCS = mul(lightWVP, posTemp);
+	o.shadowposVS = mul(mul(_lightView, _world), posTemp);
 
 	o.timer = timer;
+	o.nearZ = nearZ;
+	o.farZ = farZ;
+
+	float dist = length(mul(_world, pos).xyz - eyePos.xyz);
+	o.fogColor = fogColor;
+	o.fog = fogCoord.x + dist*fogCoord.y;
 
 	return o;
 }
@@ -205,10 +220,10 @@ float4 SlimePS(Output o) :SV_Target
 	float bright = saturate(dot(-o.lightVec, normalVec/*n_local*/));
 	//return float4(bright, bright, bright, 1);
 
-	float2 shadowUV = (float2(1, 1) + (o.shadowpos.xy / o.shadowpos.w)*float2(1, -1))*0.5f;
+	float2 shadowUV = (float2(1, 1) + (o.shadowposCS.xy / o.shadowposCS.w)*float2(1, -1))*0.5f;
 		float lightviewDepth = _shadowTex.Sample(_samplerState_clamp, shadowUV).r;
 
-	float ld = o.shadowpos.z / o.shadowpos.w;
+		float ld = o.shadowposVS.z / o.farZ;
 	float shadowWeight = 1.0f;
 	if (ld > lightviewDepth + 0.01f){
 		shadowWeight = 0.1f;
@@ -231,7 +246,10 @@ float4 SlimePS(Output o) :SV_Target
 	col.g *= cos((float)o.timer*0.006f*o.uv.y*(1-bright));
 	col.b *= cos((float)o.timer*(o.uv.x+o.uv.y)*0.002f);
 	float3 sphCol = _sph.Sample(_samplerState, o.normal.xy / 2 * float2(1, -1) + float2(0.5f, 0.5f));
-		return float4((bright*o.diffuse.rgb + o.ambient.rgb)*col.rgb
-		/*+ 0.3f*pow(max(0, dot(ref, o.lightVec)), 8)*/, o.diffuse.a*(bright+0.6));//VSSetConstantBufferで渡ってきたデータは直接ピクセルシェーダでは使えないっぽい　全部の値が0になっている
-	col.a = o.diffuse.a;
+	col = float4((bright*o.diffuse.rgb + o.ambient.rgb)*col.rgb
+	/*+ 0.3f*pow(max(0, dot(ref, o.lightVec)), 8)*/, o.diffuse.a*(bright+0.6));//VSSetConstantBufferで渡ってきたデータは直接ピクセルシェーダでは使えないっぽい　全部の値が0になっている
+	
+	//フォグかける
+	col = lerp(o.fogColor, col, o.fog);
+	return col;
 }

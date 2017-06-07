@@ -3,10 +3,10 @@
 #include"DeviceDx11.h"
 #include"ShaderGenerator.h"
 
-SkySphere::SkySphere(unsigned int divNum, float radius, Camera& camera) :_cameraRef(camera)
+SkySphere::SkySphere(unsigned int divNum, float radius,Camera* cam) :_cameraRef(cam)
 {
 	DeviceDx11& dev = DeviceDx11::Instance();
-	pos = Vector3(-10, 0, 0);
+	_pos = XMFLOAT3(0, 0, 0);
 
 	float theta;
 	float phi;
@@ -37,7 +37,7 @@ SkySphere::SkySphere(unsigned int divNum, float radius, Camera& camera) :_camera
 			vertices[nIndex].normal = vec.Normalize();
 			//vertices[nIndex].tangent = cosf(theta);
 			//vertices[nIndex].binormal = sinf()
-			vertices[nIndex].uv = Vector2(phi / (2.0f * XM_PI), theta / XM_PI);
+			vertices[nIndex].uv = Vector2(-phi / (2.0f * XM_PI), theta / XM_PI);
 			if (i > divNum - 1) {
 				float test = phi / (2.0f * XM_PI);
 				int j = 0;
@@ -80,13 +80,13 @@ SkySphere::SkySphere(unsigned int divNum, float radius, Camera& camera) :_camera
 		{
 			nIndexX = i*(divNum / 2 + 1);
 			//ポリゴンの切れ目を消そうとすると最後の部分のポリゴンのUV値が1.0～0.0になる
-			indices[nIndex] = (nIndexX + j);//&((divNum/2+1)*(divNum));
+			indices[nIndex+2] = (nIndexX + j);//&((divNum/2+1)*(divNum));
 			indices[nIndex + 1] = (nIndexX + (divNum / 2 + 1) + j);//& ((divNum/2 + 1)*(divNum ));
-			indices[nIndex + 2] = (nIndexX + j + 1);//& ((divNum/2 + 1)*(divNum ));
+			indices[nIndex ] = (nIndexX + j + 1);//& ((divNum/2 + 1)*(divNum ));
 			nIndex += 3;
-			indices[nIndex] = (nIndexX + j + 1);//& ((divNum/2 + 1)*(divNum + 1));
+			indices[nIndex+2] = (nIndexX + j + 1);//& ((divNum/2 + 1)*(divNum + 1));
 			indices[nIndex + 1] = (nIndexX + (divNum / 2 + 1) + j);//& ((divNum/2 + 1)*(divNum ));
-			indices[nIndex + 2] = (nIndexX + (divNum / 2 + 1) + j + 1);//& ((divNum/2 + 1)*(divNum ));
+			indices[nIndex ] = (nIndexX + (divNum / 2 + 1) + j + 1);//& ((divNum/2 + 1)*(divNum ));
 			nIndex += 3;
 		}
 	}
@@ -95,54 +95,13 @@ SkySphere::SkySphere(unsigned int divNum, float radius, Camera& camera) :_camera
 
 	for (auto& v : vertices)
 	{
-		Vector3 up = Vector3(0, 1, 0);/*
-									  Vector3 z = Vector3(0, 0, 1);
-									  v.binormal = v.normal.Cross(z);
-									  v.tangent = v.binormal.Cross(v.normal);*/
+		Vector3 up = Vector3(0, 1, 0);
 		v.tangent = v.normal.Cross(up);
 		v.binormal = v.tangent.Cross(v.normal);
 		int check = 0;
 	}
 
-	//{//頂点情報に従法線(binormal)、接線(tangent)情報を計算して追加
-	//	int idx = 0;
-	//	int faceCnt = indices.size() / 3;
-
-	//	std::vector<int> cnt(vertices.size());//使われる回数
-	//	std::fill(cnt.begin(), cnt.end(), 0);
-
-	//	for (int i = 0; i < faceCnt; i++)
-	//	{
-	//		TempVertex v0, v1, v2;
-	//		Vector3 tangent, binormal;
-
-	//		v0.pos = vertices[indices[idx]].pos;
-	//		v0.uv.x = vertices[indices[idx]].uv.x;
-	//		v0.uv.y = vertices[indices[idx]].uv.y;
-	//		v0.normal = vertices[indices[idx]].normal;
-	//		//++idx;
-	//		++cnt[indices[idx]];
-
-	//		v1.pos = vertices[indices[idx + 1]].pos;
-	//		v1.uv.x = vertices[indices[idx + 1]].uv.x;
-	//		v1.uv.y = vertices[indices[idx + 1]].uv.y;
-	//		v1.normal = vertices[indices[idx + 1]].normal;
-	//		//++idx;
-	//		++cnt[indices[idx + 1]];
-
-	//		v2.pos = vertices[indices[idx + 2]].pos;
-	//		v2.uv.x = vertices[indices[idx + 2]].uv.x;
-	//		v2.uv.y = vertices[indices[idx + 2]].uv.y;
-	//		v2.normal = vertices[indices[idx + 2]].normal;
-	//		//++idx;
-	//		++cnt[indices[idx + 2]];
-
-	//		CalculateTangentBinormal(&v0, &v1, &v2, vertices, indices, idx);
-
-	//		idx += 3;
-	//	}
-	//	int aaaaa = 0;
-	//}
+	
 
 
 
@@ -220,20 +179,21 @@ SkySphere::SkySphere(unsigned int divNum, float radius, Camera& camera) :_camera
 		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 	};
 
-	ShaderGenerator::CreateVertexShader("SlimeShader.hlsl", "SlimeVS", "vs_5_0",
+	ShaderGenerator::CreateVertexShader("SkySphere.hlsl", "SkySphereVS", "vs_5_0",
 		_vertexShader, inputElementDescs, sizeof(inputElementDescs) / sizeof(D3D11_INPUT_ELEMENT_DESC), _inputlayout);
-	ShaderGenerator::CreatePixelShader("SlimeShader.hlsl", "SlimePS", "ps_5_0", _pixelShader);
+	ShaderGenerator::CreatePixelShader("SkySphere.hlsl", "SkySpherePS", "ps_5_0", _pixelShader);
 
-	ShaderGenerator::CreateVertexShader("lightview.hlsl", "SlimeLightViewVS", "vs_5_0",
-		_lightviewVS, inputElementDescs, sizeof(inputElementDescs) / sizeof(D3D11_INPUT_ELEMENT_DESC), _lightviewInputLayout);
-	ShaderGenerator::CreatePixelShader("lightview.hlsl", "SlimeLightViewPS", "ps_5_0", _lightviewPS);
-
+	
 	_modelMatrix = XMMatrixIdentity();
 	_worldAndCamera.world = _modelMatrix;
-	_worldAndCamera.cameraView = _cameraRef.CameraView();
-	_worldAndCamera.cameraProj = _cameraRef.CameraProjection();
-	_worldAndCamera.lightView = _cameraRef.LightView();
-	_worldAndCamera.lightProj = _cameraRef.LightProjection();
+	XMMATRIX camView = _cameraRef->CameraView();
+	XMMATRIX camProj = _cameraRef->CameraProjection();
+	_worldAndCamera.cameraView = camView;
+	_worldAndCamera.cameraProj = camProj;
+	XMMATRIX lightView = _cameraRef->LightView();
+	XMMATRIX lightProj = _cameraRef->LightProjection();
+	_worldAndCamera.lightView = lightView;
+	_worldAndCamera.lightProj = lightProj;
 
 	rot = 0.0f;
 
@@ -260,24 +220,9 @@ SkySphere::SkySphere(unsigned int divNum, float radius, Camera& camera) :_camera
 
 	dev.Context()->VSSetConstantBuffers(0, 1, &_matrixBuffer);
 
-	//マスク（？）テクスチャ
-	result = D3DX11CreateShaderResourceViewFromFile(dev.Device(), "texture/disp0.png", nullptr, nullptr, &_dispMask, &result);
-	dev.Context()->VSSetShaderResources(8, 1, &_dispMask);
-
-
-	//ディスプレースメントテクスチャ
-	result = D3DX11CreateShaderResourceViewFromFile(dev.Device(), "texture/wave__.png", nullptr, nullptr, &_displaysmentMap, &result);
-	dev.Context()->VSSetShaderResources(7, 1, &_displaysmentMap);
-
-
-	// ノーマルマップ用テクスチャ
-	result = D3DX11CreateShaderResourceViewFromFile(dev.Device(), "texture/normal3.png", nullptr, nullptr, &_normalTex, &result);
-	dev.Context()->PSSetShaderResources(5, 1, &_normalTex);
-
-
-	//視差マッピング用テクスチャ
-	result = D3DX11CreateShaderResourceViewFromFile(dev.Device(), "texture/height1_.png", nullptr, nullptr, &_heightMap, &result);
-	dev.Context()->PSSetShaderResources(6, 1, &_heightMap);
+	//テクスチャ
+	result = D3DX11CreateShaderResourceViewFromFile(dev.Device(), "texture/height00.png", nullptr, nullptr, &_texture, &result);
+	dev.Context()->VSSetShaderResources(0, 1, &_texture);
 
 
 	//サンプラの設定
@@ -388,7 +333,7 @@ SkySphere::Update()
 
 	if (moveForward != 0 || moveRight != 0)
 	{
-		Vector3 forward = _cameraRef.EyeVec();
+		Vector3 forward = _cameraRef->EyeVec();
 		Vector3 right = forward.Cross(Vector3(0, 1, 0));
 		right = -right;
 
@@ -401,21 +346,18 @@ SkySphere::Update()
 		int i = 0;
 	}
 
-	XMFLOAT3 gaze = { pos.x, pos.y + 5, pos.z };//{ 0, 0, 0 };//
-	XMFLOAT3 eye = { gaze.x, gaze.y + 10, gaze.z - 15 };//{ 0, 0, -10 };//
-														//_cameraRef.SetEyeGazeUp(eye, gaze, XMFLOAT3(0, 1, 0));
-
+	
 	rot += -1 * XM_PI / 180;
 	XMMATRIX rotMatrix = XMMatrixRotationY(rot);
 	_modelMatrix = rotMatrix;
-	XMMATRIX transMatrix = XMMatrixTranslation(pos.x, pos.y, pos.z);
+	XMMATRIX transMatrix = XMMatrixTranslation(_pos.x, _pos.y, _pos.z);
 	_modelMatrix = transMatrix;
 	//_modelMatrix = XMMatrixIdentity();
 	_worldAndCamera.world = _modelMatrix;
-	_worldAndCamera.cameraView = _cameraRef.CameraView();
-	_worldAndCamera.cameraProj = _cameraRef.CameraProjection();
-	_worldAndCamera.lightView = _cameraRef.LightView();
-	_worldAndCamera.lightProj = _cameraRef.LightProjection();
+	_worldAndCamera.cameraView = _cameraRef->CameraView();
+	_worldAndCamera.cameraProj = _cameraRef->CameraProjection();
+	_worldAndCamera.lightView = _cameraRef->LightView();
+	_worldAndCamera.lightProj = _cameraRef->LightProjection();
 }
 void
 SkySphere::Draw()
@@ -425,7 +367,7 @@ SkySphere::Draw()
 	DeviceDx11& dev = DeviceDx11::Instance();
 
 	dev.Context()->PSSetSamplers(0, 1, &_samplerState_Wrap);
-	dev.Context()->PSSetShaderResources(5, 1, &_normalTex);
+	dev.Context()->PSSetShaderResources(0, 1, &_texture);
 
 	unsigned int stride = sizeof(float) * 14;
 	unsigned int offset = 0;
@@ -434,123 +376,15 @@ SkySphere::Draw()
 	dev.Context()->PSSetShader(_pixelShader, nullptr, 0);//PMDモデル表示用シェーダセット
 	dev.Context()->IASetInputLayout(_inputlayout);
 
-	dev.Context()->VSSetShaderResources(7, 1, &_displaysmentMap);
-	dev.Context()->VSSetShaderResources(8, 1, &_dispMask);
+	
 
 
 
-	_worldAndCamera.cameraView = _cameraRef.CameraView();
-	_worldAndCamera.cameraProj = _cameraRef.CameraProjection();
-	_worldAndCamera.lightView = _cameraRef.LightView();
-	_worldAndCamera.lightProj = _cameraRef.LightProjection();
+	_worldAndCamera.cameraView = _cameraRef->CameraView();
+	_worldAndCamera.cameraProj = _cameraRef->CameraProjection();
+	_worldAndCamera.lightView = _cameraRef->LightView();
+	_worldAndCamera.lightProj = _cameraRef->LightProjection();
 
-
-	dev.Context()->VSSetConstantBuffers(0, 1, &_matrixBuffer);
-	dev.Context()->Map(_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &_mappedMatrixies);
-	//ここでこのメモリの塊に、マトリックスの値をコピーしてやる
-	memcpy(_mappedMatrixies.pData, (void*)(&_worldAndCamera), sizeof(_worldAndCamera));
-	//↑　*(XMMATRIX*)mem.pData = matrix;//川野先生の書き方　memcpyで数値を間違えるとメモリがぐちゃぐちゃになる
-	dev.Context()->Unmap(_matrixBuffer, 0);
-	dev.Context()->IASetVertexBuffers(0, 1, &_vertexBuffer, &stride, &offset);
-	dev.Context()->IASetIndexBuffer(_indexBuffer, DXGI_FORMAT_R16_UINT, 0);
-
-	dev.Context()->VSSetConstantBuffers(1, 1, &_materialBuffer);
-	dev.Context()->Map(_materialBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &_mappedMaterial);
-	memcpy(_mappedMaterial.pData, (void*)(&_material), sizeof(_material));
-	dev.Context()->Unmap(_materialBuffer, 0);
-
-	dev.Context()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	dev.Context()->DrawIndexed(_indicesCnt, 0, 0);
-	//dev.Context()->Draw(_verticesCnt, 0);
-}
-void
-SkySphere::DrawLightView()
-{
-	DeviceDx11& dev = DeviceDx11::Instance();
-	unsigned int stride = sizeof(float) * 14;
-	unsigned int offset = 0;
-
-	dev.Context()->VSSetShader(_lightviewVS, nullptr, 0);
-	dev.Context()->PSSetShader(_lightviewPS, nullptr, 0);
-
-
-	_worldAndCamera.cameraView = _cameraRef.CameraView();
-	_worldAndCamera.cameraProj = _cameraRef.CameraProjection();
-	_worldAndCamera.lightView = _cameraRef.LightView();
-	_worldAndCamera.lightProj = _cameraRef.LightProjection();
-
-	dev.Context()->VSSetConstantBuffers(0, 1, &_matrixBuffer);
-	dev.Context()->Map(_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &_mappedMatrixies);
-	//ここでこのメモリの塊に、マトリックスの値をコピーしてやる
-	memcpy(_mappedMatrixies.pData, (void*)(&_worldAndCamera), sizeof(_worldAndCamera));
-	//↑　*(XMMATRIX*)mem.pData = matrix;//川野先生の書き方　memcpyで数値を間違えるとメモリがぐちゃぐちゃになる
-	dev.Context()->Unmap(_matrixBuffer, 0);
-
-	dev.Context()->IASetInputLayout(_lightviewInputLayout);
-	dev.Context()->IASetVertexBuffers(0, 1, &_vertexBuffer, &stride, &offset);
-	dev.Context()->IASetIndexBuffer(_indexBuffer, DXGI_FORMAT_R16_UINT, 0);
-
-	dev.Context()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	dev.Context()->DrawIndexed(_indicesCnt, 0, 0);
-	//dev.Context()->Draw(_verticesCnt, 0);
-}
-void
-SkySphere::DrawCameraDepth()
-{
-	DeviceDx11& dev = DeviceDx11::Instance();
-	unsigned int stride = sizeof(float) * 14;
-	unsigned int offset = 0;
-
-	dev.Context()->VSSetShader(_lightviewVS, nullptr, 0);
-	dev.Context()->PSSetShader(_lightviewPS, nullptr, 0);
-
-
-	XMMATRIX transMatrix = XMMatrixTranslation(pos.x, pos.y + 5.0f, pos.z);
-	_modelMatrix = transMatrix;
-	//_modelMatrix = XMMatrixIdentity();
-	_worldAndCamera.world = _modelMatrix;
-	_worldAndCamera.cameraView = _cameraRef.CameraView();
-	_worldAndCamera.cameraProj = _cameraRef.CameraProjection();
-	_worldAndCamera.lightView = _cameraRef.CameraView();
-	_worldAndCamera.lightProj = _cameraRef.CameraProjection();
-
-	dev.Context()->VSSetConstantBuffers(0, 1, &_matrixBuffer);
-	dev.Context()->Map(_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &_mappedMatrixies);
-	//ここでこのメモリの塊に、マトリックスの値をコピーしてやる
-	memcpy(_mappedMatrixies.pData, (void*)(&_worldAndCamera), sizeof(_worldAndCamera));
-	//↑　*(XMMATRIX*)mem.pData = matrix;//川野先生の書き方　memcpyで数値を間違えるとメモリがぐちゃぐちゃになる
-	dev.Context()->Unmap(_matrixBuffer, 0);
-
-	dev.Context()->IASetInputLayout(_lightviewInputLayout);
-	dev.Context()->IASetVertexBuffers(0, 1, &_vertexBuffer, &stride, &offset);
-	dev.Context()->IASetIndexBuffer(_indexBuffer, DXGI_FORMAT_R16_UINT, 0);
-
-	dev.Context()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	dev.Context()->DrawIndexed(_indicesCnt, 0, 0);
-}
-
-void
-SkySphere::DrawLightView_color()
-{
-	_worldAndCamera.cameraView = _cameraRef.LightView();//ライトから見たいのでここ書き換える
-	_worldAndCamera.cameraProj = _cameraRef.LightProjection();
-	_worldAndCamera.lightView = _cameraRef.LightView();
-	_worldAndCamera.lightProj = _cameraRef.LightProjection();
-
-	DeviceDx11& dev = DeviceDx11::Instance();
-
-	dev.Context()->PSSetSamplers(0, 1, &_samplerState_Wrap);
-	dev.Context()->PSSetShaderResources(5, 1, &_normalTex);
-
-	unsigned int stride = sizeof(float) * 14;
-	unsigned int offset = 0;
-
-	dev.Context()->VSSetShader(_vertexShader, nullptr, 0);//ＰＭＤモデル表示用シェーダセット
-	dev.Context()->PSSetShader(_pixelShader, nullptr, 0);//PMDモデル表示用シェーダセット
-	dev.Context()->IASetInputLayout(_inputlayout);
-
-	dev.Context()->VSSetShaderResources(7, 1, &_displaysmentMap);
-	dev.Context()->VSSetShaderResources(8, 1, &_dispMask);
 
 	dev.Context()->VSSetConstantBuffers(0, 1, &_matrixBuffer);
 	dev.Context()->Map(_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &_mappedMatrixies);

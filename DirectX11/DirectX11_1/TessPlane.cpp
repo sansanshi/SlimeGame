@@ -111,10 +111,10 @@ TessPlane::TessPlane(float width, float depth, Vector3 normal, Camera& camera) :
 	dev.Device()->CreateSamplerState(&samplerDesc, &_samplerState_Wrap);
 
 
-	result=D3DX11CreateShaderResourceViewFromFile(dev.Device(), "texture/sirokuro.png", nullptr, nullptr, &_groundTex, &result);
+	result=D3DX11CreateShaderResourceViewFromFile(dev.Device(), "texture/height.png", nullptr, nullptr, &_groundTex, &result);
 	dev.Context()->PSSetShaderResources(0, 1, &_groundTex);
 
-	result = D3DX11CreateShaderResourceViewFromFile(dev.Device(), "texture/disp0.png", nullptr, nullptr, &_displacementTex, &result);
+	result = D3DX11CreateShaderResourceViewFromFile(dev.Device(), "texture/asiato.png", nullptr, nullptr, &_displacementTex, &result);
 	dev.Context()->DSSetShaderResources(7, 1, &_displacementTex);
 }
 

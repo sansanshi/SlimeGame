@@ -54,6 +54,9 @@
     <FxCompile Include="PBR_Test.hlsl">
       <Filter>ソース ファイル\HLSL</Filter>
     </FxCompile>
+    <FxCompile Include="SkySphere.hlsl">
+      <Filter>ソース ファイル\HLSL</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DeviceDx11.cpp">

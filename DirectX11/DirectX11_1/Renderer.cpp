@@ -268,7 +268,7 @@ void
 Renderer::ChangeRT_Camera()
 {
 	DeviceDx11& dev = DeviceDx11::Instance();
-	float color[4] = { 0.5, 0.5, 0.5, 1 };
+	float color[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	dev.Context()->ClearRenderTargetView(_mainRTV, color);
 	dev.Context()->ClearDepthStencilView(_mainDSV, D3D11_CLEAR_DEPTH, 1.0f, 0);
 	dev.Context()->OMSetRenderTargets(1, &_mainRTV, _mainDSV);
@@ -277,7 +277,7 @@ void
 Renderer::ChangeRT_CameraDepth()
 {
 	DeviceDx11& dev = DeviceDx11::Instance();
-	float color[4] = { 0.0, 0.0, 0.0, 1 };
+	float color[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	dev.Context()->ClearRenderTargetView(_cameraZ_RTV, color);
 	dev.Context()->ClearDepthStencilView(_cameraZ_DSV, D3D11_CLEAR_DEPTH, 1.0f, 0);
 	dev.Context()->OMSetRenderTargets(1, &_cameraZ_RTV, _cameraZ_DSV);
@@ -287,7 +287,7 @@ void
 Renderer::ChangeRT_Light()
 {
 	DeviceDx11& dev = DeviceDx11::Instance();
-	float color[4] = { 0, 0, 0, 0 };
+	float color[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
 	dev.Context()->ClearRenderTargetView(_lightRTV, color);
 	dev.Context()->ClearDepthStencilView(_lightDSV, D3D11_CLEAR_DEPTH, 1.0f, 0);
 	dev.Context()->OMSetRenderTargets(1, &_lightRTV, _lightDSV);
@@ -296,7 +296,7 @@ void
 Renderer::ChangeRT_LightColor()
 {
 	DeviceDx11& dev = DeviceDx11::Instance();
-	float color[4] = { 0.5, 0.5, 0.5, 1 };
+	float color[4] = { 0.0f, 0.0f, 0.0f, 1 };
 	dev.Context()->ClearRenderTargetView(_lightRTV_color, color);
 	dev.Context()->ClearDepthStencilView(_lightDSV_color,D3D11_CLEAR_DEPTH, 1.0f, 0);
 	dev.Context()->OMSetRenderTargets(1, &_lightRTV_color, _lightDSV_color);

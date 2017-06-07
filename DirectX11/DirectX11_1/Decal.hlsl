@@ -13,9 +13,11 @@ cbuffer global:register(b0){
 cbuffer Global2:register(b5){
 	float4 lightPos;
 	float4 eyePos;
-	int timer;
+	float4 fogColor;
+	float2 fogCoord;
 	float nearZ;
 	float farZ;
+	int timer;
 
 };
 
@@ -218,7 +220,7 @@ float4 DecalBoxPS(Output o):SV_Target
 	positionVS = float4(positionVS.xyz / positionVS.w, 1.0f);
 	//positionVS = float4(positionVS.xyz / positionVS.w, 1.0f);
 		
-		float3 viewRay = float3(positionVS.xy*(o.farZ / positionVS.z),100.0f);
+		float3 viewRay = float3(positionVS.xy*(o.farZ / positionVS.z),o.farZ);
 		//viewRay = normalize(positionVS.xyz)*100.0f;
 
 		float3 viewPosition = viewRay*d;

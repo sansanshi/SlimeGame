@@ -285,13 +285,15 @@ PlayingScene::PlayingScene(HWND hwnd)
 	_player(_camera), _plane(120, 120, Vector3(0, 1, 0), _camera), 
 	_cylinder(4, 20, 20,_camera),
 	_sphere(100,5,_camera),
-	_tessPlane(100,100,Vector3(0,1,0),_camera),
+	_tessPlane(300,300,Vector3(0,1,0),_camera),
 	_decalBox(16,16,16,_camera)
 {
 	//InitDirect3D(_hwnd);//初期化子で既に呼んでいる
 	Init();
 	_renderer.Init();//レンダラー初期化
 	_player.Init();
+
+	_skySphere = new SkySphere(100, 150, &_camera);
 
 	_soundManager.Init();//サウンドマネージャ初期化
 
@@ -389,6 +391,12 @@ PlayingScene::PlayingScene(HWND hwnd)
 	_shaderGlobals.nearZ = NEAR_Z;
 	_shaderGlobals.farZ = FAR_Z;
 
+	_shaderGlobals.fog
+		= XMFLOAT2(FAR_Z / (FAR_Z - NEAR_Z), -1.0f / (FAR_Z - NEAR_Z));
+	_shaderGlobals.fogColor
+		= XMFLOAT4(0.5f,0.9f,0.9f,1);
+	
+
 
 	D3D11_BUFFER_DESC globalBuffDesc;
 	globalBuffDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
@@ -419,6 +427,7 @@ PlayingScene::PlayingScene(HWND hwnd)
 PlayingScene::~PlayingScene()
 {
 
+	delete(_skySphere);
 
 	_soundManager.Terminate();
 }
@@ -549,11 +558,12 @@ PlayingScene::Update()
 	_tessPlane.Update();
 	_sphere.Update();
 	_decalBox.Update();
+	_skySphere->Update();
 
 	_camera.Update();
 
 
-	float color[4] = { 0.5, 0.5, 0.5, 1 };
+	float color[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	//float white[4] = { 1.0, 1.0, 1.0, 1.0 };
 
 
@@ -590,6 +600,7 @@ PlayingScene::Update()
 
 #pragma region カメラビュー描画
 	_renderer.ChangeRT_Camera();
+	_skySphere->Draw();
 	//ライトビューからのレンダリング結果をテクスチャとしてGPUに渡す
 	//SetRenderTargetした後でSetShaderResourcesしないと渡らない
 	ID3D11ShaderResourceView* resource = _renderer.LightDepthShaderResource();
@@ -603,11 +614,11 @@ PlayingScene::Update()
 	_player.Draw();//プレイヤーのメイン描画
 
 	_renderer.ChangePTForPrimitive();
-	_plane.Draw();//床
+	//_plane.Draw();//床
 	_cylinder.Draw();//柱
 	_renderer.ChangePTForPMD();
 	dev.Context()->DSSetConstantBuffers(5, 1, &_globalBuffer);
-	//_tessPlane.Draw();//テッセレーション平面
+	_tessPlane.Draw();//テッセレーション平面
 
 	//デカールボックスが頂点シェーダで深度バッファテクスチャ使うので渡す
 	resource = _renderer.CameraDepthShaderResource();

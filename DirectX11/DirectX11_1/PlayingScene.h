@@ -12,6 +12,7 @@
 #include"DecalBox.h"
 #include"SoundManager.h"
 #include"DecalPlane.h"
+#include"SkySphere.h"
 class PMDMesh;
 
 class PlayingScene :
@@ -32,6 +33,7 @@ private:
 	Cylinder _cylinder;
 	Sphere _sphere;
 	TessPlane _tessPlane;
+	SkySphere* _skySphere;
 
 	DecalBox _decalBox;
 
@@ -86,7 +88,7 @@ public:
 
 	void Update();
 
-	float* clearColor;
+	//float* clearColor;
 
 	HRESULT InitDirect3D(HWND hwnd);
 

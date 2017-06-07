@@ -2,13 +2,13 @@
 #include<D3D11.h>
 #include<xnamath.h>
 
-#define WINDOW_WIDTH 1280.0f
-#define WINDOW_HEIGHT 720.0f
+const float WINDOW_WIDTH = 1280.0f;
+const float WINDOW_HEIGHT = 720.0f;
 
-#define PI 3.141592
+const float  PI = 3.141592f;
 
 const float NEAR_Z = 1.0f;
-const float FAR_Z = 100.0f;
+const float FAR_Z = 300.0f;
 
 struct Vector3{
 	float x, y, z;
@@ -116,9 +116,11 @@ struct ShaderGlobals
 {
 	XMFLOAT4 lightPos;//16
 	XMFLOAT4 eyePos;//16
-	int timer;//4
+	XMFLOAT4 fogColor;
+	XMFLOAT2 fog;//フォグ係数計算用：X成分にZfar/(Zfar-Znear)，Y成分に-1/(Zfar-Znear)
 	float nearZ;
 	float farZ;
+	int timer;//4
 
 	//XMFLOAT3 lightVec;//12
 	//int timer;//4

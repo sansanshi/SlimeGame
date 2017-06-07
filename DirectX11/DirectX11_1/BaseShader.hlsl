@@ -30,9 +30,11 @@ cbuffer boneMatrix:register(b3)
 cbuffer Global2:register(b5){
 	float4 lightPos;
 	float4 eyePos;
-	int timer;
+	float4 fogColor;
+	float2 fogCoord;
 	float nearZ;
 	float farZ;
+	int timer;
 };
 
 
@@ -41,7 +43,7 @@ struct Output{
 	float4 normal:NORMAL;
 	float2 uv:TEXCOORD0;
 	float4 diffuse:COLOR0;
-	float3 specular:COLOR1;//セマンティクスを設定しないとエラー吐く（？）
+	float3 specular:COLOR1;
 	float3 ambient:COLOR2;
 
 	float4 lightVec:TEXCOORD1;
@@ -61,6 +63,8 @@ struct Output{
 	float nearZ : NEAR;
 	float farZ : FAR;
 
+	float fog : TEXCOORD6;
+	float4 fogColor:COLOR3;
 };
 
 struct depthVS_Out{
@@ -195,6 +199,10 @@ Output BaseVS(float4 pos : POSITION, float2 uv : TEXCOORD,
 	o.nearZ = nearZ;
 	o.farZ = farZ;
 
+	float dist = length(mul(_world, pos).xyz - eyePos.xyz);
+	o.fog = fogCoord.x + dist*fogCoord.y;
+	o.fogColor = fogColor;
+
 	return o;
 }
 
@@ -266,11 +274,13 @@ float4 BasePS(Output o) :SV_Target
 
 	bright = min(bright, shadowWeight);
 	//return float4(bright, bright, bright, 1);
-	float4 col = _tex.Sample(_samplerState, o.uv);
+	float4 texcol = _tex.Sample(_samplerState, o.uv);
 		float3 sphCol = _sph.Sample(_samplerState, o.normal.xy / 2 * float2(1, -1) + float2(0.5f, 0.5f));
-		return float4((bright*o.diffuse.rgb + o.ambient.rgb)*col.rgb*sphCol
-		/*+ 0.3f*pow(max(0, dot(ref, o.lightVec)), 8)*/, 1.0f);//VSSetConstantBufferで渡ってきたデータは直接ピクセルシェーダでは使えないっぽい　全部の値が0になっている
-	col.a = o.diffuse.a;
+		float4 col= float4((bright*o.diffuse.rgb + o.ambient.rgb)*texcol.rgb*sphCol
+			/*+ 0.3f*pow(max(0, dot(ref, o.lightVec)), 8)*/, 1.0f);//VSSetConstantBufferで渡ってきたデータは直接ピクセルシェーダでは使えないっぽい　全部の値が0になっている
+		//フォグをかける
+		col = lerp(o.fogColor, col, o.fog);
+		return col;
 }
 
 float4 BoneVS(float4 pos:POSITION, uint boneId : BONE_ID) :SV_POSITION
@@ -316,6 +326,10 @@ float4 tangent:TANGENT,float4 binormal:BINORMAL)
 
 	o.farZ = farZ;
 	o.nearZ = nearZ;
+
+	float dist = length(mul(_world, pos).xyz - eyePos.xyz);
+	o.fog = fogCoord.x + dist*fogCoord.y;
+	o.fogColor = fogColor;
 	return o;
 }
 float4 PrimitivePS(Output o):SV_Target
@@ -359,8 +373,10 @@ float4 PrimitivePS(Output o):SV_Target
 	bright = min(bright, shadowWeight);
 	//return float4(bright, bright, bright, 1);
 	//return _shadowTex.Sample(_samplerState_clamp, o.uv);
-	return float4((ambient.rgb+bright)/**texColor.rgb*/,1);//ambient+bright;
-	return float4(1.0f, 1.0f, 1.0f, 1.0f);
+	float4 col = float4((ambient.rgb+bright)/**texColor.rgb*/,1);//ambient+bright;
+	//フォグをかける
+	col = lerp(o.fogColor, col, o.fog);
+	return col;
 }
 
 textureCUBE cubeTex;

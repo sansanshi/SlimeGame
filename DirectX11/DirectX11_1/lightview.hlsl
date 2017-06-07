@@ -69,11 +69,13 @@ cbuffer boneMatrix:register(b3)
 	matrix _boneMatrix[512];
 };
 cbuffer Global2:register(b5){
-	float4 lightVec;
-	float4 eyeVec;
-	int timer;
+	float4 lightPos;
+	float4 eyePos;
+	float4 fogColor;
+	float2 fogCoord;
 	float nearZ;
 	float farZ;
+	int timer;
 
 };
 
@@ -140,7 +142,7 @@ float4 LightViewPS(Output o):SV_Target
 {
 	//return float4(saturate(o.pos.z), saturate(o.shadowpos.z / 100), 0, 1);
 	//return float4(o.pos.z/2,saturate(o.shadowpos.z/100),0,1);
-	float brightness = o.shadowpos.z / 100.0f;
+	float brightness = o.shadowpos.z / o.farZ;
 	//brightness=pow(brightness, 100);
 	return float4(brightness, brightness, brightness, 1.0f);
 }
@@ -155,6 +157,8 @@ Output PrimitiveLightViewVS(float4 pos:POSITION)
 
 	o.shadowpos = mul(_world, pos);
 	o.shadowpos = mul(_lightView, o.shadowpos);
+	o.farZ = farZ;
+	o.nearZ = nearZ;
 
 	return o;
 }
@@ -163,7 +167,7 @@ float4 PrimitiveLightViewPS(Output o):SV_Target
 	//return float4(saturate(o.pos.z), saturate(o.shadowpos.z / 100), 0, 1);
 	//return float4(o.pos.z / 2, saturate(o.shadowpos.z / 100), 0, 1);
 	//float2 uv = (float2(1, 1) + (o.shadowpos.xy / o.shadowpos.w)*float2(1, -1))*0.5f;
-	float brightness = o.shadowpos.z / 100.0f;//o.shadowpos.z / o.shadowpos.w;//
+	float brightness = o.shadowpos.z / o.farZ;//o.shadowpos.z / o.shadowpos.w;//
 	//brightness=pow(brightness, 100);
 	return float4(brightness, brightness, brightness, 1.0f);
 }
@@ -196,12 +200,15 @@ Output SlimeLightViewVS(float4 pos:POSITION, float4 normal : NORMAL, float2 uv :
 	o.pos = mul(tmp, posTemp);//lightVecÇÃå„Ç©ÇÁÉYÉåÇƒÇÈÇ¡Ç€Ç¢ÅH
 	tmp = mul(_lightView, _world);
 	o.shadowpos = mul(tmp, posTemp);
+
+	o.nearZ = nearZ;
+	o.farZ = farZ;
 	return o;
 }
 
 float4 SlimeLightViewPS(Output o):SV_Target
 {
-	float brightness = o.shadowpos.z / 100.0f;
+	float brightness = o.shadowpos.z / o.farZ;
 	//brightness=pow(brightness, 100);
 	return float4(brightness, brightness, brightness, 1.0f);
 }
