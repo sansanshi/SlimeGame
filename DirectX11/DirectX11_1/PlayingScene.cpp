@@ -293,7 +293,7 @@ PlayingScene::PlayingScene(HWND hwnd)
 	_renderer.Init();//レンダラー初期化
 	_player.Init();
 
-	_skySphere = new SkySphere(100, 150, &_camera);
+	_skySphere = new SkySphere(100, 200, &_camera);
 
 	_soundManager.Init();//サウンドマネージャ初期化
 
@@ -479,7 +479,7 @@ PlayingScene::Update()
 		XMVECTOR ray = _camera.CalculateCursorVector(p.x, p.y);
 		ray = XMVector3Normalize(ray);
 
-		XMVECTOR camerapos = XMLoadFloat3(&_camera.Position());
+		XMVECTOR camerapos = XMLoadFloat3(&_camera.GetPos());
 
 		float d;
 		XMStoreFloat(&d, XMVector3Dot(camerapos, _plane.Normal()));
@@ -507,31 +507,46 @@ PlayingScene::Update()
 
 	}
 
+	float moveFront = 0.0f, moveRight = 0.0f;
 	if (keystate['W'] & 0x80)
 	{
-		_camera.MoveTPS(0.5f, 0);
+		moveFront += 1.0f;//_camera.MoveTPS(0.5f, 0);
 	}
 	if (keystate['S'] & 0x80)
 	{
-		_camera.MoveTPS(-0.5f, 0);
+		moveFront -= 1.0f;//_camera.MoveTPS(-0.5f, 0);
 	}
 	if (keystate['A'] & 0x80)
 	{
-		_camera.MoveTPS(0, -0.5f);
+		moveRight -= 1.0f;//_camera.MoveTPS(0, -0.5f);
 	}
 	if (keystate['D'] & 0x80)
 	{
-		_camera.MoveTPS(0, 0.5f);
+		moveRight += 1.0f;//_camera.MoveTPS(0, 0.5f);
 	}
-	if (keystate['X']&0x80)
-	{
-		_camera.Rotate(0, 1 * XM_PI / 180, 0);
-	}
-	if (keystate['Z'] & 0x80)
-	{
-		_camera.Rotate(0, -1 * XM_PI / 180.0f, 0);
-	}
+	_camera.MoveTPS(moveFront, moveRight);
 
+	XMFLOAT3 camRot = {0.0f,0.0f,0.0f};//それぞれx,y,x軸基準の回転
+	if (keystate[VK_NUMPAD6]&0x80)
+	{
+		camRot.y += 1;
+	}
+	if (keystate[VK_NUMPAD4] & 0x80)
+	{
+		camRot.y -= 1;
+	}
+	if (keystate[VK_NUMPAD2] & 0x80)
+	{
+		camRot.x += 1;
+	}
+	if (keystate[VK_NUMPAD8] & 0x80)
+	{
+		camRot.x -= 1;
+	}
+	float calcRadian= XM_PI / 180.0f;
+	camRot.x *= calcRadian;
+	camRot.y *= calcRadian;
+	_camera.Rotate(camRot);
 
 
 	
@@ -558,6 +573,7 @@ PlayingScene::Update()
 	_tessPlane.Update();
 	_sphere.Update();
 	_decalBox.Update();
+	_skySphere->SetPos(_camera.GetPos());
 	_skySphere->Update();
 
 	_camera.Update();

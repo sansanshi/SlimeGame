@@ -3,6 +3,7 @@
 #include"DeviceDx11.h"
 #include"Geometry.h"
 
+const float CAMERA_MOVE_SPD = 0.5f;
 
 Camera::Camera()
 {
@@ -174,6 +175,24 @@ Camera::Rotate(float pitch, float yaw, float roll)
 
 	gazePoint = { eyePoint.x + r.x, eyePoint.y + r.y, eyePoint.z + r.z };
 }
+void
+Camera::Rotate(const XMFLOAT3& rotPYR)
+{
+
+	XMMATRIX rot = XMMatrixRotationRollPitchYaw(0.0f, rotPYR.y, rotPYR.z);
+
+	XMMATRIX rotX = XMMatrixRotationX(rotPYR.x);
+
+	//éãê¸ÉxÉNÉgÉãÇçÏÇÈ
+	XMFLOAT3 v = { gazePoint.x - eyePoint.x, gazePoint.y - eyePoint.y, gazePoint.z - eyePoint.z };
+	XMVECTOR ray = XMLoadFloat3(&v); //XMLoadFloat3(&_originEyeVec);//{ _target.x - _pos.x, _target.y - _pos.y, _target.z - _pos.z };
+	ray = XMVector3Transform(ray, rot);
+	ray = XMVector3Transform(ray, rotX);
+	XMFLOAT3 r;
+	XMStoreFloat3(&r, ray);
+
+	gazePoint = { eyePoint.x + r.x, eyePoint.y + r.y, eyePoint.z + r.z };
+}
 
 void
 Camera::MoveTPS(float front, float right)
@@ -182,9 +201,10 @@ Camera::MoveTPS(float front, float right)
 	frontVec.y = 0.0f;
 	frontVec = Normalize(frontVec);
 
-	XMFLOAT3 frontMove = frontVec*front;
+
+	XMFLOAT3 frontMove = frontVec*front*CAMERA_MOVE_SPD;
 	XMFLOAT3 rightVec = XMFLOAT3(frontVec.z, 0, -frontVec.x);
-	XMFLOAT3 rightMove = rightVec*right;
+	XMFLOAT3 rightMove = rightVec*right*CAMERA_MOVE_SPD;
 
 	XMFLOAT3 moveVec = frontMove + rightMove;
 	

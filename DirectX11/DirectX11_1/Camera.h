@@ -24,7 +24,7 @@ public:
 	const XMMATRIX& CameraView(){ return _view; };
 	const XMMATRIX& LightView() { return _light; };
 	const XMMATRIX& LightProjection() { return _lightProjection; };
-	XMFLOAT3& Position(){ return eyePoint; };
+	const XMFLOAT3& GetPos(){ return eyePoint; };
 	Vector3 EyeVec();
 
 	XMVECTOR CalculateCursorVector(float x, float y);
@@ -34,6 +34,8 @@ public:
 	//@param roll Z²‰ñ“]
 	void Rotate(float pitch, float yaw, float roll);
 
+	void Rotate(const XMFLOAT3& rot);
+
 	//ƒ[ƒ‹ƒhŠî€‚Å“®‚­
 	void Move(float x, float y, float z);
 	//Œü‚¢‚Ä‚¢‚é•ûŒü‚ğŠî€‚É“®‚­
@@ -42,6 +44,7 @@ public:
 private:
 	//CameraMatrixies _camera;
 	void Init();
+
 
 	float _rotAngle;
 

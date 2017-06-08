@@ -110,6 +110,7 @@ struct Vector2{
 	
 };
 
+
 //シェーダに渡す用の構造体
 #pragma pack(1)
 struct ShaderGlobals

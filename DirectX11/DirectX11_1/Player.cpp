@@ -180,7 +180,7 @@ void MatrixTransmission(int idx, XMMATRIX& parent, std::vector<XMMATRIX>& boneMa
 //　※普通のボーンは回転しか出来ないがIKボーンは移動ができる
 
 void
-Player::CcdIkSolve(PMDMesh& mesh,std::string& ikName,XMFLOAT3& offset)
+Player::CcdIkSolve(PMDMesh& mesh,const std::string& ikName,XMFLOAT3& offset)
 {
 
 	//元座標から動いてなかったら解決しない

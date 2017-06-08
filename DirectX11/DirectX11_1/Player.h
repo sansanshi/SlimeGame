@@ -56,7 +56,7 @@ private:
 	Camera& _cameraRef;
 	//MATRIXIES _matrixMVP;
 	WorldAndCamera _worldAndCamera;
-	Vector3 _pos;
+	XMFLOAT3 _pos;
 	XMMATRIX _transMatrix;
 	XMMATRIX _rotMatrix;
 	XMMATRIX _scaleMatrix;
@@ -130,11 +130,13 @@ public:
 		return _worldAndCamera.world;
 	};
 
-	XMFLOAT3& IKPos(){ return _ikpos; };
+	const XMFLOAT3& IKPos(){ return _ikpos; };
 
-	void CcdIkSolve(PMDMesh& mesh, std::string& ikName, XMFLOAT3& offset);
+	void CcdIkSolve(PMDMesh& mesh,const std::string& ikName,XMFLOAT3& offset);
 
 	//アニメーションをブレンドする　tは0.0~1.0
 	void BlendAnimation(const char* animName,float t);
+
+	const XMFLOAT3& GetPos() { return _pos; };
 };
 
