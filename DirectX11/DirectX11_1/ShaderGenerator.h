@@ -4,7 +4,7 @@
 #include"DeviceDx11.h"
 #include<map>
 #include<string>
-//‚±‚¢‚ÂƒVƒ“ƒOƒ‹ƒgƒ“‚É‚·‚é
+
 class ShaderGenerator{
 private:
 	ShaderGenerator();

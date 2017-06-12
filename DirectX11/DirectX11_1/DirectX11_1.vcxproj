@@ -135,6 +135,7 @@
     <ClCompile Include="ClearScene.cpp" />
     <ClCompile Include="Cylinder.cpp" />
     <ClCompile Include="DecalBox.cpp" />
+    <ClCompile Include="DecalFactory.cpp" />
     <ClCompile Include="DecalPlane.cpp" />
     <ClCompile Include="DeviceDx11.cpp" />
     <ClCompile Include="Effect.cpp" />
@@ -170,6 +171,7 @@
     <ClInclude Include="ClearScene.h" />
     <ClInclude Include="Cylinder.h" />
     <ClInclude Include="DecalBox.h" />
+    <ClInclude Include="DecalFactory.h" />
     <ClInclude Include="DecalPlane.h" />
     <ClInclude Include="Define.h" />
     <ClInclude Include="DeviceDx11.h" />

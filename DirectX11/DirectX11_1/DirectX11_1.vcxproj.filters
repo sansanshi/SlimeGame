@@ -158,6 +158,9 @@
     <ClCompile Include="SkySphere.cpp">
       <Filter>ソース ファイル\Primitive</Filter>
     </ClCompile>
+    <ClCompile Include="DecalFactory.cpp">
+      <Filter>ソース ファイル\Decal</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Define.h">
@@ -258,6 +261,9 @@
     </ClInclude>
     <ClInclude Include="SkySphere.h">
       <Filter>ソース ファイル\Primitive</Filter>
+    </ClInclude>
+    <ClInclude Include="DecalFactory.h">
+      <Filter>ソース ファイル\Decal</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -13,6 +13,7 @@
 #include"SoundManager.h"
 #include"DecalPlane.h"
 #include"SkySphere.h"
+#include"DecalFactory.h"
 class PMDMesh;
 
 class PlayingScene :
@@ -36,6 +37,7 @@ private:
 	SkySphere* _skySphere;
 
 	DecalBox _decalBox;
+	DecalFactory* _decalFac;
 
 	SoundManager _soundManager;
 

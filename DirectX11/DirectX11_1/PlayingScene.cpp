@@ -286,7 +286,7 @@ PlayingScene::PlayingScene(HWND hwnd)
 	_cylinder(4, 20, 20,_camera),
 	_sphere(100,5,_camera),
 	_tessPlane(300,300,Vector3(0,1,0),_camera),
-	_decalBox(16,16,16,_camera)
+	_decalBox(1,1,1,&_camera)
 {
 	//InitDirect3D(_hwnd);//初期化子で既に呼んでいる
 	Init();
@@ -298,6 +298,10 @@ PlayingScene::PlayingScene(HWND hwnd)
 	_soundManager.Init();//サウンドマネージャ初期化
 
 	HRESULT result;
+
+	//デカールファクトリ
+	_decalFac = new DecalFactory(&_camera);
+
 
 	_effect.Emit();
 	_effectMov = { 0, 0, 0 };
@@ -426,7 +430,7 @@ PlayingScene::PlayingScene(HWND hwnd)
 
 PlayingScene::~PlayingScene()
 {
-
+	delete(_decalFac);
 	delete(_skySphere);
 
 	_soundManager.Terminate();
@@ -497,7 +501,14 @@ PlayingScene::Update()
 		//デカールボックスの位置セット
 		_decalBox.SetPos(pos);
 		int j = 0;
-		
+		bool f = keystate[VK_SPACE] & 0x80;
+		if (f) {
+			int j = 0;
+		}
+		if (keystate[VK_SPACE] & 0x80 == true)
+		{
+			_decalFac->CreateDecalBox(pos, XMFLOAT3(45.0f, 0.0f, 0.0f), XMFLOAT3(16.0f, 16.0f, 16.0f));
+		}
 		/*UINT num = 1;
 		dev.Context()->RSGetViewports(&num, &vp);
 		XMVECTOR retVec;
@@ -573,6 +584,7 @@ PlayingScene::Update()
 	_tessPlane.Update();
 	_sphere.Update();
 	_decalBox.Update();
+	_decalFac->Update();
 	_skySphere->SetPos(_camera.GetPos());
 	_skySphere->Update();
 
@@ -651,7 +663,8 @@ PlayingScene::Update()
 	resource = _renderer.CameraDepthShaderResource();
 	dev.Context()->PSSetShaderResources(12, 1, &resource);
 	//_renderer.CullNone();
-	_decalBox.Draw();//デカールボックス
+	_decalBox.DebugDraw();//デカールボックス
+	_decalFac->Draw();
 	_renderer.ZWriteOn();
 	//_renderer.CullBack();
 	
