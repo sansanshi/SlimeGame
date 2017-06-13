@@ -43,7 +43,7 @@ DecalBox::DecalBox(float width, float height, float length, Camera* cameraPtr)
 
 	ShaderGenerator::CreateVertexShader("Decal.hlsl", "DecalBoxVS", "vs_5_0",
 		_vertexShader, inputElementDescs, sizeof(inputElementDescs) / sizeof(D3D11_INPUT_ELEMENT_DESC), _inputlayout);
-	ShaderGenerator::CreatePixelShader("Decal.hlsl", "DecalBoxPS", "ps_5_0", _pixelShader);
+	ShaderGenerator::CreatePixelShader("Decal.hlsl", "DecalBoxPS_Debug", "ps_5_0", _pixelShader);
 
 
 	std::vector<unsigned short> indices(36);
@@ -395,7 +395,7 @@ void
 DecalBox::Update()
 {
 	XMMATRIX transMatrix = XMMatrixTranslation(_pos.x, _pos.y+4.0f, _pos.z);
-	float calcDeg = XM_PI / 180.0f;
+	float calcDeg = 1.0f;//XM_PI / 180.0f;
 	XMMATRIX rotMatrix = XMMatrixRotationRollPitchYaw(_rot.x* calcDeg,_rot.y*calcDeg , _rot.z*calcDeg);
 	XMMATRIX scaleMatrix = XMMatrixScaling(_scale.x, _scale.y, _scale.z);
 
@@ -424,8 +424,3 @@ DecalBox::Update()
 	int k = 0;
 }
 
-void
-DecalBox::SetPos(XMFLOAT3 pos)
-{
-	_pos = pos;
-}

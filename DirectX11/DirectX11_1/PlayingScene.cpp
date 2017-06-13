@@ -301,6 +301,11 @@ PlayingScene::PlayingScene(HWND hwnd)
 
 	//デカールファクトリ
 	_decalFac = new DecalFactory(&_camera);
+	_decalBoxPitch = 45.0f*XM_PI / 180.0f;
+
+	_isLockCursor = true;
+	_cursorPoint = { 0 };
+	_oldCursorPoint = { 0 };
 
 
 	_effect.Emit();
@@ -445,6 +450,19 @@ PlayingScene::Update()
 #pragma region 入力（仮
 	std::copy(keystate, keystate + sizeof(keystate), lastkeystate);
 	GetKeyboardState(keystate);
+
+
+	//マウスカーソル位置算出
+	/*_oldCursorPoint = _cursorPoint;
+	GetCursorPos(&_cursorPoint);
+	ScreenToClient(_hwnd, &_cursorPoint);
+	POINT center = { WINDOW_WIDTH / 2,WINDOW_HEIGHT / 2 };
+	ClientToScreen(_hwnd, &center);
+	
+	SetCursorPos(center.x,center.y);*/
+
+	
+
 	if (keystate['M']&0x80)
 	{
 		if (!(lastkeystate['M']&0x80))
@@ -468,6 +486,19 @@ PlayingScene::Update()
 			_effect.Move(_effectMov);
 		}
 	}
+
+	if (keystate[VK_ADD] & 0x80)
+	{
+		_decalBoxPitch += 1 * XM_PI / 180.0f;
+	}
+	if (keystate[VK_SUBTRACT] & 0x80)
+	{
+		_decalBoxPitch -= 1.0f*XM_PI / 180.0f;
+	}
+	
+	XMFLOAT3 test = _camera.GetRotation();
+	_decalBox.SetPYR(XMFLOAT3(_decalBoxPitch, _camera.GetRotation().y, 0));
+
 
 	if (keystate[VK_LBUTTON]&0x80)//マウス左
 	{
@@ -501,13 +532,10 @@ PlayingScene::Update()
 		//デカールボックスの位置セット
 		_decalBox.SetPos(pos);
 		int j = 0;
-		bool f = keystate[VK_SPACE] & 0x80;
-		if (f) {
-			int j = 0;
-		}
-		if (keystate[VK_SPACE] & 0x80 == true)
+		
+		if (keystate[VK_RBUTTON] & 0x80&&!(lastkeystate[VK_RBUTTON]&0x80))
 		{
-			_decalFac->CreateDecalBox(pos, XMFLOAT3(45.0f, 0.0f, 0.0f), XMFLOAT3(16.0f, 16.0f, 16.0f));
+			_decalFac->CreateDecalBox(_decalBox.GetPos(), _decalBox.GetRotation(), _decalBox.GetScale());
 		}
 		/*UINT num = 1;
 		dev.Context()->RSGetViewports(&num, &vp);
@@ -538,11 +566,11 @@ PlayingScene::Update()
 	_camera.MoveTPS(moveFront, moveRight);
 
 	XMFLOAT3 camRot = {0.0f,0.0f,0.0f};//それぞれx,y,x軸基準の回転
-	if (keystate[VK_NUMPAD6]&0x80)
+	if (keystate[VK_NUMPAD6]&0x80||keystate['X']&0x80)
 	{
 		camRot.y += 1;
 	}
-	if (keystate[VK_NUMPAD4] & 0x80)
+	if (keystate[VK_NUMPAD4] & 0x80||keystate['Z']&0x80)
 	{
 		camRot.y -= 1;
 	}
@@ -557,7 +585,10 @@ PlayingScene::Update()
 	float calcRadian= XM_PI / 180.0f;
 	camRot.x *= calcRadian;
 	camRot.y *= calcRadian;
-	_camera.Rotate(camRot);
+	if (camRot.x != 0 || camRot.y != 0 || camRot.z != 0)
+	{
+		_camera.Rotate(camRot);
+	}
 
 
 	
@@ -619,7 +650,8 @@ PlayingScene::Update()
 #pragma region カメラデプス描画
 	_renderer.ChangeRT_CameraDepth();
 	_player.DrawCameraDepth();
-	_plane.DrawCameraDepth();
+	//_plane.DrawCameraDepth();
+	_tessPlane.DrawCameraDepth();
 	_cylinder.DrawCameraDepth();
 	_sphere.DrawCameraDepth();
 
@@ -663,8 +695,8 @@ PlayingScene::Update()
 	resource = _renderer.CameraDepthShaderResource();
 	dev.Context()->PSSetShaderResources(12, 1, &resource);
 	//_renderer.CullNone();
-	_decalBox.DebugDraw();//デカールボックス
-	_decalFac->Draw();
+	_decalFac->Draw();//デカールボックス
+	_decalBox.DebugDraw();//デバッグ用デカールボックス
 	_renderer.ZWriteOn();
 	//_renderer.CullBack();
 	
@@ -820,4 +852,24 @@ PlayingScene::Update()
 	}
 
 	dev.SwapChain()->Present(1, 0);
+}
+
+void
+PlayingScene::LockCursorToggle()
+{
+	_isLockCursor = !_isLockCursor;
+	if (_isLockCursor)
+	{
+		POINT center = { WINDOW_WIDTH / 2,WINDOW_HEIGHT / 2 };
+		ClientToScreen(_hwnd, &center);
+
+		_cursorPoint = center;
+		_oldCursorPoint = center;
+		SetCursorPos(center.x, center.y);
+		ShowCursor(false);
+	}
+	else
+	{
+		ShowCursor(true);
+	}
 }

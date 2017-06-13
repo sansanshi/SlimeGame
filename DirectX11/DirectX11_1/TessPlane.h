@@ -42,9 +42,12 @@ public:
 	ID3D11InputLayout* _lightviewInputLayout;
 	ID3D11PixelShader* _lightviewPS;
 
+	ID3D11PixelShader* _cameraDepthPS;
+
 	void Update();
 
 	void Draw();
 	void DrawLightView();
+	void DrawCameraDepth();
 
 };

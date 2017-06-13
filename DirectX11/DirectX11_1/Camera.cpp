@@ -178,18 +178,16 @@ Camera::Rotate(float pitch, float yaw, float roll)
 void
 Camera::Rotate(const XMFLOAT3& rotPYR)
 {
+	_pitch += rotPYR.x;
+	_yaw += rotPYR.y;
+	_roll += rotPYR.z;
 
-	XMMATRIX rot = XMMatrixRotationRollPitchYaw(0.0f, rotPYR.y, rotPYR.z);
-
-	XMMATRIX rotX = XMMatrixRotationX(rotPYR.x);
-
-	//éãê¸ÉxÉNÉgÉãÇçÏÇÈ
-	XMFLOAT3 v = { gazePoint.x - eyePoint.x, gazePoint.y - eyePoint.y, gazePoint.z - eyePoint.z };
-	XMVECTOR ray = XMLoadFloat3(&v); //XMLoadFloat3(&_originEyeVec);//{ _target.x - _pos.x, _target.y - _pos.y, _target.z - _pos.z };
-	ray = XMVector3Transform(ray, rot);
-	ray = XMVector3Transform(ray, rotX);
+	XMVECTOR ray = XMLoadFloat3(&_originEyeVec);
+	XMMATRIX rot = XMMatrixRotationRollPitchYaw(_pitch, _yaw, _roll);
+	ray = XMVector3TransformCoord(ray, rot);
 	XMFLOAT3 r;
 	XMStoreFloat3(&r, ray);
+
 
 	gazePoint = { eyePoint.x + r.x, eyePoint.y + r.y, eyePoint.z + r.z };
 }

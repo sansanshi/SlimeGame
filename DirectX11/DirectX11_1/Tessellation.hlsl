@@ -167,8 +167,8 @@ DS_OUTPUT TessDS(HS_CONSTANT_DATA_OUTPUT In, float2 UV:SV_DomainLocation, const 
 	float d = _dispMap.SampleLevel(_samplerState, o.uv+uvOffset,0);
 	d = d*2.0f - 1.0f;
 
-	float3 temp = float3(0, 1, 0)*3.0f*d;//‚»‚Ì‚Ü‚ÜŠ|‚¯‚é‚Æ‹­‚·‚¬‚é‚Ì‚Å0.5‚­‚ç‚¢
-	float4 postemp=float4(	o.pos.xyz +temp,1);
+	float3 displacement = float3(0, 1, 0)*10.0f*d;//‚»‚Ì‚Ü‚ÜŠ|‚¯‚é‚Æ‹­‚·‚¬‚é‚Ì‚Å0.5‚­‚ç‚¢
+	float4 postemp=float4(	o.pos.xyz +displacement,1);
 
 	matrix wvp = mul(mul(_cameraProj,_cameraView), _world);
 	o.pos = mul(wvp,postemp );
@@ -181,7 +181,7 @@ DS_OUTPUT TessDS(HS_CONSTANT_DATA_OUTPUT In, float2 UV:SV_DomainLocation, const 
 	o.nearZ = nearZ;
 	o.farZ = farZ;
 
-	float dist=
+	//float dist=
 	o.fog= fogCoord.x + o.pos.w*fogCoord.y;
 	o.fogColor = patch[0].fogColor;
 
@@ -211,4 +211,12 @@ float4 TessPS(DS_OUTPUT o):SV_Target
 	//ƒtƒHƒO‚ð‚©‚¯‚é
 	col = lerp(o.fogColor, col, o.fog);
 	return col;
+}
+
+float4 DepthTessPS(DS_OUTPUT o) :SV_Target
+{
+
+	float d = o.shadowposVS.z / o.farZ;
+	
+	return float4(d, d, d, 1);
 }

@@ -45,6 +45,12 @@ public:
 	void Draw();
 	void DebugDraw();
 
-	void SetPos(XMFLOAT3 pos);
+	void SetPos(const XMFLOAT3 pos) { _pos = pos; };
+	void SetPYR(const XMFLOAT3 pitchYawRoll) { _rot = pitchYawRoll; };
+	void SetScale(const XMFLOAT3 scale) { _scale = scale; };
+
+	const XMFLOAT3 GetRotation() { return _rot; };
+	const XMFLOAT3 GetScale() { return _scale; };
+	const XMFLOAT3 GetPos() { return _pos; };
 };
 

@@ -38,10 +38,16 @@ private:
 
 	DecalBox _decalBox;
 	DecalFactory* _decalFac;
+	float _decalBoxPitch;
 
 	SoundManager _soundManager;
 
-	
+	//マウスカーソル位置保存用変数
+	POINT _cursorPoint;
+	POINT _oldCursorPoint;
+	bool _isLockCursor;
+	void LockCursorToggle();
+	void UnlockCursor();
 
 
 	ID3D11RenderTargetView* _rtvlight;

@@ -25,6 +25,7 @@ public:
 	const XMMATRIX& LightView() { return _light; };
 	const XMMATRIX& LightProjection() { return _lightProjection; };
 	const XMFLOAT3& GetPos(){ return eyePoint; };
+	const XMFLOAT3& GetRotation() { return XMFLOAT3(_pitch, _yaw, _roll); };
 	Vector3 EyeVec();
 
 	XMVECTOR CalculateCursorVector(float x, float y);

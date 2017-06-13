@@ -794,37 +794,37 @@ Player::Update()
 	std::copy(_key, _key + sizeof(_key), _oldkey);
 	GetKeyboardState(_key);
 
-	//_oldkey[VK_SPACE] = _key[VK_SPACE];
-	bool isPressedEnter = (_oldkey[VK_SPACE] & 0x80) == 1 ? true : false;
-	//GetKeyboardState(_key);
 
 	ID3D11Buffer* pmdVertBuff = _mesh->GetVertexBuffer();
 	ID3D11Buffer* boneVertBuff = _mesh->GetBoneVertBuffer();
 
-	if (!isPressedEnter&&_key[VK_SPACE] & 0x80)//oldkey[VK_RETURN] != key[VK_RETURN])
+	if (_key[VK_SPACE] & 0x80)
 	{
-		_isBoneView = !_isBoneView;
-		if (_isBoneView)
+		if (!(_oldkey[VK_SPACE] & 0x80))
 		{
-			unsigned int stride = _mesh->GetBoneVertStride();
-			unsigned int offset = 0;
-			dev.Context()->IASetInputLayout(_boneInputLayout);
-			dev.Context()->IASetVertexBuffers(0, 1, &boneVertBuff, &stride, &offset);
-			dev.Context()->VSSetShader(_boneVertexShader, nullptr, 0);//ボーン表示用シェーダセット
-			dev.Context()->PSSetShader(_bonePixelShader, nullptr, 0);//ボーン表示用シェーダセット
-			dev.Context()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
+			_isBoneView = !_isBoneView;
 		}
-		else
-		{
-			unsigned int stride = _mesh->GetVertexStride();
-			unsigned int offset = 0;
+	}
 
-			dev.Context()->IASetInputLayout(_vertInputLayout);
-			dev.Context()->IASetVertexBuffers(0, 1, &pmdVertBuff, &stride, &offset);
-			dev.Context()->VSSetShader(_vertexShader, nullptr, 0);//ＰＭＤモデル表示用シェーダセット
-			dev.Context()->PSSetShader(_pixelShader, nullptr, 0);//PMDモデル表示用シェーダセット
-			dev.Context()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-		}
+	if (_isBoneView)
+	{
+		unsigned int stride = _mesh->GetBoneVertStride();
+		unsigned int offset = 0;
+		dev.Context()->IASetInputLayout(_boneInputLayout);
+		dev.Context()->IASetVertexBuffers(0, 1, &boneVertBuff, &stride, &offset);
+		dev.Context()->VSSetShader(_boneVertexShader, nullptr, 0);//ボーン表示用シェーダセット
+		dev.Context()->PSSetShader(_bonePixelShader, nullptr, 0);//ボーン表示用シェーダセット
+		dev.Context()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
+	}
+	else
+	{
+		unsigned int stride = _mesh->GetVertexStride();
+		unsigned int offset = 0;
+
+		dev.Context()->IASetInputLayout(_vertInputLayout);
+		dev.Context()->IASetVertexBuffers(0, 1, &pmdVertBuff, &stride, &offset);
+		dev.Context()->VSSetShader(_vertexShader, nullptr, 0);//ＰＭＤモデル表示用シェーダセット
+		dev.Context()->PSSetShader(_pixelShader, nullptr, 0);//PMDモデル表示用シェーダセット		dev.Context()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	}
 
 	if (_key[VK_UP] & 0x80)
@@ -861,7 +861,7 @@ Player::Update()
 
 	//ボーンの変換行列を子のボーンに伝播
 	MatrixTransmission(0, XMMatrixIdentity(), _mesh->BoneMatrixies(), _boneTree, _mesh->GetBones());
-
+	
 }
 
 void
