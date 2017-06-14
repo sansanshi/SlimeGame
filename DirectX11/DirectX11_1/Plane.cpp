@@ -51,9 +51,9 @@ Plane::Plane(float width, float depth, Vector3 normal,Camera& camera) :_cameraRe
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 	};
 
-	ShaderGenerator::CreateVertexShader("BaseShader.hlsl", "PrimitiveVS", "vs_5_0",
+	ShaderGenerator::CreateVertexShader("water.hlsl", "WaterVS", "vs_5_0",
 		_vertexShader, inputElementDescs, sizeof(inputElementDescs) / sizeof(D3D11_INPUT_ELEMENT_DESC),_inputlayout);
-	ShaderGenerator::CreatePixelShader("BaseShader.hlsl", "PrimitivePS", "ps_5_0", _pixelShader);
+	ShaderGenerator::CreatePixelShader("water.hlsl", "WaterPS", "ps_5_0", _pixelShader);
 
 	ShaderGenerator::CreateVertexShader("lightview.hlsl", "PrimitiveLightViewVS", "vs_5_0",
 		_lightviewVS, inputElementDescs, sizeof(inputElementDescs) / sizeof(D3D11_INPUT_ELEMENT_DESC), _lightviewInputLayout);
@@ -189,9 +189,9 @@ void
 Plane::Update()
 {
 	rot += -1 * XM_PI / 180;
-	XMMATRIX rotMatrix = XMMatrixRotationY(rot);
-	_modelMatrix = rotMatrix;
-	_modelMatrix = XMMatrixIdentity();
+	XMMATRIX transMat=XMMatrixTranslation(0.0f,-0.5f,0.0f);
+	_modelMatrix = transMat;
+	//_modelMatrix = XMMatrixIdentity();
 	_worldAndCamera.world = _modelMatrix;
 	_worldAndCamera.cameraView = _cameraRef.CameraView();
 	_worldAndCamera.cameraProj=_cameraRef.CameraProjection();

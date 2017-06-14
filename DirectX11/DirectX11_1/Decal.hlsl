@@ -90,17 +90,7 @@ Output DecalBoxVS(float4 pos:POSITION)
 	o.postest = mul(_view, o.postest);
 	o.postest = mul(_proj, o.postest);
 
-	//o.texcoord = (float2(1, 1) + (o.postest.xy / o.postest.w)*float2(1, -1))*0.5f;
-
-	float sampleDepth = _cameraDepthTex.SampleLevel(_samplerState, o.texcoord, 0).r;
-
-	float3 positionVS;//ViewSpace Position
-	matrix wv = mul(_view, _world);
-
-	positionVS = mul(wv, pos);
-
 	
-
 	o.pos = mul(_world, pos);
 	o.pos = mul(_view, o.pos);
 	o.pos = mul(_proj, o.pos);

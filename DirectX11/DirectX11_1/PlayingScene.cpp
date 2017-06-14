@@ -282,7 +282,7 @@ PlayingScene::Init()
 //最初にDirect3Dの初期化をするために_result作って初期化子でInitDirecct3Dを呼ぶ
 PlayingScene::PlayingScene(HWND hwnd) 
 	:_hwnd(hwnd),_result(InitDirect3D(_hwnd)),dev(DeviceDx11::Instance()),
-	_player(_camera), _plane(120, 120, Vector3(0, 1, 0), _camera), 
+	_player(_camera), _plane(300, 300, Vector3(0, 1, 0), _camera), 
 	_cylinder(4, 20, 20,_camera),
 	_sphere(100,5,_camera),
 	_tessPlane(300,300,Vector3(0,1,0),_camera),
@@ -401,7 +401,7 @@ PlayingScene::PlayingScene(HWND hwnd)
 	_shaderGlobals.farZ = FAR_Z;
 
 	_shaderGlobals.fog
-		= XMFLOAT2(FAR_Z / (FAR_Z - NEAR_Z), -1.0f / (FAR_Z - NEAR_Z));
+		= XMFLOAT2(FOG_END / (FOG_END - FOG_START), -1.0f / (FOG_END - FOG_START));
 	_shaderGlobals.fogColor
 		= XMFLOAT4(0.5f,0.9f,0.9f,1);
 	
@@ -609,6 +609,8 @@ PlayingScene::Update()
 	dev.Context()->VSSetConstantBuffers(5, 1, &_globalBuffer);
 
 
+	_camera.Update();
+
 	_player.Update();
 	_plane.Update();
 	_cylinder.Update();
@@ -618,9 +620,6 @@ PlayingScene::Update()
 	_decalFac->Update();
 	_skySphere->SetPos(_camera.GetPos());
 	_skySphere->Update();
-
-	_camera.Update();
-
 
 	float color[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	//float white[4] = { 1.0, 1.0, 1.0, 1.0 };
@@ -637,7 +636,8 @@ PlayingScene::Update()
 
 	//_renderer.ZWriteOff();
 	_renderer.ChangePTForPrimitive();
-	_plane.DrawLightView();
+	//_plane.DrawLightView();
+	_tessPlane.DrawLightView();
 	_cylinder.DrawLightView();
 
 	_renderer.ChangePTForPMD();
@@ -660,6 +660,7 @@ PlayingScene::Update()
 
 #pragma region カメラビュー描画
 	_renderer.ChangeRT_Camera();
+	_renderer.ZWriteOn();
 	_skySphere->Draw();
 	//ライトビューからのレンダリング結果をテクスチャとしてGPUに渡す
 	//SetRenderTargetした後でSetShaderResourcesしないと渡らない
@@ -674,7 +675,6 @@ PlayingScene::Update()
 	_player.Draw();//プレイヤーのメイン描画
 
 	_renderer.ChangePTForPrimitive();
-	//_plane.Draw();//床
 	_cylinder.Draw();//柱
 	_renderer.ChangePTForPMD();
 	dev.Context()->DSSetConstantBuffers(5, 1, &_globalBuffer);
@@ -683,8 +683,6 @@ PlayingScene::Update()
 	//デカールボックスが頂点シェーダで深度バッファテクスチャ使うので渡す
 	resource = _renderer.CameraDepthShaderResource();
 	dev.Context()->VSSetShaderResources(12, 1, &resource);
-	_renderer.DepthDisable();
-	_renderer.ZWriteOff();
 
 
 	_renderer.CullNone();//両面描画させる
@@ -694,12 +692,12 @@ PlayingScene::Update()
 	//カメラからの深度バッファテクスチャ
 	resource = _renderer.CameraDepthShaderResource();
 	dev.Context()->PSSetShaderResources(12, 1, &resource);
-	//_renderer.CullNone();
+	_renderer.ZWriteOff();
+	_plane.Draw();//床
 	_decalFac->Draw();//デカールボックス
 	_decalBox.DebugDraw();//デバッグ用デカールボックス
 	_renderer.ZWriteOn();
 	//_renderer.CullBack();
-	
 
 #pragma endregion
 

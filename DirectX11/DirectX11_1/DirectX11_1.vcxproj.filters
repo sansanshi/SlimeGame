@@ -57,6 +57,9 @@
     <FxCompile Include="SkySphere.hlsl">
       <Filter>ソース ファイル\HLSL</Filter>
     </FxCompile>
+    <FxCompile Include="water.hlsl">
+      <Filter>ソース ファイル\HLSL</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DeviceDx11.cpp">

@@ -8,7 +8,10 @@ const float WINDOW_HEIGHT = 720.0f;
 const float  PI = 3.141592f;
 
 const float NEAR_Z = 1.0f;
-const float FAR_Z = 300.0f;
+const float FAR_Z = 400.0f;
+
+const float FOG_START = 30.0f;
+const float FOG_END = 250.0f;
 
 struct Vector3{
 	float x, y, z;

@@ -170,25 +170,40 @@ void
 TessPlane::DrawLightView()
 {
 	DeviceDx11& dev = DeviceDx11::Instance();
-	dev.Context()->VSSetConstantBuffers(0, 1, &_matrixBuffer);
+	dev.Context()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_4_CONTROL_POINT_PATCHLIST);
+	dev.Context()->DSSetConstantBuffers(0, 1, &_matrixBuffer);
 
+
+	_worldAndCamera.lightView = _cameraRef.LightView();
+	_worldAndCamera.lightProj = _cameraRef.LightProjection();
 
 	dev.Context()->Map(_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &_mappedMatrixies);
 	//ここでこのメモリの塊に、マトリックスの値をコピーしてやる
 	memcpy(_mappedMatrixies.pData, (void*)(&_worldAndCamera), sizeof(_worldAndCamera));
-	//↑　*(XMMATRIX*)mem.pData = matrix;//川野先生の書き方　memcpyで数値を間違えるとメモリがぐちゃぐちゃになる
+	//*(WorldAndCamera*)_mappedMatrixies.pData = _worldAndCamera;//川野先生の書き方　memcpyで数値を間違えるとメモリがぐちゃぐちゃになる
 	dev.Context()->Unmap(_matrixBuffer, 0);
 
 
-	dev.Context()->VSSetShader(_lightviewVS, nullptr, 0);
-	dev.Context()->IASetInputLayout(_lightviewInputLayout);
-	dev.Context()->PSSetShader(_lightviewPS, nullptr, 0);
+	dev.Context()->VSSetShader(_vertexShader, nullptr, 0);
+	dev.Context()->IASetInputLayout(_inputlayout);
+	dev.Context()->HSSetShader(_hullShader, nullptr, 0);
+	dev.Context()->DSSetShader(_domainShader, nullptr, 0);
+	dev.Context()->PSSetShader(_cameraDepthPS, nullptr, 0);
 	//プリミティブトポロジの切り替えを忘れない　切り替えを頻発させるのは良くない
-	dev.Context()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+	//dev.Context()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+
+	//テクスチャセット
+	dev.Context()->PSSetShaderResources(0, 1, &_groundTex);
+	dev.Context()->DSSetShaderResources(7, 1, &_displacementTex);
+	dev.Context()->DSSetSamplers(0, 1, &_samplerState_Wrap);
+
 	unsigned int stride = sizeof(float) * 14;
 	unsigned int offset = 0;
 	dev.Context()->IASetVertexBuffers(0, 1, &_vertexBuffer, &stride, &offset);
 	dev.Context()->Draw(4, 0);
+
+	dev.Context()->HSSetShader(nullptr, nullptr, 0);
+	dev.Context()->DSSetShader(nullptr, nullptr, 0);
 }
 
 void

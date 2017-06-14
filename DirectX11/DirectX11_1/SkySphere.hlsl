@@ -38,6 +38,7 @@ struct Output {
 	float4 diffuse:COLOR0;
 	float3 specular:COLOR1;
 	float3 ambient:COLOR2;
+	float3 posWorld:WORLDPOS;
 
 	float4 lightVec:TEXCOORD1;
 	float4 eyeVec:TEXCOORD2;
@@ -147,6 +148,15 @@ Output SkySphereVS(float4 pos:POSITION, float4 normal : NORMAL, float2 uv : TEXC
 	float dist = length(mul(_world, pos).xyz - eyePos.xyz);
 	o.fogColor = fogColor;
 	o.fog = fogCoord.x + dist*fogCoord.y;
+	//スカイスフィアに他と同じ距離フォグを適用すると強くかかり過ぎたので調整
+	o.fog = clamp(o.fog*2.5f, 0.0f, 1.0f);
+	
+
+	o.posWorld = mul(_world, pos);
+	//高さフォグ　とりあえず決め打ちでやってみる
+	float heightFog = clamp((200.0f - abs(o.posWorld.y)) / (200.0f - 40.0f), 0.0f, 1.0f);
+	heightFog = pow(heightFog,3);
+	o.fog = clamp(heightFog * o.fog, 0.0f, 1.0f);
 
 	return o;
 }

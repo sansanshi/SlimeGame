@@ -101,10 +101,10 @@ HS_CONSTANT_DATA_OUTPUT CalcHSPatchConstants(
 	HS_CONSTANT_DATA_OUTPUT Output;
 
 	// ここにコードを挿入して出力を計算します
-	Output.EdgeTessFactor[0] = 10;
-	Output.EdgeTessFactor[1] = 10;
-	Output.EdgeTessFactor[2] = 10;
-	Output.EdgeTessFactor[3] = 10;
+	Output.EdgeTessFactor[0] = 1;
+	Output.EdgeTessFactor[1] = 1;
+	Output.EdgeTessFactor[2] = 1;
+	Output.EdgeTessFactor[3] = 1;
 		Output.InsideTessFactor[0] = 100; // たとえば、代わりに動的テセレーション係数を計算できます
 		Output.InsideTessFactor[1] = 100;
 
@@ -167,7 +167,7 @@ DS_OUTPUT TessDS(HS_CONSTANT_DATA_OUTPUT In, float2 UV:SV_DomainLocation, const 
 	float d = _dispMap.SampleLevel(_samplerState, o.uv+uvOffset,0);
 	d = d*2.0f - 1.0f;
 
-	float3 displacement = float3(0, 1, 0)*10.0f*d;//そのまま掛けると強すぎるので0.5くらい
+	float3 displacement = float3(0, 1, 0)*20.0f*d;//そのまま掛けると強すぎるので0.5くらい
 	float4 postemp=float4(	o.pos.xyz +displacement,1);
 
 	matrix wvp = mul(mul(_cameraProj,_cameraView), _world);
