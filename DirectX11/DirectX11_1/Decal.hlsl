@@ -40,6 +40,9 @@ struct Output{
 
 	float4 modelpos:MODELPOS;
 
+	float fog:TEXCOORD1;
+	float4 fogColor:COLOR1;
+
 };
 
 matrix MatrixIdentity()
@@ -107,6 +110,10 @@ Output DecalBoxVS(float4 pos:POSITION)
 	o.nearZ = nearZ;
 	o.farZ = farZ;
 	o.modelpos = pos;
+
+	float dist = length(mul(mul(_view, _world), pos));
+	o.fogColor = fogColor;
+	o.fog = fogCoord.x + dist*fogCoord.y;
 	return o;
 }
 
@@ -172,10 +179,9 @@ float4 DecalBoxPS_Debug(Output o):SV_Target
 	}
 	col = _decalTex.Sample(_samplerState, uv);//_decalTex.Sample(_samplerState, uv);
 	
-		return col;
-
-	return float4(0, 0, 0, 1);
-	//return (1, 1, 1, 1);
+	//a=0の部分はフォグの影響を受けたくない
+	col = float4(lerp(o.fogColor.rgb, col.rgb, o.fog), col.a);
+	return col;
 }
 
 float4 DecalBoxPS(Output o) :SV_Target
@@ -229,8 +235,7 @@ float2 uv = (positionL.xy + 0.5f)*float2(1.0f,-1.0f);
 
 col = _decalTex.Sample(_samplerState, uv);//_decalTex.Sample(_samplerState, uv);
 
+//a=0の部分はフォグの影響を受けたくない
+col = float4(lerp(o.fogColor.rgb, col.rgb, o.fog), col.a);
 return col;
-
-return float4(0, 0, 0, 1);
-//return (1, 1, 1, 1);
 }

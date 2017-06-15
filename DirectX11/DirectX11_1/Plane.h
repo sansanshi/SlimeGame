@@ -16,6 +16,9 @@ private:
 	ID3D11Buffer* _matrixBuffer;
 	D3D11_MAPPED_SUBRESOURCE _mappedMatrixies;
 
+	ID3D11ShaderResourceView* _mainTex;
+	ID3D11ShaderResourceView* _subTex;
+
 	float rot;
 public:
 	Plane(Camera&);

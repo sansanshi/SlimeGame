@@ -146,17 +146,20 @@ Output SkySphereVS(float4 pos:POSITION, float4 normal : NORMAL, float2 uv : TEXC
 	o.farZ = farZ;
 
 	float dist = length(mul(_world, pos).xyz - eyePos.xyz);
+	dist = length(mul(mul(_cameraView, _world), pos));
 	o.fogColor = fogColor;
-	o.fog = fogCoord.x + dist*fogCoord.y;
-	//スカイスフィアに他と同じ距離フォグを適用すると強くかかり過ぎたので調整
-	o.fog = clamp(o.fog*2.5f, 0.0f, 1.0f);
+	//o.fog = fogCoord.x + dist*fogCoord.y;
+	//スカイスフィアに他と同じ距離フォグを適用すると見えなくなるので調整
+	o.fog = (350.0f - dist) / (350.0f - 40.0f);
+	o.fog = clamp(o.fog*4.5f, 0.0f, 1.0f);
 	
 
 	o.posWorld = mul(_world, pos);
 	//高さフォグ　とりあえず決め打ちでやってみる
-	float heightFog = clamp((200.0f - abs(o.posWorld.y)) / (200.0f - 40.0f), 0.0f, 1.0f);
+	float heightFog = clamp((300.0f - abs(o.posWorld.y)) / (300.0f - 50.0f), 0.0f, 1.0f);
 	heightFog = pow(heightFog,3);
 	o.fog = clamp(heightFog * o.fog, 0.0f, 1.0f);
+	
 
 	return o;
 }

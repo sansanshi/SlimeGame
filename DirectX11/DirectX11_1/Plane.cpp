@@ -2,6 +2,7 @@
 #include<vector>
 #include"ShaderGenerator.h"
 #include"DeviceDx11.h"
+#include"ShaderDefine.h"
 
 Plane::Plane(Camera& camera) :_cameraRef(camera)
 {
@@ -58,6 +59,12 @@ Plane::Plane(float width, float depth, Vector3 normal,Camera& camera) :_cameraRe
 	ShaderGenerator::CreateVertexShader("lightview.hlsl", "PrimitiveLightViewVS", "vs_5_0",
 		_lightviewVS, inputElementDescs, sizeof(inputElementDescs) / sizeof(D3D11_INPUT_ELEMENT_DESC), _lightviewInputLayout);
 	ShaderGenerator::CreatePixelShader("lightview.hlsl", "PrimitiveLightViewPS", "ps_5_0", _lightviewPS);
+
+	D3DX11CreateShaderResourceViewFromFile(dev.Device(), 
+		"texture/water.png", nullptr, nullptr, &_mainTex, &result);
+	D3DX11CreateShaderResourceViewFromFile(dev.Device(),
+		"texture/water.png", nullptr, nullptr, &_subTex, &result);
+
 
 	_modelMatrix = XMMatrixIdentity();
 	_worldAndCamera.world = _modelMatrix;
@@ -121,6 +128,10 @@ Plane::Draw()
 	dev.Context()->VSSetShader(_vertexShader,nullptr,0);
 	dev.Context()->IASetInputLayout(_inputlayout);
 	dev.Context()->PSSetShader(_pixelShader, nullptr, 0);
+
+	dev.Context()->PSSetShaderResources(TEXTURE_MAIN, 1, &_mainTex);
+	dev.Context()->PSSetShaderResources(TEXTURE_SUB, 1, &_subTex);
+
 	//プリミティブトポロジの切り替えを忘れない　切り替えを頻発させるのは良くない
 	dev.Context()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 	unsigned int stride = sizeof(float) * 14;

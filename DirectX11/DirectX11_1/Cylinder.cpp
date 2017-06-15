@@ -224,6 +224,7 @@ Cylinder::DrawCameraDepth()
 	_worldAndCamera.lightView = view;
 	_worldAndCamera.lightProj = proj;
 
+
 	dev.Context()->Map(_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &_mappedMatrixies);
 	//ここでこのメモリの塊に、マトリックスの値をコピーしてやる
 	memcpy(_mappedMatrixies.pData, (void*)(&_worldAndCamera), sizeof(_worldAndCamera));

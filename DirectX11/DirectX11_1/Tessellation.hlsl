@@ -101,10 +101,10 @@ HS_CONSTANT_DATA_OUTPUT CalcHSPatchConstants(
 	HS_CONSTANT_DATA_OUTPUT Output;
 
 	// ここにコードを挿入して出力を計算します
-	Output.EdgeTessFactor[0] = 1;
-	Output.EdgeTessFactor[1] = 1;
-	Output.EdgeTessFactor[2] = 1;
-	Output.EdgeTessFactor[3] = 1;
+	Output.EdgeTessFactor[0] = 10;
+	Output.EdgeTessFactor[1] = 10;
+	Output.EdgeTessFactor[2] = 10;
+	Output.EdgeTessFactor[3] = 10;
 		Output.InsideTessFactor[0] = 100; // たとえば、代わりに動的テセレーション係数を計算できます
 		Output.InsideTessFactor[1] = 100;
 
@@ -194,7 +194,6 @@ float4 TessPS(DS_OUTPUT o):SV_Target
 	shadowUV += float2(0.5f / 1280.0f, 0.5f / 720.0f);
 	float lightviewDepth = _shadowTex.Sample(_samplerState_clamp, shadowUV).r;
 
-	float4 addCol = _lightViewTex.Sample(_samplerState_clamp, shadowUV);
 
 	float ld = o.shadowposVS.z / o.farZ;
 	float2 satUV = saturate(shadowUV);

@@ -1,3 +1,5 @@
+#include"ShaderInclude.hlsli"
+
 cbuffer global:register(b0) {
 	matrix _world;
 	matrix _cameraView;
@@ -62,21 +64,6 @@ struct Output {
 	float4 fogColor:COLOR3;
 };
 
-
-Texture2D _tex:register(t0);
-Texture2D _sph:register(t1);
-Texture2D _spa:register(t2);
-
-Texture2D _normalTex:register(t5);
-Texture2D _heightMap:register(t6);
-Texture2D _dispMap:register(t7);
-Texture2D _dispMask:register(t8);
-Texture2D _decalMap:register(t9);//デカール
-Texture2D _shadowTex:register(t10);//ライトからの深度値をテクスチャとして受け取る
-Texture2D _lightViewTex:register(t11);//ライトからのレンダリング（カラー）
-SamplerState _samplerState:register(s0);
-SamplerState _samplerStateDisp:register(s1);
-SamplerState _samplerState_clamp:register(s2);
 
 
 matrix TangentMatrix(float4 tangent, float4 binormal, float4 normal)
@@ -178,5 +165,8 @@ float4 WaterPS(Output o) :SV_Target
 																   //フォグをかける
 	col.a = 0.5f;
 	//col = lerp(o.fogColor, col, o.fog);
+	col = _tex.Sample(_samplerState, o.uv);
+	float4 subCol = _subTex.Sample(_samplerState, o.uv);
+	col=col*subCol;
 	return col;
 }

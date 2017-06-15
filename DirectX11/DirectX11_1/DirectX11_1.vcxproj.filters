@@ -164,6 +164,12 @@
     <ClCompile Include="DecalFactory.cpp">
       <Filter>ソース ファイル\Decal</Filter>
     </ClCompile>
+    <ClCompile Include="Define.cpp">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="ShaderDefine.cpp">
+      <Filter>ソース ファイル\HLSL</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Define.h">
@@ -268,5 +274,13 @@
     <ClInclude Include="DecalFactory.h">
       <Filter>ソース ファイル\Decal</Filter>
     </ClInclude>
+    <ClInclude Include="ShaderDefine.h">
+      <Filter>ソース ファイル\HLSL</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ShaderInclude.hlsli">
+      <Filter>ソース ファイル\HLSL</Filter>
+    </None>
   </ItemGroup>
 </Project>

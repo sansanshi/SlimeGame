@@ -143,6 +143,7 @@
     <ClCompile Include="DecalBox.cpp" />
     <ClCompile Include="DecalFactory.cpp" />
     <ClCompile Include="DecalPlane.cpp" />
+    <ClCompile Include="Define.cpp" />
     <ClCompile Include="DeviceDx11.cpp" />
     <ClCompile Include="Effect.cpp" />
     <ClCompile Include="GameMain.cpp" />
@@ -161,6 +162,7 @@
     <ClCompile Include="Primitive.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Scene.cpp" />
+    <ClCompile Include="ShaderDefine.cpp" />
     <ClCompile Include="ShaderGenarator.cpp" />
     <ClCompile Include="SkyBox.cpp" />
     <ClCompile Include="SkySphere.cpp" />
@@ -197,6 +199,7 @@
     <ClInclude Include="Primitive.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Scene.h" />
+    <ClInclude Include="ShaderDefine.h" />
     <ClInclude Include="ShaderGenerator.h" />
     <ClInclude Include="SkyBox.h" />
     <ClInclude Include="SkySphere.h" />
@@ -206,6 +209,9 @@
     <ClInclude Include="TitleScene.h" />
     <ClInclude Include="VMDData.h" />
     <ClInclude Include="VMDLoader.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ShaderInclude.hlsli" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -2,16 +2,17 @@
 #include<D3D11.h>
 #include<xnamath.h>
 
-const float WINDOW_WIDTH = 1280.0f;
-const float WINDOW_HEIGHT = 720.0f;
+extern const float WINDOW_WIDTH ;
+extern const float WINDOW_HEIGHT;
 
-const float  PI = 3.141592f;
 
-const float NEAR_Z = 1.0f;
-const float FAR_Z = 400.0f;
+extern const float NEAR_Z;
+extern const float FAR_Z;
 
-const float FOG_START = 30.0f;
-const float FOG_END = 250.0f;
+extern const float FOG_START;
+extern const float FOG_END;
+
+extern const float SKYSPHERE_RADIUS;
 
 struct Vector3{
 	float x, y, z;
