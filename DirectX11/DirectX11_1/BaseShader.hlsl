@@ -1,7 +1,9 @@
 //コンスタントバッファはメモリの塊として送られてくるので
 //float3で送られてきた物をfloat4で受け取ったりするとfloat(4バイト)分ズレる
 //頂点シェーダの引数はfloat3で送られてきたデータをfloat4で受け取っても
-//勝手に第4要素に1を入れてくれるっぽい（？）
+//勝手に第4要素に1を入れてくれる(要検証)
+
+#include"ShaderInclude.hlsli"
 
 cbuffer global:register(b0){
 	matrix _world;
@@ -25,16 +27,6 @@ cbuffer material:register(b1){
 cbuffer boneMatrix:register(b3)
 {
 	matrix _boneMatrix[512];
-};
-
-cbuffer Global2:register(b5){
-	float4 lightPos;
-	float4 eyePos;
-	float4 fogColor;
-	float2 fogCoord;
-	float nearZ;
-	float farZ;
-	int timer;
 };
 
 
@@ -65,63 +57,16 @@ struct Output{
 
 	float fog : TEXCOORD6;
 	float4 fogColor:COLOR3;
+
+	float2 windowSize:TEXCOORD7;
 };
 
 struct depthVS_Out{
 	float4 pos:SV_POSITION;
 };
 
-Texture2D _tex:register(t0);
-Texture2D _sph:register(t1);
-Texture2D _spa:register(t2);
-
-Texture2D _normalTex:register(t5);
-Texture2D _heightMap:register(t6);
-Texture2D _dispMap:register(t7);
-Texture2D _dispMask:register(t8);
-Texture2D _decalMap:register(t9);//デカール
-Texture2D _shadowTex:register(t10);//ライトからの深度値をテクスチャとして受け取る
-Texture2D _lightViewTex:register(t11);//ライトからのレンダリング（カラー）
-SamplerState _samplerState:register(s0);
-SamplerState _samplerStateDisp:register(s1);
-SamplerState _samplerState_clamp:register(s2);
 
 
-matrix TangentMatrix(float4 tangent, float4 binormal, float4 normal)
-{
-	matrix mat = {
-		float4(normalize(tangent)),
-		float4(normalize(binormal)),
-		float4(normalize(normal)),
-		float4(0, 0, 0, 1) };
-	matrix test = {
-		float4(1, 0, 0, 0),
-		float4(0, 1, 0, 0),
-		float4(0, 0, 1, 0),
-		float4(0, 0, 0, 1)
-	};
-	return mat;
-
-}
-
-matrix InvTangentMatrix(float4 tangent, float4 binormal, float4 normal)
-{
-	matrix r = TangentMatrix(tangent, binormal, normal);
-	return transpose(r);
-}
-
-
-matrix DisableTranslation(matrix mat)
-{
-	matrix m = mat;
-	m._m03 = m._m13 = m._m23 = 0;
-	return m;
-}
-
-float GetRandomNumber(float2 texCoord, int Seed)
-{
-	return frac(sin(dot(texCoord.xy, float2(12.9898, 78.233)) + Seed) * 43758.5453);
-}
 
 //こっち（シェーダ側）で定義済みのセマンティクスに対応するInputLayoutがないと
 //CreateInputLayoutの時点でエラー？
@@ -202,6 +147,8 @@ Output BaseVS(float4 pos : POSITION, float2 uv : TEXCOORD,
 	float dist = length(mul(_world, pos).xyz - eyePos.xyz);
 	o.fog = fogCoord.x + dist*fogCoord.y;
 	o.fogColor = fogColor;
+
+	o.windowSize = windowSize;
 
 	return o;
 }
@@ -330,6 +277,9 @@ float4 tangent:TANGENT,float4 binormal:BINORMAL)
 	float dist = length(mul(_world, pos).xyz - eyePos.xyz);
 	o.fog = fogCoord.x + dist*fogCoord.y;
 	o.fogColor = fogColor;
+
+	o.windowSize = windowSize;
+
 	return o;
 }
 float4 PrimitivePS(Output o):SV_Target

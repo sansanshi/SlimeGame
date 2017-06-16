@@ -1,3 +1,5 @@
+#include"ShaderInclude.hlsli"
+
 cbuffer global:register(b0){
 	matrix _world;
 	matrix _cameraView;
@@ -7,22 +9,7 @@ cbuffer global:register(b0){
 
 };
 
-matrix TangentMatrix(float3 tangent, float3 binormal, float3 normal)
-{
-	matrix mat = {
-		float4(normalize(tangent), 0.0f),
-		float4(normalize(binormal), 0.0f),
-		float4(normalize(normal), 0.0f),
-		float4(0, 0, 0, 1) };
-	matrix test = {
-		float4(1, 0, 0, 0),
-		float4(0, 1, 0, 0),
-		float4(0, 0, 1, 0),
-		float4(0, 0, 0, 1)
-	};
-	return mat;
 
-}
 matrix Scalling(float x, float y, float z)
 {
 	matrix mat = {
@@ -34,19 +21,6 @@ matrix Scalling(float x, float y, float z)
 	return mat;
 }
 
-matrix InvTangentMatrix(float3 tangent, float3 binormal, float3 normal)
-{
-	matrix r = TangentMatrix(tangent, binormal, normal);
-	return transpose(r);
-}
-
-
-matrix DisableTranslation(matrix mat)
-{
-	matrix m = mat;
-	m._m03 = m._m13 = m._m23 = 0;
-	return m;
-}
 
 struct Output{
 	float4 pos:SV_POSITION;
@@ -62,25 +36,15 @@ struct Output{
 
 	float nearZ : NEAR;
 	float farZ : FAR;
+	float2 windowSize:TEXCOORD0;
 };
 
 cbuffer boneMatrix:register(b3)
 {
 	matrix _boneMatrix[512];
 };
-cbuffer Global2:register(b5){
-	float4 lightPos;
-	float4 eyePos;
-	float4 fogColor;
-	float2 fogCoord;
-	float nearZ;
-	float farZ;
-	int timer;
 
-};
 
-Texture2D _dispMap:register(t7);
-SamplerState _samplerStateDisp:register(s1);
 
 Output LightViewVS(float4 pos : POSITION, float2 uv : TEXCOORD,
 	float4 normal : NORMAL, uint boneid : BONE_ID, uint boneWeight : BONE_WEIGHT,
@@ -127,6 +91,8 @@ Output LightViewVS(float4 pos : POSITION, float2 uv : TEXCOORD,
 	o.shadowpos = mul(_lightView, o.shadowpos);
 	o.nearZ = nearZ;
 	o.farZ = farZ;
+
+	o.windowSize = windowSize;
 	//o.uv = uv;
 
 	//o.lightVec = float4(normalize(lightVec));//float4(normalize(lightVec), 1.0);
@@ -159,6 +125,8 @@ Output PrimitiveLightViewVS(float4 pos:POSITION)
 	o.shadowpos = mul(_lightView, o.shadowpos);
 	o.farZ = farZ;
 	o.nearZ = nearZ;
+
+	o.windowSize = windowSize;
 
 	return o;
 }
@@ -203,6 +171,8 @@ Output SlimeLightViewVS(float4 pos:POSITION, float4 normal : NORMAL, float2 uv :
 
 	o.nearZ = nearZ;
 	o.farZ = farZ;
+
+	o.windowSize = windowSize;
 	return o;
 }
 

@@ -8,6 +8,7 @@
 #include"ShaderGenerator.h"
 #include<cassert>
 #include"Geometry.h"
+#include"ShaderDefine.h"
 
 
 
@@ -678,7 +679,7 @@ Player::Init()
 	textureDesc.BindFlags = D3D11_BIND_RENDER_TARGET;
 	
 	result = D3DX11CreateShaderResourceViewFromFile(dev.Device(), "texture/decal_.png", nullptr, nullptr, &_decalTex, &result);
-	dev.Context()->PSSetShaderResources(9, 1, &_decalTex);
+	dev.Context()->PSSetShaderResources(TEXTURE_DECAL, 1, &_decalTex);
 	//dev.Device()->CreateShaderResourceView()
 	
 
@@ -882,7 +883,7 @@ Player::Draw()
 		dev.Context()->IASetVertexBuffers(0, 1, &pmdVertBuff, &stride, &offset);
 		dev.Context()->VSSetShader(_vertexShader, nullptr, 0);//ＰＭＤモデル表示用シェーダセット
 		dev.Context()->PSSetShader(_pixelShader, nullptr, 0);//PMDモデル表示用シェーダセット
-		dev.Context()->PSSetShaderResources(9, 1, &_decalTex);//デカールテクスチャセット
+		dev.Context()->PSSetShaderResources(TEXTURE_DECAL, 1, &_decalTex);//デカールテクスチャセット
 		dev.Context()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 		//XMMATRIX world = XMMatrixIdentity();
@@ -914,9 +915,9 @@ Player::Draw()
 
 		for (int i = 0; i < (int)pmdMaterials.size(); i++)
 		{
-			dev.Context()->PSSetShaderResources(0, 1, &pmdMaterials[i].texture);//texture
-			dev.Context()->PSSetShaderResources(1, 1, &pmdMaterials[i].sph);//sph
-			dev.Context()->PSSetShaderResources(2, 1, &pmdMaterials[i].spa);//spa
+			dev.Context()->PSSetShaderResources(TEXTURE_MAIN, 1, &pmdMaterials[i].texture);//texture
+			dev.Context()->PSSetShaderResources(TEXTURE_SPH, 1, &pmdMaterials[i].sph);//sph
+			dev.Context()->PSSetShaderResources(TEXTURE_SPA, 1, &pmdMaterials[i].spa);//spa
 			_material.diffuse = pmdMaterials[i].diffuse;
 			_material.alpha = pmdMaterials[i].alpha;
 			_material.specularColor = pmdMaterials[i].specularColor;

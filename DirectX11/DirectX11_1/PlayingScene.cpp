@@ -1,5 +1,6 @@
 #include "PlayingScene.h"
 #include"ShaderGenerator.h"
+#include"ShaderDefine.h"
 
 
 #pragma pack(1)
@@ -402,8 +403,10 @@ PlayingScene::PlayingScene(HWND hwnd)
 	_shaderGlobals.fog
 		= XMFLOAT2(FOG_END / (FOG_END - FOG_START), -1.0f / (FOG_END - FOG_START));
 	_shaderGlobals.fogColor
-		= XMFLOAT4(0.5f,0.9f,0.9f,1);
+		= FOG_COLOR;
 	
+	_shaderGlobals.windowSize.x = WINDOW_WIDTH;
+	_shaderGlobals.windowSize.y = WINDOW_HEIGHT;
 
 
 	D3D11_BUFFER_DESC globalBuffDesc;
@@ -477,13 +480,13 @@ PlayingScene::Update()
 			_effect.Emit();
 		}
 	}
-	if (keystate[VK_UP] & 0x80)
+	if (keystate[VK_SPACE] & 0x80)
 	{
-		if (!(lastkeystate[VK_UP] & 0x80))
-		{
-			_effectMov.y += 1;
-			_effect.Move(_effectMov);
-		}
+		_camera.Move(0.0f, SPEED_RISING, 0.0f);
+	}
+	if (keystate[VK_SHIFT] & 0x80)
+	{
+		_camera.Move(0.0f, -SPEED_RISING, 0.0f);
 	}
 
 	if (keystate[VK_ADD] & 0x80)
@@ -664,11 +667,8 @@ PlayingScene::Update()
 	//ライトビューからのレンダリング結果をテクスチャとしてGPUに渡す
 	//SetRenderTargetした後でSetShaderResourcesしないと渡らない
 	ID3D11ShaderResourceView* resource = _renderer.LightDepthShaderResource();
-	dev.Context()->PSSetShaderResources(10, 1, &resource);
+	dev.Context()->PSSetShaderResources(TEXTURE_LIGHT_DEPTH, 1, &resource);
 
-	//ライトからのレンダリング結果（カラー
-	resource = _renderer.LightViewShaderResource();
-	dev.Context()->PSSetShaderResources(11, 1, &resource);
 
 	_renderer.ChangePTForPMD();
 	_player.Draw();//プレイヤーのメイン描画
@@ -680,8 +680,8 @@ PlayingScene::Update()
 	_tessPlane.Draw();//テッセレーション平面
 
 	//デカールボックスが頂点シェーダで深度バッファテクスチャ使うので渡す
-	resource = _renderer.CameraDepthShaderResource();
-	dev.Context()->VSSetShaderResources(12, 1, &resource);
+	resource = _renderer.LightDepthShaderResource();
+	dev.Context()->VSSetShaderResources(TEXTURE_CAMERA_DEPTH, 1, &resource);
 
 
 	_renderer.CullNone();//両面描画させる
@@ -690,7 +690,7 @@ PlayingScene::Update()
 
 	//カメラからの深度バッファテクスチャ
 	resource = _renderer.CameraDepthShaderResource();
-	dev.Context()->PSSetShaderResources(12, 1, &resource);
+	dev.Context()->PSSetShaderResources(TEXTURE_CAMERA_DEPTH, 1, &resource);
 	_renderer.ZWriteOff();
 	_plane.Draw();//床
 	_decalFac->Draw();//デカールボックス
@@ -738,9 +738,9 @@ PlayingScene::Update()
 		dev.Context()->VSSetShader(billBoardVS, nullptr, 0);
 		dev.Context()->PSSetShader(billBoardPS, nullptr, 0);
 		dev.Context()->IASetInputLayout(billBoardInputLayout);
-		//ライトからのレンダリング結果（カラー
+
 		resource = billBoardSRV;
-		dev.Context()->PSSetShaderResources(0, 1, &resource);
+		dev.Context()->PSSetShaderResources(TEXTURE_MAIN, 1, &resource);
 		unsigned int hudstride = sizeof(HUDVertex);
 		unsigned int hudoffset = 0;
 		dev.Context()->IASetVertexBuffers(0, 1, &billBoardBuffer, &hudstride, &hudoffset);
@@ -772,10 +772,9 @@ PlayingScene::Update()
 		dev.Context()->VSSetShader(_hudVS, nullptr, 0);
 		dev.Context()->PSSetShader(_hudPS, nullptr, 0);
 		dev.Context()->IASetInputLayout(_hudInputLayout);
-		//ライトからのレンダリング結果（カラー
-		resource = _renderer.LightDepthShaderResource();
-		//resource = _renderer.CameraDepthShaderResource();
-		dev.Context()->PSSetShaderResources(10, 1, &resource);
+		//ライトからのレンダリング結果
+		resource = _renderer.CameraDepthShaderResource();
+		dev.Context()->PSSetShaderResources(TEXTURE_LIGHT_DEPTH, 1, &resource);
 		unsigned int hudstride = sizeof(HUDVertex);
 		unsigned int hudoffset = 0;
 		dev.Context()->IASetVertexBuffers(0, 1, &_hudBuffer, &hudstride, &hudoffset);
@@ -836,9 +835,9 @@ PlayingScene::Update()
 		dev.Context()->VSSetShader(_hudVS, nullptr, 0);
 		dev.Context()->PSSetShader(_hudPS, nullptr, 0);
 		dev.Context()->IASetInputLayout(_hudInputLayout);
-		//ライトからのレンダリング結果（カラー
+		//ライトからのレンダリング結果
 		resource = _makerSRV;
-		dev.Context()->PSSetShaderResources(10, 1, &resource);
+		dev.Context()->PSSetShaderResources(TEXTURE_LIGHT_DEPTH, 1, &resource);
 		unsigned int hudstride = sizeof(HUDVertex);
 		unsigned int hudoffset = 0;
 		dev.Context()->IASetVertexBuffers(0, 1, &_makerBuffer, &hudstride, &hudoffset);

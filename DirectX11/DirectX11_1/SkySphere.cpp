@@ -2,6 +2,7 @@
 #include<vector>
 #include"DeviceDx11.h"
 #include"ShaderGenerator.h"
+#include"ShaderDefine.h"
 
 SkySphere::SkySphere(unsigned int divNum, float radius,Camera* cam) :_cameraRef(cam)
 {
@@ -222,7 +223,7 @@ SkySphere::SkySphere(unsigned int divNum, float radius,Camera* cam) :_cameraRef(
 
 	//テクスチャ
 	result = D3DX11CreateShaderResourceViewFromFile(dev.Device(), "texture/height00.png", nullptr, nullptr, &_texture, &result);
-	dev.Context()->VSSetShaderResources(0, 1, &_texture);
+	dev.Context()->VSSetShaderResources(TEXTURE_MAIN, 1, &_texture);
 
 
 	//サンプラの設定
@@ -367,7 +368,7 @@ SkySphere::Draw()
 	DeviceDx11& dev = DeviceDx11::Instance();
 
 	dev.Context()->PSSetSamplers(0, 1, &_samplerState_Wrap);
-	dev.Context()->PSSetShaderResources(0, 1, &_texture);
+	dev.Context()->PSSetShaderResources(TEXTURE_MAIN, 1, &_texture);
 
 	unsigned int stride = sizeof(float) * 14;
 	unsigned int offset = 0;

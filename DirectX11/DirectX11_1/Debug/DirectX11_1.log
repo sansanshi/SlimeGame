@@ -1,4 +1,4 @@
-﻿  Plane.cpp
+﻿  PlayingScene.cpp
 c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2662): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
 c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2663): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
 c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2664): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
@@ -37,6 +37,16 @@ c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamathconvert.
 c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamathvector.inl(1269): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
 c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamathmisc.inl(518): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
 c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamathmisc.inl(519): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
-c:\users\1401349\documents\workinggames\slimegame\directx11\directx11_1\define.h(48): warning C4244: 'return': 'double' から 'float' への変換です。データが失われる可能性があります。
+c:\users\1401349\documents\workinggames\slimegame\directx11\directx11_1\playingscene.cpp(33): warning C4552: '/': 演算子にプログラム上の作用がありません。作用を伴う演算子を使用してください
+c:\users\1401349\documents\workinggames\slimegame\directx11\directx11_1\playingscene.cpp(34): warning C4552: '+': 演算子にプログラム上の作用がありません。作用を伴う演算子を使用してください
+c:\users\1401349\documents\workinggames\slimegame\directx11\directx11_1\playingscene.cpp(35): warning C4552: '/': 演算子にプログラム上の作用がありません。作用を伴う演算子を使用してください
+c:\users\1401349\documents\workinggames\slimegame\directx11\directx11_1\playingscene.cpp(36): warning C4552: '+': 演算子にプログラム上の作用がありません。作用を伴う演算子を使用してください
+c:\users\1401349\documents\workinggames\slimegame\directx11\directx11_1\playingscene.cpp(257): warning C4101: 'result': ローカル変数は 1 度も使われていません。
+c:\users\1401349\documents\workinggames\slimegame\directx11\directx11_1\playingscene.cpp(296): warning C4316: 'SkySphere': ヒープで割り当てられたオブジェクトが 16 にアラインメントされていない可能性があります
+c:\users\1401349\documents\workinggames\slimegame\directx11\directx11_1\playingscene.cpp(516): warning C4244: '引数': 'LONG' から 'float' への変換です。データが失われる可能性があります。
+c:\users\1401349\documents\workinggames\slimegame\directx11\directx11_1\playingscene.cpp(859): warning C4838: 'float' から 'LONG' への変換には縮小変換が必要です
+c:\users\1401349\documents\workinggames\slimegame\directx11\directx11_1\playingscene.cpp(859): warning C4244: '初期化中': 'float' から 'LONG' への変換です。データが失われる可能性があります。
+c:\users\1401349\documents\workinggames\slimegame\directx11\directx11_1\camera.h(28): warning C4172: ローカル変数またはテンポラリのアドレスを返します
+cl : コマンド ライン warning D9028: 簡易リビルド時のエラーです、通常のビルドに戻します
   DirectX11_1.vcxproj -> C:\Users\1401349\Documents\WorkingGames\SlimeGame\DirectX11\Debug\DirectX11_1.exe
   DirectX11_1.vcxproj -> C:\Users\1401349\Documents\WorkingGames\SlimeGame\DirectX11\Debug\DirectX11_1.pdb (Full PDB)

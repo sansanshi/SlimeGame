@@ -1,3 +1,5 @@
+#include"ShaderInclude.hlsli"
+
 cbuffer global:register(b0){
 	matrix _world;
 	matrix _cameraView;
@@ -7,45 +9,7 @@ cbuffer global:register(b0){
 
 };
 
-cbuffer Global2:register(b5){
-	float4 lightPos;
-	float4 eyePos;
-	float4 fogColor;
-	float2 fogCoord;
-	float nearZ;
-	float farZ;
-	int timer;
 
-};
-Texture2D _tex:register(t0);
-Texture2D _sph:register(t1);
-Texture2D _spa:register(t2);
-
-Texture2D _normalTex:register(t5);
-Texture2D _heightMap:register(t6);
-Texture2D _dispMap:register(t7);
-Texture2D _dispMask:register(t8);
-Texture2D _shadowTex:register(t10);//ライトからのレンダリング結果をテクスチャとして受け取る
-Texture2D _lightViewTex:register(t11);//ライトから見たレンダリング結果（カラー
-SamplerState _samplerState:register(s0);
-SamplerState _samplerStateDisp:register(s1);
-SamplerState _samplerState_clamp:register(s2);
-matrix DisableTranslation(matrix mat)
-{
-	matrix m = mat;
-	m._m03 = m._m13 = m._m23 = 0;
-	return m;
-}
-matrix InitMat()
-{
-	matrix mat;
-	mat._m00 = mat._m01 = mat._m02 = mat._m03 = 0;
-	mat._m10 = mat._m11 = mat._m12 = mat._m13 = 0;
-	mat._m20 = mat._m21 = mat._m22 = mat._m23 = 0;
-	mat._m30 = mat._m31 = mat._m32 = mat._m33 = 0;
-	mat._m00 = mat._m11 = mat._m22 = mat._m33 = 1;
-	return mat;
-}
 
 // 入力制御点
 struct VS_CONTROL_POINT_OUTPUT
@@ -57,6 +21,8 @@ struct VS_CONTROL_POINT_OUTPUT
 
 	float fogCoord : TEXCOORD1;
 	float4 fogColor : COLOR0;
+
+	float2 windowSize:TEXCOORD2;
 };
 
 VS_CONTROL_POINT_OUTPUT TessVS(float4 pos:POSITION, float4 normal : NORMAL, float2 uv : TEXCOORD,
@@ -69,6 +35,8 @@ VS_CONTROL_POINT_OUTPUT TessVS(float4 pos:POSITION, float4 normal : NORMAL, floa
 
 	o.fogColor = fogColor;
 	o.fogCoord = fogCoord;
+
+	o.windowSize = windowSize;
 	return o;
 }
 
@@ -81,6 +49,7 @@ struct HS_CONTROL_POINT_OUTPUT
 
 	float fogCoord : TEXCOORD1;
 	float4 fogColor:COLOR0;
+	float2 windowSize:TEXCOORD2;
 };
 
 // 出力パッチ定数データ。
@@ -130,6 +99,7 @@ HS_CONTROL_POINT_OUTPUT TessHS(
 
 	o.fogCoord = ip[i].fogCoord;
 	o.fogColor = ip[i].fogColor;
+	o.windowSize = ip[i].windowSize;
 
 	return o;
 }
@@ -147,6 +117,7 @@ struct DS_OUTPUT
 
 	float4 fogColor:COLOR0;
 	float fog : TEXCOORD1;
+	float2 windowSize:TEXCOORD2;
 };
 
 [domain("quad")]
@@ -175,6 +146,8 @@ DS_OUTPUT TessDS(HS_CONSTANT_DATA_OUTPUT In, float2 UV:SV_DomainLocation, const 
 	matrix lvp = mul(mul(_lightProj,_lightView),_world);
 	o.shadowposCS = mul(lvp, postemp);
 	o.shadowposVS = mul(mul(_lightView, _world), postemp);
+	o.shadowposVS = mul(_world, postemp);
+	o.shadowposVS = mul(_lightView, o.shadowposVS);
 
 	o.normal = float3(0, 1, 0);//とりあえず平面なので今は0,1,0でやっとく
 
@@ -184,6 +157,8 @@ DS_OUTPUT TessDS(HS_CONSTANT_DATA_OUTPUT In, float2 UV:SV_DomainLocation, const 
 	//float dist=
 	o.fog= fogCoord.x + o.pos.w*fogCoord.y;
 	o.fogColor = patch[0].fogColor;
+
+	o.windowSize.x = patch[0].windowSize;
 
 	return o;
 }

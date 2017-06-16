@@ -2,6 +2,7 @@
 #include<vector>
 #include"DeviceDx11.h"
 #include"ShaderGenerator.h"
+#include"ShaderDefine.h"
 
 Sphere::Sphere(unsigned int divNum,float radius,Camera& camera) :_cameraRef(camera)
 {
@@ -262,22 +263,22 @@ Sphere::Sphere(unsigned int divNum,float radius,Camera& camera) :_cameraRef(came
 
 	//マスク（？）テクスチャ
 	result = D3DX11CreateShaderResourceViewFromFile(dev.Device(), "texture/disp0.png", nullptr, nullptr, &_dispMask, &result);
-	dev.Context()->VSSetShaderResources(8, 1, &_dispMask);
+	dev.Context()->VSSetShaderResources(TEXTURE_MASK, 1, &_dispMask);
 
 
 	//ディスプレースメントテクスチャ
 	result = D3DX11CreateShaderResourceViewFromFile(dev.Device(), "texture/wave__.png", nullptr, nullptr, &_displaysmentMap, &result);
-	dev.Context()->VSSetShaderResources(7, 1, &_displaysmentMap);
+	dev.Context()->VSSetShaderResources(TEXTURE_DISPLACEMENT, 1, &_displaysmentMap);
 
 
 	// ノーマルマップ用テクスチャ
 	result = D3DX11CreateShaderResourceViewFromFile(dev.Device(), "texture/normal3.png", nullptr, nullptr, &_normalTex, &result);
-	dev.Context()->PSSetShaderResources(5, 1, &_normalTex);
+	dev.Context()->PSSetShaderResources(TEXTURE_NORMAL, 1, &_normalTex);
 
 
 	//視差マッピング用テクスチャ
 	result = D3DX11CreateShaderResourceViewFromFile(dev.Device(), "texture/height1_.png", nullptr, nullptr, &_heightMap, &result);
-	dev.Context()->PSSetShaderResources(6, 1, &_heightMap);
+	dev.Context()->PSSetShaderResources(TEXTURE_HEIGHT, 1, &_heightMap);
 
 
 	//サンプラの設定
@@ -425,7 +426,7 @@ Sphere::Draw()
 	DeviceDx11& dev = DeviceDx11::Instance();
 
 	dev.Context()->PSSetSamplers(0, 1, &_samplerState_Wrap);
-	dev.Context()->PSSetShaderResources(5, 1, &_normalTex);
+	dev.Context()->PSSetShaderResources(TEXTURE_NORMAL, 1, &_normalTex);
 
 	unsigned int stride = sizeof(float) * 14;
 	unsigned int offset = 0;
@@ -434,8 +435,8 @@ Sphere::Draw()
 	dev.Context()->PSSetShader(_pixelShader, nullptr, 0);//PMDモデル表示用シェーダセット
 	dev.Context()->IASetInputLayout(_inputlayout);
 
-	dev.Context()->VSSetShaderResources(7, 1, &_displaysmentMap);
-	dev.Context()->VSSetShaderResources(8, 1, &_dispMask);
+	dev.Context()->VSSetShaderResources(TEXTURE_DISPLACEMENT, 1, &_displaysmentMap);
+	dev.Context()->VSSetShaderResources(TEXTURE_MASK, 1, &_dispMask);
 
 
 	
@@ -537,7 +538,7 @@ Sphere::DrawLightView_color()
 	DeviceDx11& dev = DeviceDx11::Instance();
 
 	dev.Context()->PSSetSamplers(0, 1, &_samplerState_Wrap);
-	dev.Context()->PSSetShaderResources(5, 1, &_normalTex);
+	dev.Context()->PSSetShaderResources(TEXTURE_NORMAL, 1, &_normalTex);
 
 	unsigned int stride = sizeof(float) * 14;
 	unsigned int offset = 0;
@@ -546,8 +547,8 @@ Sphere::DrawLightView_color()
 	dev.Context()->PSSetShader(_pixelShader, nullptr, 0);//PMDモデル表示用シェーダセット
 	dev.Context()->IASetInputLayout(_inputlayout);
 
-	dev.Context()->VSSetShaderResources(7, 1, &_displaysmentMap);
-	dev.Context()->VSSetShaderResources(8, 1, &_dispMask);
+	dev.Context()->VSSetShaderResources(TEXTURE_DISPLACEMENT, 1, &_displaysmentMap);
+	dev.Context()->VSSetShaderResources(TEXTURE_MASK, 1, &_dispMask);
 
 	dev.Context()->VSSetConstantBuffers(0, 1, &_matrixBuffer);
 	dev.Context()->Map(_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &_mappedMatrixies);

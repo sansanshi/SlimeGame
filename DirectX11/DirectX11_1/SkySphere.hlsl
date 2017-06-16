@@ -1,4 +1,6 @@
 
+#include"ShaderInclude.hlsli"
+
 cbuffer global:register(b0) {
 	matrix _world;
 	matrix _cameraView;
@@ -18,17 +20,6 @@ cbuffer material:register(b1) {
 };
 
 
-
-cbuffer Global2:register(b5) {
-	float4 lightPos;
-	float4 eyePos;
-	float4 fogColor;
-	float2 fogCoord;
-	float nearZ;
-	float farZ;
-	int timer;
-
-};
 
 
 struct Output {
@@ -56,56 +47,17 @@ struct Output {
 	float4 fogColor:COLOR3;
 	float fog : TEXCOORD5;
 
+	float2 windowSize:TEXCOORD6;
+
 };
 
 struct depthVS_Out {
 	float4 pos:SV_POSITION;
 };
 
-Texture2D _tex:register(t0);
-Texture2D _sph:register(t1);
-Texture2D _spa:register(t2);
-
-Texture2D _normalTex:register(t5);
-Texture2D _heightMap:register(t6);
-Texture2D _dispMap:register(t7);
-Texture2D _dispMask:register(t8);
-Texture2D _shadowTex:register(t10);//ライトからのレンダリング結果をテクスチャとして受け取る
-SamplerState _samplerState:register(s0);
-SamplerState _samplerStateDisp:register(s1);
-SamplerState _samplerState_clamp:register(s2);
 
 
-matrix TangentMatrix(float4 tangent, float4 binormal, float4 normal)
-{
-	matrix mat = {
-		float4(normalize(tangent)),
-		float4(normalize(binormal)),
-		float4(normalize(normal)),
-		float4(0, 0, 0, 1) };
-	matrix test = {
-		float4(1, 0, 0, 0),
-		float4(0, 1, 0, 0),
-		float4(0, 0, 1, 0),
-		float4(0, 0, 0, 1)
-	};
-	return mat;
 
-}
-
-matrix InvTangentMatrix(float4 tangent, float4 binormal, float4 normal)
-{
-	matrix r = TangentMatrix(tangent, binormal, normal);
-	return transpose(r);
-}
-
-
-matrix DisableTranslation(matrix mat)
-{
-	matrix m = mat;
-	m._m03 = m._m13 = m._m23 = 0;
-	return m;
-}
 
 
 Output SkySphereVS(float4 pos:POSITION, float4 normal : NORMAL, float2 uv : TEXCOORD,
@@ -160,6 +112,7 @@ Output SkySphereVS(float4 pos:POSITION, float4 normal : NORMAL, float2 uv : TEXC
 	heightFog = pow(heightFog,3);
 	o.fog = clamp(heightFog * o.fog, 0.0f, 1.0f);
 	
+	o.windowSize = windowSize;
 
 	return o;
 }

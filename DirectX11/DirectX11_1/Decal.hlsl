@@ -1,3 +1,5 @@
+#include"ShaderInclude.hlsli"
+
 cbuffer global:register(b0){
 	matrix _world;
 	matrix _view;//カメラビュー
@@ -10,16 +12,7 @@ cbuffer global:register(b0){
 	matrix _wvp;
 
 };
-cbuffer Global2:register(b5){
-	float4 lightPos;
-	float4 eyePos;
-	float4 fogColor;
-	float2 fogCoord;
-	float nearZ;
-	float farZ;
-	int timer;
 
-};
 
 //行列の成分取り出しが列優先順になっている
 //3行目4列目　なら._43 ._m32
@@ -42,6 +35,7 @@ struct Output{
 
 	float fog:TEXCOORD1;
 	float4 fogColor:COLOR1;
+	float2 windowSize:TEXCOORD2;
 
 };
 
@@ -56,30 +50,7 @@ matrix MatrixIdentity()
 	return ret;
 }
 
-Texture2D _tex:register(t0);
-Texture2D _sph:register(t1);
-Texture2D _spa:register(t2);
 
-Texture2D _normalTex:register(t5);
-Texture2D _heightMap:register(t6);
-Texture2D _dispMap:register(t7);
-Texture2D _dispMask:register(t8);
-Texture2D _decalTex:register(t9);//デカールテクスチャ
-Texture2D _shadowTex:register(t10);//ライトからのレンダリング結果をテクスチャとして受け取る
-Texture2D _lightViewTex:register(t11);
-Texture2D _cameraDepthTex:register(t12);
-
-SamplerState _samplerState:register(s0);
-SamplerState _samplerStateDisp:register(s1);
-SamplerState _samplerState_clamp:register(s2);
-
-
-matrix DisableTranslation(matrix mat)
-{
-	matrix m = mat;
-	m._m03 = m._m13 = m._m23 = 0;
-	return m;
-}
 
 
 
@@ -88,17 +59,8 @@ Output DecalBoxVS(float4 pos:POSITION)
 	Output o;
 	matrix wvp = mul(_proj, mul(_view, _world));
 	o.pos = mul(wvp,pos);
+	o.postest = o.pos;//SV_POSITIONを設定するとラスタライザでwで割ってくれるのでこれでok
 
-	o.postest = mul(_world, pos);
-	o.postest = mul(_view, o.postest);
-	o.postest = mul(_proj, o.postest);
-
-	
-	o.pos = mul(_world, pos);
-	o.pos = mul(_view, o.pos);
-	o.pos = mul(_proj, o.pos);
-
-	//o.pos = mul(_wvp, pos);
 
 
 	o.invWorld = _invWorld;//InverseTranslation(_world);
@@ -114,6 +76,8 @@ Output DecalBoxVS(float4 pos:POSITION)
 	float dist = length(mul(mul(_view, _world), pos));
 	o.fogColor = fogColor;
 	o.fog = fogCoord.x + dist*fogCoord.y;
+
+	o.windowSize = windowSize;
 	return o;
 }
 

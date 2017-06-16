@@ -11,8 +11,11 @@ extern const float FAR_Z;
 
 extern const float FOG_START;
 extern const float FOG_END;
+extern const XMFLOAT4 FOG_COLOR;
 
 extern const float SKYSPHERE_RADIUS;
+
+extern const float SPEED_RISING;//カメラの上昇、下降スピード
 
 struct Vector3{
 	float x, y, z;
@@ -123,9 +126,11 @@ struct ShaderGlobals
 	XMFLOAT4 eyePos;//16
 	XMFLOAT4 fogColor;
 	XMFLOAT2 fog;//フォグ係数計算用：X成分にZfar/(Zfar-Znear)，Y成分に-1/(Zfar-Znear)
+	XMFLOAT2 windowSize;
 	float nearZ;
 	float farZ;
 	int timer;//4
+	
 
 	//XMFLOAT3 lightVec;//12
 	//int timer;//4

@@ -24,16 +24,6 @@ cbuffer boneMatrix:register(b3)
 	matrix _boneMatrix[512];
 };
 
-cbuffer Global2:register(b5) {
-	float4 lightPos;
-	float4 eyePos;
-	float4 fogColor;
-	float2 fogCoord;
-	float nearZ;
-	float farZ;
-	int timer;
-};
-
 
 struct Output {
 	float4 pos:SV_POSITION;
@@ -62,39 +52,14 @@ struct Output {
 
 	float fog : TEXCOORD6;
 	float4 fogColor:COLOR3;
+
+	float2 windowSize:TEXCOORD7;
 };
 
 
 
-matrix TangentMatrix(float4 tangent, float4 binormal, float4 normal)
-{
-	matrix mat = {
-		float4(normalize(tangent)),
-		float4(normalize(binormal)),
-		float4(normalize(normal)),
-		float4(0, 0, 0, 1) };
-	return mat;
-
-}
-
-matrix InvTangentMatrix(float4 tangent, float4 binormal, float4 normal)
-{
-	matrix r = TangentMatrix(tangent, binormal, normal);
-	return transpose(r);
-}
 
 
-matrix DisableTranslation(matrix mat)
-{
-	matrix m = mat;
-	m._m03 = m._m13 = m._m23 = 0;
-	return m;
-}
-
-float GetRandomNumber(float2 texCoord, int Seed)
-{
-	return frac(sin(dot(texCoord.xy, float2(12.9898, 78.233)) + Seed) * 43758.5453);
-}
 
 Output WaterVS(float4 pos:POSITION, float4 normal : NORMAL, float2 uv : TEXCOORD,
 	float4 tangent : TANGENT, float4 binormal : BINORMAL)
@@ -126,6 +91,8 @@ Output WaterVS(float4 pos:POSITION, float4 normal : NORMAL, float2 uv : TEXCOORD
 	float dist = length(mul(_world, pos).xyz - eyePos.xyz);
 	o.fog = fogCoord.x + dist*fogCoord.y;
 	o.fogColor = fogColor;
+
+	o.windowSize = windowSize;
 	return o;
 }
 float4 WaterPS(Output o) :SV_Target

@@ -5,6 +5,8 @@
 #include<xnamath.h>
 #include"Camera.h"
 
+#include"ShaderDefine.h"
+
 DecalBox::DecalBox(float width, float height, float length, Camera* cameraPtr) 
 	:_pos(0.f,0.f,0.f),_rot(45.f,0.f,0.f),_scale(16.f,16.f,16.f),_cameraPtr(cameraPtr)
 {
@@ -295,7 +297,7 @@ DecalBox::DebugDraw()
 	dev.Context()->IASetInputLayout(_inputlayout);
 
 
-	dev.Context()->PSSetShaderResources(9, 1, &_decalTexture);
+	dev.Context()->PSSetShaderResources(TEXTURE_DECAL, 1, &_decalTexture);
 
 
 
@@ -373,7 +375,7 @@ DecalBox::Draw()
 	dev.Context()->IASetInputLayout(_inputlayout);
 
 	ID3D11ShaderResourceView** temp = _decalTex.get();
-	dev.Context()->PSSetShaderResources(9, 1, temp);
+	dev.Context()->PSSetShaderResources(TEXTURE_DECAL, 1, temp);
 
 
 
