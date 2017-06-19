@@ -156,6 +156,16 @@ struct MatrixiesForDecal{
 	XMMATRIX invWVP;
 	XMMATRIX wvp;
 };
+struct MatrixiesForDecalTest {
+	XMMATRIX world[300];
+	XMMATRIX view;
+	XMMATRIX proj;
+
+	XMMATRIX invWorld[300];
+	XMMATRIX invView;
+	XMMATRIX invProj;
+
+};
 
 //シェーダに渡す用の構造体
 struct Material{

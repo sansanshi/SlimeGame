@@ -535,9 +535,10 @@ PlayingScene::Update()
 		_decalBox.SetPos(pos);
 		int j = 0;
 		
-		if (keystate[VK_RBUTTON] & 0x80&&!(lastkeystate[VK_RBUTTON]&0x80))
+		if (keystate[VK_RBUTTON] & 0x80)
 		{
-			_decalFac->CreateDecalBox(_decalBox.GetPos(), _decalBox.GetRotation(), _decalBox.GetScale());
+			_decalFac->CreateDecalBox(_decalBox.GetWorldMatrix());
+			//_decalFac->CreateDecalBox(_decalBox.GetPos(), _decalBox.GetRotation(), _decalBox.GetScale());
 		}
 		/*UINT num = 1;
 		dev.Context()->RSGetViewports(&num, &vp);

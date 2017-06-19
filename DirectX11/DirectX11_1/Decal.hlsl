@@ -1,17 +1,24 @@
 #include"ShaderInclude.hlsli"
 
 cbuffer global:register(b0){
-	matrix _world;
+	matrix _world[300];
 	matrix _view;//カメラビュー
 	matrix _proj;//カメラプロジェクション
-	matrix _invWorld;
+	matrix _invWorld[300];
 	matrix _invView;
 	matrix _invProj;
 
-	matrix _invWVP;
-	matrix _wvp;
 
 };
+cbuffer global_debug:register(b1)
+{
+	matrix __world;
+	matrix __view;//カメラビュー
+	matrix __proj;//カメラプロジェクション
+	matrix __invWorld;
+	matrix __invView;
+	matrix __invProj;
+}
 
 
 //行列の成分取り出しが列優先順になっている
@@ -37,6 +44,9 @@ struct Output{
 	float4 fogColor:COLOR1;
 	float2 windowSize:TEXCOORD2;
 
+	float2 screenCoord:TEXCOORD3;
+	float3 positionL:POSITION1;
+
 };
 
 matrix MatrixIdentity()
@@ -49,21 +59,64 @@ matrix MatrixIdentity()
 	};
 	return ret;
 }
-
-
-
-
-
-Output DecalBoxVS(float4 pos:POSITION)
+Output DecalBoxVS_Debug(float4 pos:POSITION)
 {
 	Output o;
-	matrix wvp = mul(_proj, mul(_view, _world));
+	matrix wvp = mul(_proj, mul(_view, __world));
+	o.pos = mul(wvp, pos);
+	o.postest = o.pos;//SV_POSITIONを設定するとラスタライザでwで割ってくれるのでこれでok
+
+
+
+	o.invWorld = __invWorld;//InverseTranslation(_world);
+	o.invView = __invView;
+	o.invProj = __invProj;
+
+
+
+	o.nearZ = nearZ;
+	o.farZ = farZ;
+	o.modelpos = pos;
+
+	float dist = length(mul(mul(__view, __world), pos));
+	o.fogColor = fogColor;
+	o.fog = fogCoord.x + dist*fogCoord.y;
+
+	o.windowSize = windowSize;
+	
+	float3 positionVS = mul(mul(__view, __world), pos);
+
+	float2 screenpos = o.postest.xy / o.postest.w;
+	o.screenCoord= float2(
+		(1.0f + screenpos.x) / 2.0f + (0.5f / 1280.0f),
+		(1.0f - screenpos.y) / 2.0f + (0.5f / 720.0f));
+	float d = _cameraDepthTex.SampleLevel(_samplerState, o.screenCoord,0);
+
+	float3 viewRay = float3(positionVS.xy*(o.farZ / positionVS.z), o.farZ);
+	//viewRay = normalize(positionVS.xyz)*100.0f;
+
+	float3 viewPosition = viewRay*d;
+	float3 positionW = mul(o.invView, float4(viewPosition, 1)).xyz;
+	float4 positionL = mul(o.invWorld, float4(positionW, 1));
+
+	o.positionL = positionL;
+
+	return o;
+}
+
+
+
+
+Output DecalBoxVS(float4 pos:POSITION,uint instNum:SV_InstanceID)
+{
+	Output o;
+	matrix wvp = mul(_proj, mul(_view, _world[instNum]));
 	o.pos = mul(wvp,pos);
 	o.postest = o.pos;//SV_POSITIONを設定するとラスタライザでwで割ってくれるのでこれでok
 
 
 
-	o.invWorld = _invWorld;//InverseTranslation(_world);
+	o.invWorld = _invWorld[instNum];//InverseTranslation(_world);
 	o.invView = _invView;
 	o.invProj = _invProj;
 
@@ -73,7 +126,7 @@ Output DecalBoxVS(float4 pos:POSITION)
 	o.farZ = farZ;
 	o.modelpos = pos;
 
-	float dist = length(mul(mul(_view, _world), pos));
+	float dist = length(mul(mul(_view, _world[instNum]), pos));
 	o.fogColor = fogColor;
 	o.fog = fogCoord.x + dist*fogCoord.y;
 
@@ -99,7 +152,7 @@ float4 DecalBoxPS_Debug(Output o):SV_Target
 	//半ピクセルずらさない場合実際に描画するとテクスチャが若干歪む
 
 
-	float d = _cameraDepthTex.Sample(_samplerState, coord);
+	float d = _cameraDepthTex.Sample(_samplerState, o.screenCoord);
 		
 		
 	float4 positionVS = mul(o.invProj, o.postest);
@@ -127,7 +180,7 @@ float4 DecalBoxPS_Debug(Output o):SV_Target
 		{
 			return float4(1, 0, (o.modelpos.z+0.5f), 1);
 		}
-		clip(0.5f - abs(positionL.xyz));
+		clip(0.5f - abs(o.positionL.xyz));
 		
 
 
@@ -136,7 +189,7 @@ float4 DecalBoxPS_Debug(Output o):SV_Target
 
 	
 	
-	float2 uv = (positionL.xy + 0.5f)*float2(1.0f,-1.0f);
+	float2 uv = (o.positionL.xy + 0.5f)*float2(1.0f,-1.0f);
 	if (abs(0.5f-uv.x)>0.49f||abs(0.5f+uv.y)>0.49f)
 	{
 		return float4(1, 0, 0, 1);
@@ -185,6 +238,7 @@ float3 viewRay = float3(positionVS.xy*(o.farZ / positionVS.z),o.farZ);
 float3 viewPosition = viewRay*d;
 float3 positionW = mul(o.invView,float4(viewPosition, 1)).xyz;
 float4 positionL = mul(o.invWorld,float4(positionW, 1));
+
 
 clip(0.5f - abs(positionL.xyz));
 

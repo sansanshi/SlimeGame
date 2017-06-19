@@ -30,6 +30,7 @@ private:
 	ID3D11ShaderResourceView* _decalTexture;
 	std::shared_ptr<ID3D11ShaderResourceView*> _decalTex;
 
+
 public:
 	DecalBox(float width,float height,float length,Camera* cameraPtr);
 	DecalBox(const XMFLOAT3& pos, const XMFLOAT3& rot,const XMFLOAT3& scale,
@@ -52,5 +53,7 @@ public:
 	const XMFLOAT3 GetRotation() { return _rot; };
 	const XMFLOAT3 GetScale() { return _scale; };
 	const XMFLOAT3 GetPos() { return _pos; };
+
+	const XMMATRIX& GetWorldMatrix() { return _modelMatrix; };
 };
 

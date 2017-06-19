@@ -3,6 +3,7 @@
 #include<xnamath.h>
 #include<vector>
 #include<memory>
+#include"Define.h"
 
 class Camera;
 class DecalBox;
@@ -15,6 +16,7 @@ public:
 
 	void CreateDecalBox(const XMFLOAT3& pos);
 	void CreateDecalBox(const XMFLOAT3& pos, const XMFLOAT3& rot,const XMFLOAT3& scale);
+	void CreateDecalBox(const XMMATRIX& worldMat);
 	void Update();
 	void Draw();
 private:
@@ -31,5 +33,15 @@ private:
 	ID3D11VertexShader* _vertexShader;
 	ID3D11PixelShader* _pixelShader;
 	ID3D11InputLayout* _inputlayout;
+
+
+	XMMATRIX _worldMatrixes[300];
+	XMMATRIX _invWorldMatrixes[300];
+	unsigned int _decalBoxCnt;
+
+	MatrixiesForDecalTest _matrixies;
+	ID3D11Buffer* _matrixBuffer;
+	D3D11_MAPPED_SUBRESOURCE _mappedMatrixies;
+	ID3D11SamplerState* _samplerState;
 };
 

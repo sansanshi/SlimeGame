@@ -53,7 +53,7 @@ Renderer::Init()
 
 	_depthStencilDesc = {};
 	_depthStencilDesc.DepthEnable = true;
-	_depthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
+	_depthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;
 	_depthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;//深度バッファへの書き込みをオン
 
 	dev.Device()->CreateDepthStencilState(&_depthStencilDesc, &_depthStencilState);
@@ -64,7 +64,7 @@ Renderer::Init()
 	dev.Device()->CreateDepthStencilState(&_depthStencilDesc, &_depthStencilState_ZWriteOff);
 
 	//深度バッファそのものが無効なステンシルステートの作成
-	_depthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
+	_depthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;
 	_depthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
 	_depthStencilDesc.DepthEnable = false;
 	dev.Device()->CreateDepthStencilState(&_depthStencilDesc,&_depthStencilState_ZOff);

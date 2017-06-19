@@ -43,7 +43,7 @@ DecalBox::DecalBox(float width, float height, float length, Camera* cameraPtr)
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 	};
 
-	ShaderGenerator::CreateVertexShader("Decal.hlsl", "DecalBoxVS", "vs_5_0",
+	ShaderGenerator::CreateVertexShader("Decal.hlsl", "DecalBoxVS_Debug", "vs_5_0",
 		_vertexShader, inputElementDescs, sizeof(inputElementDescs) / sizeof(D3D11_INPUT_ELEMENT_DESC), _inputlayout);
 	ShaderGenerator::CreatePixelShader("Decal.hlsl", "DecalBoxPS_Debug", "ps_5_0", _pixelShader);
 
@@ -105,7 +105,7 @@ DecalBox::DecalBox(float width, float height, float length, Camera* cameraPtr)
 	//*(XMMATRIX*)mem.pData = matrix;//川野先生の書き方　memcpyで数値を間違えるとメモリがぐちゃぐちゃになる
 	dev.Context()->Unmap(_matrixBuffer, 0);
 
-	dev.Context()->VSSetConstantBuffers(0, 1, &_matrixBuffer);
+	dev.Context()->VSSetConstantBuffers(1, 1, &_matrixBuffer);
 
 
 	//サンプラの設定
@@ -234,7 +234,7 @@ DecalBox::DecalBox(const XMFLOAT3& pos, const XMFLOAT3& rot, const XMFLOAT3& sca
 	//*(XMMATRIX*)mem.pData = matrix;//川野先生の書き方　memcpyで数値を間違えるとメモリがぐちゃぐちゃになる
 	dev.Context()->Unmap(_matrixBuffer, 0);
 
-	dev.Context()->VSSetConstantBuffers(0, 1, &_matrixBuffer);
+	dev.Context()->VSSetConstantBuffers(1, 1, &_matrixBuffer);
 
 
 	//サンプラの設定
@@ -301,7 +301,7 @@ DecalBox::DebugDraw()
 
 
 
-	dev.Context()->VSSetConstantBuffers(0, 1, &_matrixBuffer);
+	dev.Context()->VSSetConstantBuffers(1, 1, &_matrixBuffer);
 	dev.Context()->Map(_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &_mappedMatrixies);
 	//ここでこのメモリの塊に、マトリックスの値をコピーしてやる
 	memcpy(_mappedMatrixies.pData, (void*)(&_matrixies), sizeof(_matrixies));
@@ -404,25 +404,25 @@ DecalBox::Update()
 	_modelMatrix =  XMMatrixMultiply(rotMatrix, scaleMatrix);
 	_modelMatrix = XMMatrixMultiply(_modelMatrix, transMatrix);
 	_matrixies.world = _modelMatrix;
-	_matrixies.view = _cameraPtr->CameraView();
-	_matrixies.proj = _cameraPtr->CameraProjection();
+	//_matrixies.view = _cameraPtr->CameraView();
+	//_matrixies.proj = _cameraPtr->CameraProjection();
 
-	XMVECTOR dummy;
-	XMMATRIX view = _cameraPtr->CameraView();
-	_matrixies.invView = XMMatrixInverse(&dummy, view);
-	XMMATRIX world = _matrixies.world;
-	_matrixies.invWorld = XMMatrixInverse(&dummy, world);
-	XMMATRIX proj = _matrixies.proj;
-	_matrixies.invProj = XMMatrixInverse(&dummy, proj);
+	//XMVECTOR dummy;
+	//XMMATRIX view = _cameraPtr->CameraView();
+	//_matrixies.invView = XMMatrixInverse(&dummy, view);
+	//XMMATRIX world = _matrixies.world;
+	//_matrixies.invWorld = XMMatrixInverse(&dummy, world);
+	//XMMATRIX proj = _matrixies.proj;
+	//_matrixies.invProj = XMMatrixInverse(&dummy, proj);
 
 
-	XMMATRIX vp = XMMatrixMultiply(proj, view);
-	XMMATRIX wvp = XMMatrixMultiply(vp,world);
-	XMMATRIX invWVP = XMMatrixInverse(&dummy, wvp);
-	_matrixies.invWVP = invWVP;
-	_matrixies.wvp = wvp;
-	//とりあえずinvWVPは多分合ってる
+	//XMMATRIX vp = XMMatrixMultiply(proj, view);
+	//XMMATRIX wvp = XMMatrixMultiply(vp,world);
+	//XMMATRIX invWVP = XMMatrixInverse(&dummy, wvp);
+	//_matrixies.invWVP = invWVP;
+	//_matrixies.wvp = wvp;
+	////とりあえずinvWVPは多分合ってる
 
-	int k = 0;
+	//int k = 0;
 }
 
