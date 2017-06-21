@@ -170,6 +170,9 @@
     <ClCompile Include="ShaderDefine.cpp">
       <Filter>ソース ファイル\HLSL</Filter>
     </ClCompile>
+    <ClCompile Include="HUD.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Define.h">
@@ -276,6 +279,9 @@
     </ClInclude>
     <ClInclude Include="ShaderDefine.h">
       <Filter>ソース ファイル\HLSL</Filter>
+    </ClInclude>
+    <ClInclude Include="HUD.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

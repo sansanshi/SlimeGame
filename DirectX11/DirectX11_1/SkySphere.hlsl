@@ -108,8 +108,9 @@ Output SkySphereVS(float4 pos:POSITION, float4 normal : NORMAL, float2 uv : TEXC
 
 	o.posWorld = mul(_world, pos);
 	//高さフォグ　とりあえず決め打ちでやってみる
-	float heightFog = clamp((300.0f - abs(o.posWorld.y)) / (300.0f - 50.0f), 0.0f, 1.0f);
+	float heightFog = clamp((300.0f - o.posWorld.y) / (300.0f - 30.0f), 0.0f, 1.0f);
 	heightFog = pow(heightFog,3);
+	heightFog = (1.0f - heightFog);
 	o.fog = clamp(heightFog * o.fog, 0.0f, 1.0f);
 	
 	o.windowSize = windowSize;

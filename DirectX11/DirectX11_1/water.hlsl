@@ -112,7 +112,7 @@ float4 WaterPS(Output o) :SV_Target
 	bright = saturate(dot(o.lightVec, o.normal));//saturate(dot(-o.lightVec, normalVec));
 	o.shadowposCS = float4(o.shadowposCS.xyz / o.shadowposCS.w, 1.0f);
 	float2 shadowUV = (float2(1, 1) + (o.shadowposCS.xy)*float2(1, -1))*0.5f;
-	shadowUV += float2(0.5f / 1280.0f, 0.5f / 720.0f);
+	shadowUV += float2(0.5f / o.windowSize.x, 0.5f / o.windowSize.y);
 	float lightviewDepth = _shadowTex.Sample(_samplerState_clamp, shadowUV).r;
 
 	float ld = o.shadowposVS.z / o.farZ;

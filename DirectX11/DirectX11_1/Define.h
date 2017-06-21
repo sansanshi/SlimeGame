@@ -17,6 +17,15 @@ extern const float SKYSPHERE_RADIUS;
 
 extern const float SPEED_RISING;//カメラの上昇、下降スピード
 
+
+#pragma pack(1)
+struct HUDVertex {
+	XMFLOAT3 pos;
+	XMFLOAT2 uv;
+	/*HUDVertex(XMFLOAT3 p, XMFLOAT2 texcoord) :pos(p), uv(texcoord){}*/
+};
+#pragma pack()
+
 struct Vector3{
 	float x, y, z;
 

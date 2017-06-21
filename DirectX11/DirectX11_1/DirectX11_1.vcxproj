@@ -149,6 +149,7 @@
     <ClCompile Include="GameMain.cpp" />
     <ClCompile Include="GameOverScene.cpp" />
     <ClCompile Include="Geometry.cpp" />
+    <ClCompile Include="HUD.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="OBJLoader.cpp" />
     <ClCompile Include="OBJMesh.cpp" />
@@ -187,6 +188,7 @@
     <ClInclude Include="GameMain.h" />
     <ClInclude Include="GameOverScene.h" />
     <ClInclude Include="Geometry.h" />
+    <ClInclude Include="HUD.h" />
     <ClInclude Include="OBJLoader.h" />
     <ClInclude Include="OBJMesh.h" />
     <ClInclude Include="Plane.h" />

@@ -228,16 +228,15 @@ Player::CcdIkSolve(PMDMesh& mesh,const std::string& ikName,XMFLOAT3& offset)
 	//ボーンの根っこ部分（IKから最も遠いボーン）から変更後IKへのベクトル
 	XMFLOAT3 ikTargetRootVec = ikTargetPos - tmpBonePositions[iklist.ikchainLen - 1];
 
-
 	//本来の長さ以上になろうとしたらクランプする------------------------------------------
 	float ikmaxlen = Length(ikOriginRootVec);
 	if (Length(ikTargetRootVec) > ikmaxlen)
 	{
 		XMVECTOR v = XMLoadFloat3(&ikTargetRootVec);
-		v = XMVector3ClampLength(v, 0.0f, ikmaxlen);
+		v = XMVector3ClampLength(v, 0.1f, ikmaxlen);
 		XMStoreFloat3(&ikTargetRootVec, v);
 
-		ikTargetPos = ikTargetRootVec + tmpBonePositions[iklist.ikchainLen - 1];
+		ikTargetPos = tmpBonePositions[iklist.ikchainLen - 1] + ikTargetRootVec ;
 	}
 	_ikpos = ikTargetPos;
 	//------------------------------------------------------------------------------------
@@ -257,15 +256,19 @@ Player::CcdIkSolve(PMDMesh& mesh,const std::string& ikName,XMFLOAT3& offset)
 	ikTargetRootVec = Normalize(ikTargetRootVec);
 	matIkRot = XMMatrixRotationAxis(XMLoadFloat3(&rootAxis), rootangle);
 
-
+	matIkRot = LookAtMatrix(ikOriginRootVec, ikTargetRootVec, XMFLOAT3(0, 1, 0), XMFLOAT3(1, 0, 0));
 
 	//ここからCCD_IK
 	//ほんとはここでサイクリック（繰り返す）するが、まず1回目の事だけ考える
 	for (int c = 0; c < iklist.iterations; ++c)
 	{
+
+		matIkRot = LookAtMatrix(ikOriginRootVec, ikTargetRootVec, XMFLOAT3(0, 1, 0), XMFLOAT3(-1, 0, 0));
+		
 		//中間ボーン座標補正
 		for (int i = 0; i < iklist.ikchainLen; ++i)
 		{
+
 			int ikboneIdx = iklist.ikboneIndices[i];
 			XMFLOAT3 originVec = ikOriginPos - tmpBonePositions[i];
 			XMFLOAT3 targetVec = ikTargetPos - tmpBonePositions[i];
@@ -491,7 +494,7 @@ Player::Init()
 	//vmd側にリピートフラグを持たせる
 	//VMDファイルの読み込み
 	VMDLoader vmdLoader;
-	_vmd = vmdLoader.Load("motiontest.vmd",true);
+	_vmd = vmdLoader.Load("neutral.vmd",true);
 	RegisterAnim("charge", _vmd);
 	VMDData* run = vmdLoader.Load("run.vmd",true);
 	RegisterAnim("run", run);

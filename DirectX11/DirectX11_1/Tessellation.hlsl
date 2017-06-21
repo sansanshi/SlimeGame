@@ -18,11 +18,6 @@ struct VS_CONTROL_POINT_OUTPUT
 	// TODO: 他のスタッフの変更/追加
 	float3 normal:NORMAL;
 	float2 uv:TEXCOORD0;
-
-	float fogCoord : TEXCOORD1;
-	float4 fogColor : COLOR0;
-
-	float2 windowSize:TEXCOORD2;
 };
 
 VS_CONTROL_POINT_OUTPUT TessVS(float4 pos:POSITION, float4 normal : NORMAL, float2 uv : TEXCOORD,
@@ -32,11 +27,6 @@ VS_CONTROL_POINT_OUTPUT TessVS(float4 pos:POSITION, float4 normal : NORMAL, floa
 	o.vPosition = pos;
 	o.normal = normal;
 	o.uv = uv;
-
-	o.fogColor = fogColor;
-	o.fogCoord = fogCoord;
-
-	o.windowSize = windowSize;
 	return o;
 }
 
@@ -47,9 +37,6 @@ struct HS_CONTROL_POINT_OUTPUT
 	float3 normal:NORMAL;
 	float2 uv:TEXCOORD;
 
-	float fogCoord : TEXCOORD1;
-	float4 fogColor:COLOR0;
-	float2 windowSize:TEXCOORD2;
 };
 
 // 出力パッチ定数データ。
@@ -97,10 +84,6 @@ HS_CONTROL_POINT_OUTPUT TessHS(
 	o.normal = ip[i].normal;
 	o.uv = ip[i].uv;
 
-	o.fogCoord = ip[i].fogCoord;
-	o.fogColor = ip[i].fogColor;
-	o.windowSize = ip[i].windowSize;
-
 	return o;
 }
 
@@ -138,7 +121,7 @@ DS_OUTPUT TessDS(HS_CONSTANT_DATA_OUTPUT In, float2 UV:SV_DomainLocation, const 
 	float d = _dispMap.SampleLevel(_samplerState, o.uv+uvOffset,0);
 	d = d*2.0f - 1.0f;
 
-	float3 displacement = float3(0, 1, 0)*20.0f*d;//そのまま掛けると強すぎるので0.5くらい
+	float3 displacement = float3(0, 1, 0)*40.0f*d;//そのまま掛けると強すぎるので0.5くらい
 	float4 postemp=float4(	o.pos.xyz +displacement,1);
 
 	matrix wvp = mul(mul(_cameraProj,_cameraView), _world);
@@ -156,9 +139,9 @@ DS_OUTPUT TessDS(HS_CONSTANT_DATA_OUTPUT In, float2 UV:SV_DomainLocation, const 
 
 	//float dist=
 	o.fog= fogCoord.x + o.pos.w*fogCoord.y;
-	o.fogColor = patch[0].fogColor;
+	o.fogColor = fogColor;
 
-	o.windowSize.x = patch[0].windowSize;
+	o.windowSize = windowSize;
 
 	return o;
 }
@@ -166,13 +149,16 @@ DS_OUTPUT TessDS(HS_CONSTANT_DATA_OUTPUT In, float2 UV:SV_DomainLocation, const 
 float4 TessPS(DS_OUTPUT o):SV_Target
 {
 	float2 shadowUV = (float2(1, 1) + (o.shadowposCS.xy / o.shadowposCS.w)*float2(1, -1))*0.5f;
-	shadowUV += float2(0.5f / 1280.0f, 0.5f / 720.0f);
+	shadowUV += float2(0.5f / o.windowSize.x, 0.5f / o.windowSize.y);
 	float lightviewDepth = _shadowTex.Sample(_samplerState_clamp, shadowUV).r;
 
 
 	float ld = o.shadowposVS.z / o.farZ;
 	float2 satUV = saturate(shadowUV);
 		float shadowWeight = 1.0f;
+	
+		//return float4(ld-lightviewDepth, 0, 0, 1);
+	
 	if (shadowUV.x == satUV.x&&shadowUV.y == satUV.y&&ld > lightviewDepth + 0.005f){
 		shadowWeight = 0.3f;
 	}
@@ -184,6 +170,7 @@ float4 TessPS(DS_OUTPUT o):SV_Target
 	float4 col = float4(_tex.Sample(_samplerState, o.uv).rgb*shadowWeight, 1.0f);/*+addCol*sss*/
 	//フォグをかける
 	col = lerp(o.fogColor, col, o.fog);
+	//col = float4(lightviewDepth, 0, 0, 1);
 	return col;
 }
 

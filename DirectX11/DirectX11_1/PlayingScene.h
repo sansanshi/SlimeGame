@@ -14,6 +14,9 @@
 #include"DecalPlane.h"
 #include"SkySphere.h"
 #include"DecalFactory.h"
+
+class Billboard;
+class HUD;
 class PMDMesh;
 
 class PlayingScene :
@@ -73,6 +76,10 @@ private:
 	ID3D11VertexShader* billBoardVS;
 	ID3D11PixelShader* billBoardPS;
 	ID3D11InputLayout* billBoardInputLayout;
+
+	Billboard* _billBoard;
+	HUD* _debugHUD;
+
 
 
 	BYTE keystate[256];
