@@ -19,12 +19,6 @@ cbuffer material:register(b1) {
 };
 
 
-cbuffer boneMatrix:register(b3)
-{
-	matrix _boneMatrix[512];
-};
-
-
 struct Output {
 	float4 pos:SV_POSITION;
 	float4 normal:NORMAL;
@@ -77,6 +71,10 @@ Output WaterVS(float4 pos:POSITION, float4 normal : NORMAL, float2 uv : TEXCOORD
 	o.lightVec = float4(normalize(lightPos.xyz - posWorld), 0);
 	o.eyeVec = float4(normalize(eyePos.xyz - posWorld), 1);
 
+	matrix invTang = InvTangentMatrix(float4(1, 0, 0, 0), float4(0, 1, 0, 0), float4(0, 0, 1, 0));
+	o.lightVec = mul(invTang, o.lightVec);
+
+
 	o.postest = mul(pos, m);
 	matrix _lightVP = mul(_lightProj, _lightView);
 	matrix lightview = mul(_lightView, _world);//_lightView
@@ -109,7 +107,7 @@ float4 WaterPS(Output o) :SV_Target
 	float3 normalVec = 2 * normalColor - 1.0f;
 	normalVec = normalize(normalVec);
 
-	bright = saturate(dot(o.lightVec, o.normal));//saturate(dot(-o.lightVec, normalVec));
+	bright = saturate(dot(o.lightVec, normalVec));//saturate(dot(-o.lightVec, normalVec));
 	o.shadowposCS = float4(o.shadowposCS.xyz / o.shadowposCS.w, 1.0f);
 	float2 shadowUV = (float2(1, 1) + (o.shadowposCS.xy)*float2(1, -1))*0.5f;
 	shadowUV += float2(0.5f / o.windowSize.x, 0.5f / o.windowSize.y);
@@ -122,8 +120,8 @@ float4 WaterPS(Output o) :SV_Target
 		shadowWeight = 0.1f;
 		//return float4(lightviewDepth, 0, 0, 1);
 	}
-
-	
+	//return float4(normalVec, 1);
+	return float4(bright, bright, bright, 1);
 
 	bright = min(bright, shadowWeight);
 	//return float4(bright, bright, bright, 1);

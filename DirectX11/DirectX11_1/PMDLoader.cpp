@@ -136,23 +136,6 @@ PMDLoader::LoadPMD(std::string filepath)
 			CalculateTangentBinormal(&v0, &v1, &v2, vertsForBuff,indices,idx);
 
 
-			if (cnt[23] == 1)
-			{
-				int g = 0;
-			}
-			if (cnt[23] == 2)
-			{
-				int g = 0;
-			}
-			if (cnt[23] == 3)
-			{
-				int g = 0;
-			}
-			if (cnt[23] == 4)
-			{
-				int g = 0;
-			}
-
 
 			idx += 3;
 		}

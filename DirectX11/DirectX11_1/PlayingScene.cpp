@@ -9,9 +9,11 @@
 #include"Sphere.h"
 #include"SkySphere.h"
 #include"DecalFactory.h"
-
+#include"Camera.h"
+#include"Renderer.h"
 #include"Billboard.h"
 #include"HUD.h"
+#include"InputManager.h"
 
 
 //DirectX11初期化関数
@@ -96,42 +98,43 @@ PlayingScene::PlayingScene(HWND hwnd)
 {
 	//InitDirect3D(_hwnd);//初期化子で既に呼んでいる
 	Init();
+	_camera = std::make_shared<Camera>();
 	_renderer = std::make_unique<Renderer>();
 	_renderer->Init();//レンダラー初期化
 	//_player = new Player(&_camera);
 	//_player->Init();
-	_player = std::make_unique<Player>(&_camera);
+	_player = std::make_unique<Player>(_camera);
 	_player->Init();
 
-	_plane = std::make_unique<Plane>(300, 300, Vector3(0, 1, 0), &_camera);
+	_plane = std::make_unique<Plane>(300, 300, Vector3(0, 1, 0), _camera);
 	//_plane = new Plane(300, 300, Vector3(0, 1, 0), &_camera);
-	_cylinder = new Cylinder(4, 20, 20, &_camera);
-	_sphere = new Sphere(100, 5, &_camera);
-	_tessPlane = new TessPlane(400, 400, Vector3(0, 1, 0), &_camera);
-	_decalBox = new DecalBox(1, 1, 1, &_camera);
+	_cylinder = std::make_unique<Cylinder>(4, 20, 20, _camera);// new Cylinder(4, 20, 20, _camera);
+	_sphere = std::make_unique<Sphere>(100, 5, _camera);//new Sphere(100, 5, _camera);
+	_tessPlane = std::make_unique<TessPlane>(400, 400, Vector3(0, 1, 0), _camera);//new TessPlane(400, 400, Vector3(0, 1, 0), _camera);
+	_decalBox = std::make_unique<DecalBox>(1, 1, 1, _camera);//new DecalBox(1, 1, 1, _camera);
 
-	_skySphere = new SkySphere(100, SKYSPHERE_RADIUS, &_camera);
+	_skySphere = std::make_unique<SkySphere>(100, SKYSPHERE_RADIUS, _camera);//new SkySphere(100, SKYSPHERE_RADIUS, _camera);
 
 	_soundManager.Init();//サウンドマネージャ初期化
 
 	HRESULT result;
 
 	//デカールファクトリ
-	_decalFac = new DecalFactory(&_camera);
+	_decalFac = std::make_unique<DecalFactory>(_camera);//new DecalFactory(_camera);
 	_decalBoxPitch = 45.0f*XM_PI / 180.0f;
 
 	_isLockCursor = true;
 	_cursorPoint = { 0 };
 	_oldCursorPoint = { 0 };
 
-	_billBoard = new Billboard(&_camera,10,10);
-	_debugHUD = new HUD(&_camera,0,0,320,240);
-	_makerHUD = new HUD(&_camera, -8, -8, 16, 16);
+	_billBoard = std::make_unique<Billboard>(_camera, 10, 10);//new Billboard(_camera,10,10);
+	_debugHUD = std::make_unique<HUD>(_camera, 0, 0, 320, 240);//new HUD(_camera,0,0,320,240);
+	_makerHUD = std::make_unique<HUD>(_camera, -8, -8, 16, 16);// new HUD(_camera, -8, -8, 16, 16);
 
 
 	_effect.Emit();
 	_effectMov = { 0, 0, 0 };
-	_effect.SetCamera(_camera.CameraView(), _camera.CameraProjection());
+	_effect.SetCamera(_camera->CameraView(), _camera->CameraProjection());
 
 	//ビュー行列は回転と平行移動しかない（拡大はない
 	//回転行列は転置すると逆行列の性質を示す
@@ -146,8 +149,8 @@ PlayingScene::PlayingScene(HWND hwnd)
 	
 	//シェーダにフレーム単位で渡す定数バッファ
 	unsigned int globalTimer = 0;
-	_shaderGlobals.eyePos = _camera.GetEyePos();//XMFLOAT4(eyePoint.x, eyePoint.y, eyePoint.z, 1);//XMFLOAT3(gazePoint.x - eyePoint.x, gazePoint.y - eyePoint.y, gazePoint.z - eyePoint.z);//Vector3(gazePoint.x - eyePoint.x, gazePoint.y - eyePoint.y, gazePoint.z - eyePoint.z).Normalize();
-	_shaderGlobals.lightPos = _camera.GetLightPos();//w要素は1ならポイントライト、0ならディレクショナルライト？
+	_shaderGlobals.eyePos = _camera->GetEyePos();//XMFLOAT4(eyePoint.x, eyePoint.y, eyePoint.z, 1);//XMFLOAT3(gazePoint.x - eyePoint.x, gazePoint.y - eyePoint.y, gazePoint.z - eyePoint.z);//Vector3(gazePoint.x - eyePoint.x, gazePoint.y - eyePoint.y, gazePoint.z - eyePoint.z).Normalize();
+	_shaderGlobals.lightPos = _camera->GetLightPos();//w要素は1ならポイントライト、0ならディレクショナルライト？
 	_shaderGlobals.timer = 0;
 	_shaderGlobals.nearZ = NEAR_Z;
 	_shaderGlobals.farZ = FAR_Z;
@@ -189,8 +192,6 @@ PlayingScene::PlayingScene(HWND hwnd)
 
 PlayingScene::~PlayingScene()
 {
-	delete(_decalFac);
-	delete(_skySphere);
 
 	_soundManager.Terminate();
 }
@@ -234,11 +235,11 @@ PlayingScene::Update()
 	}
 	if (keystate[VK_SPACE] & 0x80)
 	{
-		_camera.Move(0.0f, SPEED_RISING, 0.0f);
+		_camera->Move(0.0f, SPEED_RISING, 0.0f);
 	}
 	if (keystate[VK_SHIFT] & 0x80)
 	{
-		_camera.Move(0.0f, -SPEED_RISING, 0.0f);
+		_camera->Move(0.0f, -SPEED_RISING, 0.0f);
 	}
 
 	if (keystate[VK_ADD] & 0x80)
@@ -250,8 +251,8 @@ PlayingScene::Update()
 		_decalBoxPitch -= 1.0f*XM_PI / 180.0f;
 	}
 	
-	XMFLOAT3 test = _camera.GetRotation();
-	_decalBox->SetPYR(XMFLOAT3(_decalBoxPitch, _camera.GetRotation().y, 0));
+	XMFLOAT3 test = _camera->GetRotation();
+	_decalBox->SetPYR(XMFLOAT3(_decalBoxPitch, _camera->GetRotation().y, 0));
 
 
 	if (keystate[VK_LBUTTON]&0x80)//マウス左
@@ -265,10 +266,10 @@ PlayingScene::Update()
 		ScreenToClient(_hwnd, &p);
 
 
-		XMVECTOR ray = _camera.CalculateCursorVector(p.x, p.y);
+		XMVECTOR ray = _camera->CalculateCursorVector(p.x, p.y);
 		ray = XMVector3Normalize(ray);
 
-		XMVECTOR camerapos = XMLoadFloat3(&_camera.GetPos());
+		XMVECTOR camerapos = XMLoadFloat3(&_camera->GetPos());
 
 		float d;
 		XMStoreFloat(&d, XMVector3Dot(camerapos, _plane->Normal()));
@@ -301,21 +302,21 @@ PlayingScene::Update()
 	float moveFront = 0.0f, moveRight = 0.0f;
 	if (keystate['W'] & 0x80)
 	{
-		moveFront += 1.0f;//_camera.MoveTPS(0.5f, 0);
+		moveFront += 1.0f;//_camera->MoveTPS(0.5f, 0);
 	}
 	if (keystate['S'] & 0x80)
 	{
-		moveFront -= 1.0f;//_camera.MoveTPS(-0.5f, 0);
+		moveFront -= 1.0f;//_camera->MoveTPS(-0.5f, 0);
 	}
 	if (keystate['A'] & 0x80)
 	{
-		moveRight -= 1.0f;//_camera.MoveTPS(0, -0.5f);
+		moveRight -= 1.0f;//_camera->MoveTPS(0, -0.5f);
 	}
 	if (keystate['D'] & 0x80)
 	{
-		moveRight += 1.0f;//_camera.MoveTPS(0, 0.5f);
+		moveRight += 1.0f;//_camera->MoveTPS(0, 0.5f);
 	}
-	_camera.MoveTPS(moveFront, moveRight);
+	_camera->MoveTPS(moveFront, moveRight);
 
 	XMFLOAT3 camRot = {0.0f,0.0f,0.0f};//それぞれx,y,x軸基準の回転
 	if (keystate[VK_NUMPAD6]&0x80||keystate['X']&0x80)
@@ -339,7 +340,7 @@ PlayingScene::Update()
 	camRot.y *= calcRadian;
 	if (camRot.x != 0 || camRot.y != 0 || camRot.z != 0)
 	{
-		_camera.Rotate(camRot);
+		_camera->Rotate(camRot);
 	}
 
 
@@ -352,8 +353,8 @@ PlayingScene::Update()
 
 	//シェーダに渡すタイマーの更新
 	_shaderGlobals.timer++;
-	_shaderGlobals.eyePos = _camera.GetEyePos();//XMFLOAT4(eyePoint.x, eyePoint.y, eyePoint.z, 1);//XMFLOAT3(gazePoint.x - eyePoint.x, gazePoint.y - eyePoint.y, gazePoint.z - eyePoint.z);//Vector3(gazePoint.x - eyePoint.x, gazePoint.y - eyePoint.y, gazePoint.z - eyePoint.z).Normalize();
-	_shaderGlobals.lightPos = _camera.GetLightPos();//w要素は1ならポイントライト、0ならディレクショナルライト？
+	_shaderGlobals.eyePos = _camera->GetEyePos();//XMFLOAT4(eyePoint.x, eyePoint.y, eyePoint.z, 1);//XMFLOAT3(gazePoint.x - eyePoint.x, gazePoint.y - eyePoint.y, gazePoint.z - eyePoint.z);//Vector3(gazePoint.x - eyePoint.x, gazePoint.y - eyePoint.y, gazePoint.z - eyePoint.z).Normalize();
+	_shaderGlobals.lightPos = _camera->GetLightPos();//w要素は1ならポイントライト、0ならディレクショナルライト？
 	//shaderGlobals.dummy0++;
 	dev.Context()->Map(_globalBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &_mappedGlobals);
 	memcpy(_mappedGlobals.pData, (void*)(&_shaderGlobals), sizeof(ShaderGlobals));
@@ -361,7 +362,7 @@ PlayingScene::Update()
 	dev.Context()->VSSetConstantBuffers(5, 1, &_globalBuffer);
 
 
-	_camera.Update();
+	_camera->Update();
 
 	_player->Update();
 	_plane->Update();
@@ -370,7 +371,7 @@ PlayingScene::Update()
 	_sphere->Update();
 	_decalBox->Update();
 	_decalFac->Update();
-	_skySphere->SetPos(_camera.GetPos());
+	_skySphere->SetPos(_camera->GetPos());
 	_skySphere->Update();
 	_billBoard->Update();
 	_debugHUD->Update();
@@ -455,10 +456,9 @@ PlayingScene::Update()
 
 #pragma endregion
 
-	
 
 	
-	_effect.SetCamera(_camera.CameraView(), _camera.CameraProjection());
+	_effect.SetCamera(_camera->CameraView(), _camera->CameraProjection());
 	_effect.Update();
 
 #pragma region HUD描画
@@ -483,8 +483,8 @@ PlayingScene::Update()
 		//XMMATRIX bonemat = _player.GetMesh()->BoneMatrixies()[ikboneIdx];
 		XMMATRIX world = _player->GetModelMatrix();
 		//XMMATRIX wvp = XMMatrixMultiply(bonemat,world);
-		XMMATRIX view = _camera.CameraView();
-		XMMATRIX proj = _camera.CameraProjection();
+		XMMATRIX view = _camera->CameraView();
+		XMMATRIX proj = _camera->CameraProjection();
 		XMMATRIX cam = XMMatrixMultiply(view, proj);
 		XMMATRIX wvp = XMMatrixMultiply(world, cam);
 
@@ -501,8 +501,6 @@ PlayingScene::Update()
 		//後でCreateHudMatrixの引数にoffsetX,offsestY追加して作り直す
 		XMMATRIX screenOfsMatrix = XMMatrixTranslation(ikScreenPos.x, ikScreenPos.y, 0);
 
-		XMMATRIX h = _hudMatrix;
-		XMMATRIX m = XMMatrixMultiply(screenOfsMatrix, h);
 
 
 		_renderer->ChangePTForPrimitive();

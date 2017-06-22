@@ -4,7 +4,7 @@
 #include"ShaderGenerator.h"
 #include"Camera.h"
 
-HUD::HUD(Camera* cam,const float top,const float left,const float width,const float height):_cameraPtr(cam)
+HUD::HUD(const std::shared_ptr<Camera>& cam,const float top,const float left,const float width,const float height):_cameraPtr(cam)
 {
 	DeviceDx11& dev = DeviceDx11::Instance();
 	_vs = nullptr;
@@ -31,8 +31,8 @@ HUD::HUD(Camera* cam,const float top,const float left,const float width,const fl
 	_hudMatrixIdentity = _hudMatrix;
 
 	_worldAndCamera.world = _hudMatrix;
-	_worldAndCamera.cameraView = _cameraPtr->CameraView();
-	_worldAndCamera.cameraProj = _cameraPtr->CameraProjection();
+	_worldAndCamera.cameraView = _cameraPtr.lock()->CameraView();
+	_worldAndCamera.cameraProj = _cameraPtr.lock()->CameraProjection();
 	D3D11_SUBRESOURCE_DATA d;
 	d.pSysMem = &_worldAndCamera;
 
@@ -157,8 +157,8 @@ HUD::Update()
 {
 	//world‘‚«Š·‚¦ihudMatrix‚Éj
 	_worldAndCamera.world = _hudMatrix;// XMMatrixIdentity();
-	_worldAndCamera.cameraView = _cameraPtr->CameraView();
-	_worldAndCamera.cameraProj = _cameraPtr->CameraProjection();
+	_worldAndCamera.cameraView = _cameraPtr.lock()->CameraView();
+	_worldAndCamera.cameraProj = _cameraPtr.lock()->CameraProjection();
 
 	
 }

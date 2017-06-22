@@ -1,13 +1,13 @@
 #pragma once
 #include "Scene.h"
 #include"Define.h"
-#include"Camera.h"
-#include"Renderer.h"
 #include"Effect.h"
 #include"SoundManager.h"
 #include"DeviceDx11.h"
 #include<memory>
 
+class Camera;
+class Renderer;
 class Player;
 class Plane;
 class Cylinder;
@@ -19,6 +19,7 @@ class DecalFactory;
 class Billboard;
 class HUD;
 class PMDMesh;
+class InputManager;
 
 class PlayingScene :
 	public Scene
@@ -30,20 +31,22 @@ private:
 
 	ID3D11Buffer* _globalBuffer;
 	std::unique_ptr<Renderer> _renderer;
-	Camera _camera;
+	std::shared_ptr<Camera> _camera;
 	
 	void Init();
 	//Player* _player;
 	std::unique_ptr<Player> _player;
 	std::unique_ptr<Plane> _plane;
-	Cylinder* _cylinder;
-	Sphere* _sphere;
-	TessPlane* _tessPlane;
-	SkySphere* _skySphere;
+	std::unique_ptr<Cylinder> _cylinder;
+	std::unique_ptr<Sphere> _sphere;
+	std::unique_ptr<TessPlane> _tessPlane;
+	std::unique_ptr<SkySphere> _skySphere;
 
-	DecalBox* _decalBox;
-	DecalFactory* _decalFac;
+	std::unique_ptr<DecalBox> _decalBox;
+	std::unique_ptr<DecalFactory> _decalFac;
 	float _decalBoxPitch;
+
+	std::unique_ptr<InputManager> _inputManager;
 
 	SoundManager _soundManager;
 
@@ -59,29 +62,16 @@ private:
 	ID3D11DepthStencilView* _lightDSV;
 	ID3D11ShaderResourceView* _shaderResourceViewForShadow;//レンダリング結果をテクスチャとして扱う
 
-	//マーカー頂点バッファ（IKボーン位置表示
-	ID3D11Buffer* _makerBuffer;
 	ID3D11ShaderResourceView* _makerSRV;
 
-	//HUD
-	ID3D11Buffer* _hudBuffer;
-	ID3D11VertexShader* _hudVS;
-	ID3D11PixelShader* _hudPS;
-	ID3D11InputLayout* _hudInputLayout;
-	XMMATRIX _hudMatrix;
+	//HUD表示フラグ
 	bool debugToggle;
 
 
 	//ビルボードテスト
-	ID3D11Buffer* billBoardBuffer;
-	ID3D11ShaderResourceView* billBoardSRV;
-	ID3D11VertexShader* billBoardVS;
-	ID3D11PixelShader* billBoardPS;
-	ID3D11InputLayout* billBoardInputLayout;
-
-	Billboard* _billBoard;
-	HUD* _debugHUD;
-	HUD* _makerHUD;
+	std::unique_ptr<Billboard> _billBoard;
+	std::unique_ptr<HUD> _debugHUD;
+	std::unique_ptr<HUD> _makerHUD;
 
 
 

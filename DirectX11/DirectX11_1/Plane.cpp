@@ -3,12 +3,13 @@
 #include"ShaderGenerator.h"
 #include"DeviceDx11.h"
 #include"ShaderDefine.h"
+#include"Camera.h"
 
-Plane::Plane(Camera* camera) :_cameraPtr(camera)
+Plane::Plane(const std::shared_ptr<Camera> camera) :_cameraPtr(camera)
 {
 };
 
-Plane::Plane(float width, float depth, Vector3 normal,Camera* camera) :_cameraPtr(camera)
+Plane::Plane(float width, float depth, Vector3 normal,const std::shared_ptr<Camera>& camera) :_cameraPtr(camera)
 {
 
 
@@ -64,17 +65,19 @@ Plane::Plane(float width, float depth, Vector3 normal,Camera* camera) :_cameraPt
 		"texture/water.png", nullptr, nullptr, &_mainTex, &result);
 	D3DX11CreateShaderResourceViewFromFile(dev.Device(),
 		"texture/water.png", nullptr, nullptr, &_subTex, &result);
+	D3DX11CreateShaderResourceViewFromFile(dev.Device(),
+		"texture/normal2.png", nullptr, nullptr, &_normalTex, &result);
 
 
 	_modelMatrix = XMMatrixIdentity();
 	_worldAndCamera.world = _modelMatrix;
-	_worldAndCamera.cameraView = _cameraPtr->CameraView();
-	_worldAndCamera.cameraProj = _cameraPtr->CameraProjection();
-	_worldAndCamera.lightView = _cameraPtr->LightView();
-	_worldAndCamera.lightProj = _cameraPtr->LightProjection();
+	_worldAndCamera.cameraView = _cameraPtr.lock()->CameraView();
+	_worldAndCamera.cameraProj = _cameraPtr.lock()->CameraProjection();
+	_worldAndCamera.lightView = _cameraPtr.lock()->LightView();
+	_worldAndCamera.lightProj = _cameraPtr.lock()->LightProjection();
 	//_mvp.worldMatrix = _modelMatrix;//cameraのUpdateでカメラのworldMatrixを変えるようになったら2つを乗算する
-	//_mvp.viewMatrix = _cameraPtr->GetMatrixies().view;
-	//_mvp.projectionMatrix = _cameraPtr->GetMatrixies().projection;
+	//_mvp.viewMatrix = _cameraPtr.lock()->GetMatrixies().view;
+	//_mvp.projectionMatrix = _cameraPtr.lock()->GetMatrixies().projection;
 
 	rot = 0.0f;
 
@@ -113,10 +116,10 @@ Plane::Draw()
 	DeviceDx11& dev = DeviceDx11::Instance();
 	dev.Context()->VSSetConstantBuffers(0, 1, &_matrixBuffer);
 	_worldAndCamera.world = _modelMatrix;
-	_worldAndCamera.cameraView = _cameraPtr->CameraView();
-	_worldAndCamera.cameraProj = _cameraPtr->CameraProjection();
-	_worldAndCamera.lightView = _cameraPtr->LightView();
-	_worldAndCamera.lightProj = _cameraPtr->LightProjection();
+	_worldAndCamera.cameraView = _cameraPtr.lock()->CameraView();
+	_worldAndCamera.cameraProj = _cameraPtr.lock()->CameraProjection();
+	_worldAndCamera.lightView = _cameraPtr.lock()->LightView();
+	_worldAndCamera.lightProj = _cameraPtr.lock()->LightProjection();
 
 	dev.Context()->Map(_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &_mappedMatrixies);
 	//ここでこのメモリの塊に、マトリックスの値をコピーしてやる
@@ -131,6 +134,7 @@ Plane::Draw()
 
 	dev.Context()->PSSetShaderResources(TEXTURE_MAIN, 1, &_mainTex);
 	dev.Context()->PSSetShaderResources(TEXTURE_SUB, 1, &_subTex);
+	dev.Context()->PSSetShaderResources(TEXTURE_NORMAL, 1, &_normalTex);
 
 	//プリミティブトポロジの切り替えを忘れない　切り替えを頻発させるのは良くない
 	dev.Context()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
@@ -145,10 +149,10 @@ Plane::DrawLightView()
 	DeviceDx11& dev = DeviceDx11::Instance();
 	dev.Context()->VSSetConstantBuffers(0, 1, &_matrixBuffer);
 	_worldAndCamera.world = _modelMatrix;
-	_worldAndCamera.cameraView = _cameraPtr->CameraView();
-	_worldAndCamera.cameraProj = _cameraPtr->CameraProjection();
-	_worldAndCamera.lightView = _cameraPtr->LightView();
-	_worldAndCamera.lightProj = _cameraPtr->LightProjection();
+	_worldAndCamera.cameraView = _cameraPtr.lock()->CameraView();
+	_worldAndCamera.cameraProj = _cameraPtr.lock()->CameraProjection();
+	_worldAndCamera.lightView = _cameraPtr.lock()->LightView();
+	_worldAndCamera.lightProj = _cameraPtr.lock()->LightProjection();
 
 	dev.Context()->Map(_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &_mappedMatrixies);
 	//ここでこのメモリの塊に、マトリックスの値をコピーしてやる
@@ -174,9 +178,9 @@ Plane::DrawCameraDepth()
 	dev.Context()->VSSetConstantBuffers(0, 1, &_matrixBuffer);
 
 	//
-	XMMATRIX cameraView = _cameraPtr->CameraView();
+	XMMATRIX cameraView = _cameraPtr.lock()->CameraView();
 	_worldAndCamera.lightView = cameraView;
-	_worldAndCamera.lightProj = _cameraPtr->CameraProjection();
+	_worldAndCamera.lightProj = _cameraPtr.lock()->CameraProjection();
 
 	dev.Context()->Map(_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &_mappedMatrixies);
 	//ここでこのメモリの塊に、マトリックスの値をコピーしてやる
@@ -204,7 +208,7 @@ Plane::Update()
 	_modelMatrix = transMat;
 	//_modelMatrix = XMMatrixIdentity();
 	_worldAndCamera.world = _modelMatrix;
-	_worldAndCamera.cameraView = _cameraPtr->CameraView();
-	_worldAndCamera.cameraProj=_cameraPtr->CameraProjection();
+	_worldAndCamera.cameraView = _cameraPtr.lock()->CameraView();
+	_worldAndCamera.cameraProj=_cameraPtr.lock()->CameraProjection();
 
 }

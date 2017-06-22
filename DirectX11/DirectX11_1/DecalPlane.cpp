@@ -57,8 +57,8 @@ DecalPlane::DecalPlane(float width, float depth, XMFLOAT3 normal, Camera* camera
 	_matrixies.view = _cameraPtr->CameraView();
 	_matrixies.proj = _cameraPtr->CameraProjection();
 	//_mvp.worldMatrix = _modelMatrix;//camera‚ÌUpdate‚ÅƒJƒƒ‰‚ÌworldMatrix‚ð•Ï‚¦‚é‚æ‚¤‚É‚È‚Á‚½‚ç2‚Â‚ðæŽZ‚·‚é
-	//_mvp.viewMatrix = _cameraPtr->GetMatrixies().view;
-	//_mvp.projectionMatrix = _cameraPtr->GetMatrixies().projection;
+	//_mvp.viewMatrix = _cameraPtr.lock()->GetMatrixies().view;
+	//_mvp.projectionMatrix = _cameraPtr.lock()->GetMatrixies().projection;
 
 	XMVECTOR dummy;
 	XMMATRIX view = _cameraPtr->CameraView();

@@ -2,12 +2,13 @@
 #include <D3D11.h>
 #include<xnamath.h>
 #include"Define.h"
+#include<memory>
 
 class Camera;
 class HUD
 {
 public:
-	HUD(Camera* camPtr,const float top,const float left,const float width,const float height);
+	HUD(const std::shared_ptr<Camera>& camPtr,const float top,const float left,const float width,const float height);
 	~HUD();
 
 	void SetPos(XMFLOAT3&);
@@ -28,7 +29,7 @@ private:
 	ID3D11ShaderResourceView* _texture;
 	ID3D11Buffer* _vertexBuffer;
 	XMFLOAT3 _pos;
-	Camera* _cameraPtr;
+	std::weak_ptr<Camera> _cameraPtr;
 	ID3D11VertexShader* _vs;
 	ID3D11PixelShader* _ps;
 	ID3D11InputLayout* _inputLayout;

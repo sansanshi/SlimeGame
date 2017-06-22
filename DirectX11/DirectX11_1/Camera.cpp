@@ -58,10 +58,10 @@ Camera::Init()
 		XMLoadFloat3(&gazePoint),
 		XMLoadFloat3(&upVec));
 	_light = lightView;
-	//_camera.cameraview = XMMatrixMultiply(view, cameraProjection);
-	//_camera.cameraview = camera;
-	//_camera.lightview = XMMatrixMultiply(lightView, lightProjection);
-	//_camera.lightview = light;
+	//_camera->cameraview = XMMatrixMultiply(view, cameraProjection);
+	//_camera->cameraview = camera;
+	//_camera->lightview = XMMatrixMultiply(lightView, lightProjection);
+	//_camera->lightview = light;
 
 	_originEyeVec = { gazePoint.x - eyePoint.x, gazePoint.y - eyePoint.y, gazePoint.z - eyePoint.z };
 }

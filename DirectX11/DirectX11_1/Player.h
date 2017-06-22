@@ -10,6 +10,7 @@
 #include"VMDData.h"
 #include"VMDLoader.h"
 #include"Define.h"
+#include<memory>
 
 
 class Camera;
@@ -53,7 +54,7 @@ private:
 	XMFLOAT3 gazePoint;
 	XMFLOAT3 upVec;
 
-	Camera* _cameraPtr;
+	std::weak_ptr<Camera> _cameraPtr;
 	//MATRIXIES _matrixMVP;
 	WorldAndCamera _worldAndCamera;
 	XMFLOAT3 _pos;
@@ -106,7 +107,7 @@ private:
 
 
 public:
-	Player(Camera*);
+	Player(const std::shared_ptr<Camera>& cam);
 	~Player();
 	PMDMesh* GetMesh(){ return _mesh; };
 

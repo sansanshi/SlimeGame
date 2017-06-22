@@ -5,7 +5,7 @@ extern const float WINDOW_HEIGHT = 720.0f;
 
 
 extern const float NEAR_Z = 0.1f;
-extern const float FAR_Z = 300.0f;
+extern const float FAR_Z = 350.0f;
 
 extern const float FOG_START = 50.0f;
 extern const float FOG_END = 250.0f;

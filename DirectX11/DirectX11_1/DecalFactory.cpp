@@ -7,7 +7,7 @@
 
 const int MAX_DECAL_NUM = 300;
 
-DecalFactory::DecalFactory(Camera* cameraPtr):_cameraPtr(cameraPtr),_decalBoxCnt(0)
+DecalFactory::DecalFactory(const std::shared_ptr<Camera>& cameraPtr):_cameraPtr(cameraPtr),_decalBoxCnt(0)
 {
 	HRESULT result = S_OK;
 	DeviceDx11& dev = DeviceDx11::Instance();
@@ -79,10 +79,10 @@ DecalFactory::DecalFactory(Camera* cameraPtr):_cameraPtr(cameraPtr),_decalBoxCnt
 		invW = XMMatrixIdentity();
 	}
 	XMVECTOR dummy;
-	XMMATRIX view = _cameraPtr->CameraView();
+	XMMATRIX view = _cameraPtr.lock()->CameraView();
 	XMMATRIX invView = XMMatrixInverse(&dummy, view);
 	_matrixies.invView = invView;
-	XMMATRIX proj = _cameraPtr->CameraProjection();
+	XMMATRIX proj = _cameraPtr.lock()->CameraProjection();
 	XMMATRIX invProj = XMMatrixInverse(&dummy, proj);
 	_matrixies.invProj = invProj;
 
@@ -195,10 +195,10 @@ DecalFactory::Draw()
 
 
 	XMVECTOR dummy;
-	XMMATRIX view = _cameraPtr->CameraView();
+	XMMATRIX view = _cameraPtr.lock()->CameraView();
 	XMMATRIX invView = XMMatrixInverse(&dummy, view);
 	_matrixies.invView = invView;
-	XMMATRIX proj = _cameraPtr->CameraProjection();
+	XMMATRIX proj = _cameraPtr.lock()->CameraProjection();
 	XMMATRIX invProj = XMMatrixInverse(&dummy, proj);
 	_matrixies.invProj = invProj;
 

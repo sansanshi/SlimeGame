@@ -2,6 +2,7 @@
 #include"Primitive.h"
 #include"Define.h"
 #include<vector>
+#include<memory>
 class Camera;
 struct ID3D11Buffer;
 
@@ -15,7 +16,7 @@ private:
 	int moveForward;
 	int moveRight;
 
-	Camera* _cameraPtr;
+	std::weak_ptr<Camera> _cameraPtr;
 	WorldAndCamera _worldAndCamera;
 	XMMATRIX _modelMatrix;
 	ID3D11Buffer* _matrixBuffer;
@@ -48,7 +49,7 @@ private:
 
 	ID3D11ShaderResourceView* _texture;
 public:
-	SkySphere(unsigned int divNum, float radius,Camera* cam);
+	SkySphere(unsigned int divNum, float radius,const std::shared_ptr<Camera>& cam);
 	~SkySphere();
 
 	ID3D11Buffer* VertexBuffer() { return _vertexBuffer; };

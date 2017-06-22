@@ -7,7 +7,7 @@
 
 #include"ShaderDefine.h"
 
-DecalBox::DecalBox(float width, float height, float length, Camera* cameraPtr) 
+DecalBox::DecalBox(float width, float height, float length, const std::shared_ptr<Camera>& cameraPtr) 
 	:_pos(0.f,0.f,0.f),_rot(45.f,0.f,0.f),_scale(16.f,16.f,16.f),_cameraPtr(cameraPtr)
 {
 	_pos = XMFLOAT3(0, 0, 0);
@@ -67,16 +67,16 @@ DecalBox::DecalBox(float width, float height, float length, Camera* cameraPtr)
 
 	_modelMatrix = XMMatrixIdentity();
 	_matrixies.world = _modelMatrix;
-	_matrixies.view = _cameraPtr->CameraView();
-	_matrixies.proj = _cameraPtr->CameraProjection();
+	_matrixies.view = _cameraPtr.lock()->CameraView();
+	_matrixies.proj = _cameraPtr.lock()->CameraProjection();
 
 	XMVECTOR dummy;
-	XMMATRIX view = _cameraPtr->CameraView();
+	XMMATRIX view = _cameraPtr.lock()->CameraView();
 	_matrixies.invView = XMMatrixInverse(&dummy, view);
 	XMMATRIX world = _matrixies.world;
 	_matrixies.invWorld = XMMatrixInverse(&dummy, world);
 
-	XMMATRIX proj = _cameraPtr->CameraProjection();
+	XMMATRIX proj = _cameraPtr.lock()->CameraProjection();
 	XMMATRIX vp = XMMatrixMultiply(proj, view);
 	XMMATRIX wvp = XMMatrixMultiply(vp, world);
 	XMMATRIX invWVP = XMMatrixInverse(&dummy, wvp);
@@ -126,7 +126,7 @@ DecalBox::DecalBox(float width, float height, float length, Camera* cameraPtr)
 
 }
 DecalBox::DecalBox(const XMFLOAT3& pos, const XMFLOAT3& rot, const XMFLOAT3& scale,
-	Camera* cameraPtr,std::shared_ptr<ID3D11ShaderResourceView*> texPtr,
+	const std::shared_ptr<Camera>& cameraPtr,std::shared_ptr<ID3D11ShaderResourceView*> texPtr,
 	ID3D11VertexShader* vs,ID3D11PixelShader* ps,ID3D11InputLayout* layout,
 	ID3D11Buffer* vertBuff,ID3D11Buffer* indexBuff,unsigned int indicesCnt) 
 	:_pos(pos),_rot(rot),_scale(scale),_cameraPtr(cameraPtr)
@@ -196,16 +196,16 @@ DecalBox::DecalBox(const XMFLOAT3& pos, const XMFLOAT3& rot, const XMFLOAT3& sca
 
 	_modelMatrix = XMMatrixIdentity();
 	_matrixies.world = _modelMatrix;
-	_matrixies.view = _cameraPtr->CameraView();
-	_matrixies.proj = _cameraPtr->CameraProjection();
+	_matrixies.view = _cameraPtr.lock()->CameraView();
+	_matrixies.proj = _cameraPtr.lock()->CameraProjection();
 
 	XMVECTOR dummy;
-	XMMATRIX view = _cameraPtr->CameraView();
+	XMMATRIX view = _cameraPtr.lock()->CameraView();
 	_matrixies.invView = XMMatrixInverse(&dummy, view);
 	XMMATRIX world = _matrixies.world;
 	_matrixies.invWorld = XMMatrixInverse(&dummy, world);
 
-	XMMATRIX proj = _cameraPtr->CameraProjection();
+	XMMATRIX proj = _cameraPtr.lock()->CameraProjection();
 	XMMATRIX vp = XMMatrixMultiply(proj, view);
 	XMMATRIX wvp = XMMatrixMultiply(vp, world);
 	XMMATRIX invWVP = XMMatrixInverse(&dummy, wvp);
@@ -263,11 +263,11 @@ void
 DecalBox::DebugDraw()
 {
 	_matrixies.world = _modelMatrix;
-	_matrixies.view = _cameraPtr->CameraView();
-	_matrixies.proj = _cameraPtr->CameraProjection();
+	_matrixies.view = _cameraPtr.lock()->CameraView();
+	_matrixies.proj = _cameraPtr.lock()->CameraProjection();
 
 	XMVECTOR dummy;
-	XMMATRIX view = _cameraPtr->CameraView();
+	XMMATRIX view = _cameraPtr.lock()->CameraView();
 	XMMATRIX invView = XMMatrixInverse(&dummy, view);
 	_matrixies.invView = invView;
 	XMMATRIX world = _matrixies.world;
@@ -321,11 +321,11 @@ DecalBox::Draw()
 	_modelMatrix = transMatrix;*/
 
 	_matrixies.world = _modelMatrix;
-	_matrixies.view = _cameraPtr->CameraView();
-	_matrixies.proj = _cameraPtr->CameraProjection();
+	_matrixies.view = _cameraPtr.lock()->CameraView();
+	_matrixies.proj = _cameraPtr.lock()->CameraProjection();
 
 	XMVECTOR dummy;
-	XMMATRIX view = _cameraPtr->CameraView();
+	XMMATRIX view = _cameraPtr.lock()->CameraView();
 	XMMATRIX invView = XMMatrixInverse(&dummy, view);
 	_matrixies.invView = invView;
 	XMMATRIX world = _matrixies.world;
@@ -404,11 +404,11 @@ DecalBox::Update()
 	_modelMatrix =  XMMatrixMultiply(rotMatrix, scaleMatrix);
 	_modelMatrix = XMMatrixMultiply(_modelMatrix, transMatrix);
 	_matrixies.world = _modelMatrix;
-	//_matrixies.view = _cameraPtr->CameraView();
-	//_matrixies.proj = _cameraPtr->CameraProjection();
+	//_matrixies.view = _cameraPtr.lock()->CameraView();
+	//_matrixies.proj = _cameraPtr.lock()->CameraProjection();
 
 	//XMVECTOR dummy;
-	//XMMATRIX view = _cameraPtr->CameraView();
+	//XMMATRIX view = _cameraPtr.lock()->CameraView();
 	//_matrixies.invView = XMMatrixInverse(&dummy, view);
 	//XMMATRIX world = _matrixies.world;
 	//_matrixies.invWorld = XMMatrixInverse(&dummy, world);

@@ -1,69 +1,8 @@
-﻿  PlayingScene.cpp
-c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2662): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
-c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2663): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
-c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2664): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
-c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2665): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
-c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2666): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
-c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2667): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
-c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2668): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
-c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2689): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
-c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2690): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
-c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2691): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
-c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2694): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
-c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2695): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
-c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2698): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
-c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2702): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
-c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2712): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
-c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2713): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
-c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2715): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
-c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2716): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
-c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2717): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
-c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2727): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
-c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2728): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
-c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2729): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
-c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2730): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
-c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2731): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
-c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2732): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
-c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2742): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
-c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2743): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
-c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2754): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
-c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamathconvert.inl(2254): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
-c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamathconvert.inl(4523): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
-c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamathconvert.inl(4577): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
-c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamathconvert.inl(4639): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
-c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamathconvert.inl(4707): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
-c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamathconvert.inl(4770): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
-c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamathconvert.inl(4832): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
-c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamathvector.inl(1269): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
-c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamathmisc.inl(518): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
-c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamathmisc.inl(519): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
-c:\users\1401349\documents\workinggames\slimegame\directx11\directx11_1\define.h(60): warning C4244: 'return': 'double' から 'float' への変換です。データが失われる可能性があります。
-c:\users\1401349\documents\workinggames\slimegame\directx11\directx11_1\playingscene.cpp(86): warning C4101: 'result': ローカル変数は 1 度も使われていません。
-c:\users\1401349\documents\workinggames\slimegame\directx11\directx11_1\playingscene.cpp(108): warning C4316: 'Cylinder': ヒープで割り当てられたオブジェクトが 16 にアラインメントされていない可能性があります
-c:\users\1401349\documents\workinggames\slimegame\directx11\directx11_1\playingscene.cpp(109): warning C4316: 'Sphere': ヒープで割り当てられたオブジェクトが 16 にアラインメントされていない可能性があります
-c:\users\1401349\documents\workinggames\slimegame\directx11\directx11_1\playingscene.cpp(110): warning C4316: 'TessPlane': ヒープで割り当てられたオブジェクトが 16 にアラインメントされていない可能性があります
-c:\users\1401349\documents\workinggames\slimegame\directx11\directx11_1\playingscene.cpp(111): warning C4316: 'DecalBox': ヒープで割り当てられたオブジェクトが 16 にアラインメントされていない可能性があります
-c:\users\1401349\documents\workinggames\slimegame\directx11\directx11_1\playingscene.cpp(113): warning C4316: 'SkySphere': ヒープで割り当てられたオブジェクトが 16 にアラインメントされていない可能性があります
-c:\users\1401349\documents\workinggames\slimegame\directx11\directx11_1\playingscene.cpp(120): warning C4316: 'DecalFactory': ヒープで割り当てられたオブジェクトが 16 にアラインメントされていない可能性があります
-c:\users\1401349\documents\workinggames\slimegame\directx11\directx11_1\playingscene.cpp(127): warning C4316: 'Billboard': ヒープで割り当てられたオブジェクトが 16 にアラインメントされていない可能性があります
-c:\users\1401349\documents\workinggames\slimegame\directx11\directx11_1\playingscene.cpp(128): warning C4316: 'HUD': ヒープで割り当てられたオブジェクトが 16 にアラインメントされていない可能性があります
-c:\users\1401349\documents\workinggames\slimegame\directx11\directx11_1\playingscene.cpp(129): warning C4316: 'HUD': ヒープで割り当てられたオブジェクトが 16 にアラインメントされていない可能性があります
-c:\users\1401349\documents\workinggames\slimegame\directx11\directx11_1\playingscene.cpp(268): warning C4244: '引数': 'LONG' から 'float' への変換です。データが失われる可能性があります。
-c:\users\1401349\documents\workinggames\slimegame\directx11\directx11_1\playingscene.cpp(523): warning C4838: 'float' から 'LONG' への変換には縮小変換が必要です
-c:\users\1401349\documents\workinggames\slimegame\directx11\directx11_1\playingscene.cpp(523): warning C4244: '初期化中': 'float' から 'LONG' への変換です。データが失われる可能性があります。
-c:\program files (x86)\microsoft visual studio 14.0\vc\include\memory(1630): warning C4316: 'Player': ヒープで割り当てられたオブジェクトが 16 にアラインメントされていない可能性があります
-  c:\users\1401349\documents\workinggames\slimegame\directx11\directx11_1\playingscene.cpp(103): note: コンパイル対象の関数 テンプレート インスタンス化 'std::unique_ptr<Player,std::default_delete<_Ty>> std::make_unique<Player,Camera*>(Camera *&&)' のリファレンスを確認してください
-          with
-          [
-              _Ty=Player
-          ]
-c:\program files (x86)\microsoft visual studio 14.0\vc\include\memory(1630): warning C4244: '引数': 'int' から 'float' への変換です。データが失われる可能性があります。
-  c:\users\1401349\documents\workinggames\slimegame\directx11\directx11_1\playingscene.cpp(106): note: コンパイル対象の関数 テンプレート インスタンス化 'std::unique_ptr<Plane,std::default_delete<_Ty>> std::make_unique<Plane,int,int,Vector3,Camera*>(int &&,int &&,Vector3 &&,Camera *&&)' のリファレンスを確認してください
-          with
-          [
-              _Ty=Plane
-          ]
-c:\program files (x86)\microsoft visual studio 14.0\vc\include\memory(1630): warning C4316: 'Plane': ヒープで割り当てられたオブジェクトが 16 にアラインメントされていない可能性があります
-c:\users\1401349\documents\workinggames\slimegame\directx11\directx11_1\camera.h(28): warning C4172: ローカル変数またはテンポラリのアドレスを返します
+﻿FXC : warning X4717: Effects deprecated for D3DCompiler_47
+C:\Users\1401349\Documents\WorkingGames\SlimeGame\DirectX11\DirectX11_1\water.hlsl(70,9-35): warning X3206: implicit truncation of vector type
+C:\Users\1401349\Documents\WorkingGames\SlimeGame\DirectX11\DirectX11_1\water.hlsl(105,9-60): warning X3206: implicit truncation of vector type
+C:\Users\1401349\Documents\WorkingGames\SlimeGame\DirectX11\DirectX11_1\water.hlsl(110,20-45): warning X3206: 'dot': implicit truncation of vector type
+  
+  compilation object save succeeded; see C:\Users\1401349\Documents\WorkingGames\SlimeGame\DirectX11\Debug\water.cso
   DirectX11_1.vcxproj -> C:\Users\1401349\Documents\WorkingGames\SlimeGame\DirectX11\Debug\DirectX11_1.exe
   DirectX11_1.vcxproj -> C:\Users\1401349\Documents\WorkingGames\SlimeGame\DirectX11\Debug\DirectX11_1.pdb (Full PDB)

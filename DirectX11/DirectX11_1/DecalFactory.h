@@ -11,7 +11,7 @@ class DecalBox;
 class DecalFactory
 {
 public:
-	DecalFactory(Camera* cameraPtr);
+	DecalFactory(const std::shared_ptr<Camera>& cameraPtr);
 	~DecalFactory();
 
 	void CreateDecalBox(const XMFLOAT3& pos);
@@ -25,7 +25,7 @@ private:
 
 	std::shared_ptr<ID3D11ShaderResourceView*> _decalTex;
 
-	Camera* _cameraPtr;
+	std::weak_ptr<Camera> _cameraPtr;
 
 	ID3D11Buffer* _vertexBuffer;
 	ID3D11Buffer* _indexBuffer;

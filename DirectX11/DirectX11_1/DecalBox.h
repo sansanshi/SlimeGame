@@ -1,8 +1,8 @@
 #pragma once
 #include<D3D11.h>
-#include"Camera.h"
 #include"Define.h"
 #include<memory>
+class Camera;
 class DecalBox
 {
 
@@ -19,7 +19,7 @@ private:
 	ID3D11Buffer* _indexBuffer;
 	unsigned int _indicesCnt;
 
-	Camera* _cameraPtr;
+	std::weak_ptr<Camera> _cameraPtr;
 	MatrixiesForDecal _matrixies;
 	XMMATRIX _modelMatrix;
 	ID3D11Buffer* _matrixBuffer;
@@ -32,9 +32,9 @@ private:
 
 
 public:
-	DecalBox(float width,float height,float length,Camera* cameraPtr);
+	DecalBox(float width,float height,float length,const std::shared_ptr<Camera>& cameraPtr);
 	DecalBox(const XMFLOAT3& pos, const XMFLOAT3& rot,const XMFLOAT3& scale,
-		Camera* cameraPtr,std::shared_ptr<ID3D11ShaderResourceView*> texPtr,
+		const std::shared_ptr<Camera>& cameraPtr,std::shared_ptr<ID3D11ShaderResourceView*> texPtr,
 		ID3D11VertexShader* vs,ID3D11PixelShader* ps,ID3D11InputLayout* lauout,
 		ID3D11Buffer* vertBuff,ID3D11Buffer* indexBuff,unsigned int indicesCnt);
 	~DecalBox();

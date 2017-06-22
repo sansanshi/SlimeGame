@@ -2,6 +2,7 @@
 #include"Primitive.h"
 #include"Define.h"
 #include"Camera.h"
+#include<memory>
 
 struct ID3D11Buffer;
 
@@ -9,7 +10,7 @@ class Plane
 	:public Primitive
 {
 private:
-	Camera* _cameraPtr;
+	std::weak_ptr<Camera> _cameraPtr;
 	//MATRIXIES _mvp;
 	WorldAndCamera _worldAndCamera;
 	XMMATRIX _modelMatrix;
@@ -18,12 +19,13 @@ private:
 
 	ID3D11ShaderResourceView* _mainTex;
 	ID3D11ShaderResourceView* _subTex;
+	ID3D11ShaderResourceView* _normalTex;
 
 	float rot;
 public:
-	Plane(Camera*);
+	Plane(const std::shared_ptr<Camera> cam);
 	~Plane();
-	Plane(float width, float height, Vector3 normal,Camera* camera);
+	Plane(float width, float height, Vector3 normal,const std::shared_ptr<Camera>& camera);
 	
 	ID3D11Buffer* _vertexBuffer;
 	ID3D11Buffer* VertexBuffer(){ return _vertexBuffer; };

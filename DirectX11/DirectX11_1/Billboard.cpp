@@ -6,7 +6,7 @@
 #include"ShaderDefine.h"
 
 
-Billboard::Billboard(Camera* cam, float width, float height) :_cameraPtr(cam)
+Billboard::Billboard(const std::shared_ptr<Camera>& cam, float width, float height) :_cameraPtr(cam)
 {
 	DeviceDx11& dev = DeviceDx11::Instance();
 	HRESULT result = S_OK;
@@ -24,8 +24,8 @@ Billboard::Billboard(Camera* cam, float width, float height) :_cameraPtr(cam)
 
 
 	_worldAndCamera.world = XMMatrixIdentity();
-	_worldAndCamera.cameraView = _cameraPtr->CameraView();
-	_worldAndCamera.cameraProj = _cameraPtr->CameraProjection();
+	_worldAndCamera.cameraView = _cameraPtr.lock()->CameraView();
+	_worldAndCamera.cameraProj = _cameraPtr.lock()->CameraProjection();
 
 	D3D11_BUFFER_DESC matBuffDesc = {};
 	matBuffDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
@@ -64,11 +64,11 @@ Billboard::Draw()
 	DeviceDx11& dev = DeviceDx11::Instance();
 
 
-	//XMMATRIX view = _cameraPtr->CameraView();
+	//XMMATRIX view = _cameraPtr.lock()->CameraView();
 	//XMFLOAT3 trans = { view._41, view._42, view._43 };
 	//view._41 = view._42 = view._43 = 0;
 	//XMMATRIX invView = XMMatrixTranspose(view);
-	//XMMATRIX proj = _cameraPtr->CameraProjection();
+	//XMMATRIX proj = _cameraPtr.lock()->CameraProjection();
 	////そのままカメラ回転逆行列を掛けるとワールド平行移動が影響を受けてしまうため
 	////一時的にワールドの平行移動を無効にして、カメラ逆回転を掛けた後で平行移動成分を元に戻す
 	////Wr * [Wt * Vr^-1] * Vr * Vt * proj
@@ -79,8 +79,8 @@ Billboard::Draw()
 	//XMMATRIX temp = XMMatrixMultiply(_modelMatrix, invView);
 	//temp._41 = worldTrans.x; temp._42 = worldTrans.y; temp._43 = worldTrans.z;
 	//_modelMatrix= temp;
-	//XMMATRIX v = _cameraPtr->CameraView();
-	//XMMATRIX p = _cameraPtr->CameraProjection();
+	//XMMATRIX v = _cameraPtr.lock()->CameraView();
+	//XMMATRIX p = _cameraPtr.lock()->CameraProjection();
 
 	
 
@@ -110,12 +110,12 @@ Billboard::Update()
 	_worldAndCamera.world = XMMatrixTranslation(-10, 15, 10);
 
 	XMMATRIX w = _worldAndCamera.world;
-	XMMATRIX view = _cameraPtr->CameraView();
+	XMMATRIX view = _cameraPtr.lock()->CameraView();
 	XMFLOAT3 trans = { view._41, view._42, view._43 };
 	view._41 = view._42 = view._43 = 0;
 	XMMATRIX invView = XMMatrixTranspose(view);
 	//invView._41 = trans.x; invView._42 = trans.y; invView._43 = trans.z;
-	XMMATRIX proj = _cameraPtr->CameraProjection();
+	XMMATRIX proj = _cameraPtr.lock()->CameraProjection();
 	//そのままカメラ回転逆行列を掛けるとワールド平行移動が影響を受けてしまうため
 	//一時的にワールドの平行移動を無効にして、カメラ逆回転を掛けた後で平行移動成分を元に戻す
 	//Wr * [Wt * Vr^-1] * Vr * Vt * proj
@@ -126,8 +126,8 @@ Billboard::Update()
 	XMMATRIX temp = XMMatrixMultiply(w, invView);
 	temp._41 = worldTrans.x; temp._42 = worldTrans.y; temp._43 = worldTrans.z;
 	_worldAndCamera.world = temp;
-	_worldAndCamera.cameraView = _cameraPtr->CameraView();
-	_worldAndCamera.cameraProj = _cameraPtr->CameraProjection();
+	_worldAndCamera.cameraView = _cameraPtr.lock()->CameraView();
+	_worldAndCamera.cameraProj = _cameraPtr.lock()->CameraProjection();
 
 	dev.Context()->Map(_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &_mem);
 	//ここでこのメモリの塊に、マトリックスの値をコピーしてやる

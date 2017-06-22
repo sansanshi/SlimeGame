@@ -5,7 +5,7 @@
 #include"ShaderDefine.h"
 #include"Camera.h"
 
-Sphere::Sphere(unsigned int divNum,float radius,Camera* camera) :_cameraPtr(camera)
+Sphere::Sphere(unsigned int divNum,float radius,const std::shared_ptr<Camera>& camera) :_cameraPtr(camera)
 {
 	DeviceDx11& dev = DeviceDx11::Instance();
 	pos = Vector3(-10, 0, 0);
@@ -232,10 +232,10 @@ Sphere::Sphere(unsigned int divNum,float radius,Camera* camera) :_cameraPtr(came
 
 	_modelMatrix = XMMatrixIdentity();
 	_worldAndCamera.world = _modelMatrix;
-	_worldAndCamera.cameraView = _cameraPtr->CameraView();
-	_worldAndCamera.cameraProj = _cameraPtr->CameraProjection();
-	_worldAndCamera.lightView = _cameraPtr->LightView();
-	_worldAndCamera.lightProj = _cameraPtr->LightProjection();
+	_worldAndCamera.cameraView = _cameraPtr.lock()->CameraView();
+	_worldAndCamera.cameraProj = _cameraPtr.lock()->CameraProjection();
+	_worldAndCamera.lightView = _cameraPtr.lock()->LightView();
+	_worldAndCamera.lightProj = _cameraPtr.lock()->LightProjection();
 
 	rot = 0.0f;
 
@@ -390,7 +390,7 @@ Sphere::Update()
 	
 	if (moveForward != 0 || moveRight != 0)
 	{
-		Vector3 forward = _cameraPtr->EyeVec();
+		Vector3 forward = _cameraPtr.lock()->EyeVec();
 		Vector3 right = forward.Cross(Vector3(0, 1, 0));
 		right = -right;
 
@@ -405,7 +405,7 @@ Sphere::Update()
 
 	XMFLOAT3 gaze = { pos.x, pos.y + 5, pos.z };//{ 0, 0, 0 };//
 	XMFLOAT3 eye = { gaze.x, gaze.y + 10, gaze.z - 15 };//{ 0, 0, -10 };//
-	//_cameraPtr->SetEyeGazeUp(eye, gaze, XMFLOAT3(0, 1, 0));
+	//_cameraPtr.lock()->SetEyeGazeUp(eye, gaze, XMFLOAT3(0, 1, 0));
 
 	rot += -1 * XM_PI / 180;
 	XMMATRIX rotMatrix = XMMatrixRotationY(rot);
@@ -414,16 +414,16 @@ Sphere::Update()
 	_modelMatrix = transMatrix;
 	//_modelMatrix = XMMatrixIdentity();
 	_worldAndCamera.world = _modelMatrix;
-	_worldAndCamera.cameraView = _cameraPtr->CameraView();
-	_worldAndCamera.cameraProj = _cameraPtr->CameraProjection();
-	_worldAndCamera.lightView = _cameraPtr->LightView();
-	_worldAndCamera.lightProj = _cameraPtr->LightProjection();
+	_worldAndCamera.cameraView = _cameraPtr.lock()->CameraView();
+	_worldAndCamera.cameraProj = _cameraPtr.lock()->CameraProjection();
+	_worldAndCamera.lightView = _cameraPtr.lock()->LightView();
+	_worldAndCamera.lightProj = _cameraPtr.lock()->LightProjection();
 }
 void 
 Sphere::Draw()
 {
-//	_worldAndCamera.camera = _cameraPtr->GetMatrixies().cameraview;//ライトからの視点にするのでここ書き換える
-//	_worldAndCamera.lightview = _cameraPtr->GetMatrixies().lightview;
+//	_worldAndCamera.camera = _cameraPtr.lock()->GetMatrixies().cameraview;//ライトからの視点にするのでここ書き換える
+//	_worldAndCamera.lightview = _cameraPtr.lock()->GetMatrixies().lightview;
 	DeviceDx11& dev = DeviceDx11::Instance();
 
 	dev.Context()->PSSetSamplers(0, 1, &_samplerState_Wrap);
@@ -441,10 +441,10 @@ Sphere::Draw()
 
 
 	
-	_worldAndCamera.cameraView = _cameraPtr->CameraView();
-	_worldAndCamera.cameraProj = _cameraPtr->CameraProjection();
-	_worldAndCamera.lightView = _cameraPtr->LightView();
-	_worldAndCamera.lightProj = _cameraPtr->LightProjection();
+	_worldAndCamera.cameraView = _cameraPtr.lock()->CameraView();
+	_worldAndCamera.cameraProj = _cameraPtr.lock()->CameraProjection();
+	_worldAndCamera.lightView = _cameraPtr.lock()->LightView();
+	_worldAndCamera.lightProj = _cameraPtr.lock()->LightProjection();
 
 
 	dev.Context()->VSSetConstantBuffers(0, 1, &_matrixBuffer);
@@ -476,10 +476,10 @@ Sphere::DrawLightView()
 	dev.Context()->PSSetShader(_lightviewPS, nullptr, 0);
 
 	
-	_worldAndCamera.cameraView = _cameraPtr->CameraView();
-	_worldAndCamera.cameraProj = _cameraPtr->CameraProjection();
-	_worldAndCamera.lightView = _cameraPtr->LightView();
-	_worldAndCamera.lightProj = _cameraPtr->LightProjection();
+	_worldAndCamera.cameraView = _cameraPtr.lock()->CameraView();
+	_worldAndCamera.cameraProj = _cameraPtr.lock()->CameraProjection();
+	_worldAndCamera.lightView = _cameraPtr.lock()->LightView();
+	_worldAndCamera.lightProj = _cameraPtr.lock()->LightProjection();
 
 	dev.Context()->VSSetConstantBuffers(0, 1, &_matrixBuffer);
 	dev.Context()->Map(_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &_mappedMatrixies);
@@ -508,10 +508,10 @@ Sphere::DrawCameraDepth()
 
 
 	_worldAndCamera.world = _modelMatrix;
-	_worldAndCamera.cameraView = _cameraPtr->CameraView();
-	_worldAndCamera.cameraProj = _cameraPtr->CameraProjection();
-	_worldAndCamera.lightView = _cameraPtr->CameraView();
-	_worldAndCamera.lightProj = _cameraPtr->CameraProjection();
+	_worldAndCamera.cameraView = _cameraPtr.lock()->CameraView();
+	_worldAndCamera.cameraProj = _cameraPtr.lock()->CameraProjection();
+	_worldAndCamera.lightView = _cameraPtr.lock()->CameraView();
+	_worldAndCamera.lightProj = _cameraPtr.lock()->CameraProjection();
 
 	dev.Context()->VSSetConstantBuffers(0, 1, &_matrixBuffer);
 	dev.Context()->Map(_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &_mappedMatrixies);
@@ -531,10 +531,10 @@ Sphere::DrawCameraDepth()
 void
 Sphere::DrawLightView_color()
 {
-	_worldAndCamera.cameraView = _cameraPtr->LightView();//ライトから見たいのでここ書き換える
-	_worldAndCamera.cameraProj = _cameraPtr->LightProjection();
-	_worldAndCamera.lightView = _cameraPtr->LightView();
-	_worldAndCamera.lightProj = _cameraPtr->LightProjection();
+	_worldAndCamera.cameraView = _cameraPtr.lock()->LightView();//ライトから見たいのでここ書き換える
+	_worldAndCamera.cameraProj = _cameraPtr.lock()->LightProjection();
+	_worldAndCamera.lightView = _cameraPtr.lock()->LightView();
+	_worldAndCamera.lightProj = _cameraPtr.lock()->LightProjection();
 
 	DeviceDx11& dev = DeviceDx11::Instance();
 

@@ -77,8 +77,6 @@ Output LightViewVS(float4 pos : POSITION, float2 uv : TEXCOORD,
 		float4 posTemp = pos;//posTemp = pos + normalTemp;Å©Ç±Ç§Ç∑ÇÈÇ∆x,y,z,wÇÃ[w]ÇÃóvëfÇ‹Ç≈â¡éZÇ≥ÇÍÇƒÇµÇ‹Ç§
 		//posTemp.xyz += normalTemp.xyz;//posTemp=float4(pos.xyz+normalTemp.xyz, 1.0)Ç≈Ç‡â¬
 
-		matrix scale = Scalling(1.02f, 1.02f, 1.02f);
-	worldtemp = mul(worldtemp, scale);
 
 	matrix _lightVP = mul(_lightProj, _lightView);
 	matrix tmp = mul(_lightVP/*_lightview*/, worldtemp);

@@ -159,7 +159,7 @@ float4 TessPS(DS_OUTPUT o):SV_Target
 	
 		//return float4(ld-lightviewDepth, 0, 0, 1);
 	
-	if (shadowUV.x == satUV.x&&shadowUV.y == satUV.y&&ld > lightviewDepth + 0.005f){
+	if (shadowUV.x == satUV.x&&shadowUV.y == satUV.y&&ld > lightviewDepth +0.001f){
 		shadowWeight = 0.3f;
 	}
 

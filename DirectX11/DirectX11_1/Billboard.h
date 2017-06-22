@@ -2,6 +2,7 @@
 #include <D3D11.h>
 #include<xnamath.h>
 #include"Define.h"
+#include<memory>
 
 class Camera;
 
@@ -11,7 +12,7 @@ private:
 	ID3D11ShaderResourceView* _texture;
 	ID3D11Buffer* _vertexBuffer;
 	XMFLOAT3 _pos;
-	Camera* _cameraPtr;
+	std::weak_ptr<Camera> _cameraPtr;
 	ID3D11VertexShader* _vs;
 	ID3D11PixelShader* _ps;
 	ID3D11InputLayout* _inputLayout;
@@ -31,7 +32,7 @@ public:
 	};
 #pragma pack()
 
-	Billboard(Camera* cameraPtr,float width,float height);
+	Billboard(const std::shared_ptr<Camera>& cameraPtr,float width,float height);
 	~Billboard();
 
 	void SetPos(XMFLOAT3&);
