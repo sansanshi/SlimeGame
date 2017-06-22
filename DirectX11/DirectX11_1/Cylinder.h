@@ -1,7 +1,7 @@
 #pragma once
 #include"Primitive.h"
 #include<D3D11.h>
-#include"Camera.h"
+class Camera;
 class Cylinder:public Primitive
 {
 private:
@@ -20,7 +20,7 @@ private:
 	ID3D11InputLayout* _lightviewInputLayout;
 
 	unsigned int _vertexCnt;
-	Camera& _cameraRef;
+	Camera* _cameraPtr;
 
 	//MATRIXIES _mvp;
 	WorldAndCamera _worldAndCamera;
@@ -42,8 +42,8 @@ private:
 	void CalculateTangentBinormal();
 
 public:
-	Cylinder(float radius,float height,unsigned int div,Camera& camera);
-	Cylinder(Camera& camera);
+	Cylinder(float radius,float height,unsigned int div,Camera* camera);
+	Cylinder(Camera* camera);
 	~Cylinder();
 
 	ID3D11Buffer* VertexBuffer(){ return _vertexBuffer; };

@@ -1,8 +1,8 @@
 #pragma once
 #include"Primitive.h"
 #include"Define.h"
-#include"Camera.h"
 #include<vector>
+class Camera;
 
 struct ID3D11Buffer;
 
@@ -16,7 +16,7 @@ private:
 	int moveForward;
 	int moveRight;
 
-	Camera& _cameraRef;
+	Camera* _cameraPtr;
 	WorldAndCamera _worldAndCamera;
 	XMMATRIX _modelMatrix;
 	ID3D11Buffer* _matrixBuffer;
@@ -52,7 +52,7 @@ private:
 	ID3D11ShaderResourceView* _displaysmentMap;
 	ID3D11ShaderResourceView* _heightMap;
 public:
-	Sphere(unsigned int divNum,float radius,Camera& );
+	Sphere(unsigned int divNum,float radius,Camera* );
 	~Sphere();
 
 	ID3D11Buffer* VertexBuffer(){ return _vertexBuffer; };

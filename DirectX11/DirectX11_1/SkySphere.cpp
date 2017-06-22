@@ -3,8 +3,9 @@
 #include"DeviceDx11.h"
 #include"ShaderGenerator.h"
 #include"ShaderDefine.h"
+#include"Camera.h"
 
-SkySphere::SkySphere(unsigned int divNum, float radius,Camera* cam) :_cameraRef(cam)
+SkySphere::SkySphere(unsigned int divNum, float radius,Camera* cam) :_cameraPtr(cam)
 {
 	DeviceDx11& dev = DeviceDx11::Instance();
 	_pos = XMFLOAT3(0, 0, 0);
@@ -187,12 +188,12 @@ SkySphere::SkySphere(unsigned int divNum, float radius,Camera* cam) :_cameraRef(
 	
 	_modelMatrix = XMMatrixIdentity();
 	_worldAndCamera.world = _modelMatrix;
-	XMMATRIX camView = _cameraRef->CameraView();
-	XMMATRIX camProj = _cameraRef->CameraProjection();
+	XMMATRIX camView = _cameraPtr->CameraView();
+	XMMATRIX camProj = _cameraPtr->CameraProjection();
 	_worldAndCamera.cameraView = camView;
 	_worldAndCamera.cameraProj = camProj;
-	XMMATRIX lightView = _cameraRef->LightView();
-	XMMATRIX lightProj = _cameraRef->LightProjection();
+	XMMATRIX lightView = _cameraPtr->LightView();
+	XMMATRIX lightProj = _cameraPtr->LightProjection();
 	_worldAndCamera.lightView = lightView;
 	_worldAndCamera.lightProj = lightProj;
 
@@ -334,7 +335,7 @@ SkySphere::Update()
 
 	if (moveForward != 0 || moveRight != 0)
 	{
-		Vector3 forward = _cameraRef->EyeVec();
+		Vector3 forward = _cameraPtr->EyeVec();
 		Vector3 right = forward.Cross(Vector3(0, 1, 0));
 		right = -right;
 
@@ -355,16 +356,16 @@ SkySphere::Update()
 	_modelMatrix = transMatrix;
 	//_modelMatrix = XMMatrixIdentity();
 	_worldAndCamera.world = _modelMatrix;
-	_worldAndCamera.cameraView = _cameraRef->CameraView();
-	_worldAndCamera.cameraProj = _cameraRef->CameraProjection();
-	_worldAndCamera.lightView = _cameraRef->LightView();
-	_worldAndCamera.lightProj = _cameraRef->LightProjection();
+	_worldAndCamera.cameraView = _cameraPtr->CameraView();
+	_worldAndCamera.cameraProj = _cameraPtr->CameraProjection();
+	_worldAndCamera.lightView = _cameraPtr->LightView();
+	_worldAndCamera.lightProj = _cameraPtr->LightProjection();
 }
 void
 SkySphere::Draw()
 {
-	//	_worldAndCamera.camera = _cameraRef.GetMatrixies().cameraview;//ライトからの視点にするのでここ書き換える
-	//	_worldAndCamera.lightview = _cameraRef.GetMatrixies().lightview;
+	//	_worldAndCamera.camera = _cameraPtr->GetMatrixies().cameraview;//ライトからの視点にするのでここ書き換える
+	//	_worldAndCamera.lightview = _cameraPtr->GetMatrixies().lightview;
 	DeviceDx11& dev = DeviceDx11::Instance();
 
 	dev.Context()->PSSetSamplers(0, 1, &_samplerState_Wrap);
@@ -381,10 +382,10 @@ SkySphere::Draw()
 
 
 
-	_worldAndCamera.cameraView = _cameraRef->CameraView();
-	_worldAndCamera.cameraProj = _cameraRef->CameraProjection();
-	_worldAndCamera.lightView = _cameraRef->LightView();
-	_worldAndCamera.lightProj = _cameraRef->LightProjection();
+	_worldAndCamera.cameraView = _cameraPtr->CameraView();
+	_worldAndCamera.cameraProj = _cameraPtr->CameraProjection();
+	_worldAndCamera.lightView = _cameraPtr->LightView();
+	_worldAndCamera.lightProj = _cameraPtr->LightProjection();
 
 
 	dev.Context()->VSSetConstantBuffers(0, 1, &_matrixBuffer);

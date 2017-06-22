@@ -1,9 +1,8 @@
 #pragma once
 #include"Primitive.h"
 #include"Define.h"
-#include"Camera.h"
 #include<vector>
-
+class Camera;
 struct ID3D11Buffer;
 
 class SkySphere
@@ -16,7 +15,7 @@ private:
 	int moveForward;
 	int moveRight;
 
-	Camera* _cameraRef;
+	Camera* _cameraPtr;
 	WorldAndCamera _worldAndCamera;
 	XMMATRIX _modelMatrix;
 	ID3D11Buffer* _matrixBuffer;

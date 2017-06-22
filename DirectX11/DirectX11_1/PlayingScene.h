@@ -1,20 +1,21 @@
 #pragma once
 #include "Scene.h"
-#include"Player.h"
 #include"Define.h"
-#include"Plane.h"
-#include"Cylinder.h"
 #include"Camera.h"
-#include"Sphere.h"
 #include"Renderer.h"
 #include"Effect.h"
-#include"TessPlane.h"
-#include"DecalBox.h"
 #include"SoundManager.h"
-#include"DecalPlane.h"
-#include"SkySphere.h"
-#include"DecalFactory.h"
+#include"DeviceDx11.h"
+#include<memory>
 
+class Player;
+class Plane;
+class Cylinder;
+class Sphere;
+class TessPlane;
+class DecalBox;
+class SkySphere;
+class DecalFactory;
 class Billboard;
 class HUD;
 class PMDMesh;
@@ -28,18 +29,19 @@ private:
 	HRESULT _result;
 
 	ID3D11Buffer* _globalBuffer;
-	Renderer _renderer;
+	std::unique_ptr<Renderer> _renderer;
 	Camera _camera;
 	
 	void Init();
-	Player _player;
-	Plane _plane;
-	Cylinder _cylinder;
-	Sphere _sphere;
-	TessPlane _tessPlane;
+	//Player* _player;
+	std::unique_ptr<Player> _player;
+	std::unique_ptr<Plane> _plane;
+	Cylinder* _cylinder;
+	Sphere* _sphere;
+	TessPlane* _tessPlane;
 	SkySphere* _skySphere;
 
-	DecalBox _decalBox;
+	DecalBox* _decalBox;
 	DecalFactory* _decalFac;
 	float _decalBoxPitch;
 
@@ -79,6 +81,7 @@ private:
 
 	Billboard* _billBoard;
 	HUD* _debugHUD;
+	HUD* _makerHUD;
 
 
 

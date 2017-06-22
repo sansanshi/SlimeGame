@@ -1,105 +1,18 @@
 #include "PlayingScene.h"
 #include"ShaderGenerator.h"
 #include"ShaderDefine.h"
+#include"Player.h"
+#include"DecalBox.h"
+#include"Plane.h"
+#include"TessPlane.h"
+#include"Cylinder.h"
+#include"Sphere.h"
+#include"SkySphere.h"
+#include"DecalFactory.h"
+
 #include"Billboard.h"
 #include"HUD.h"
 
-
-
-XMMATRIX CreateHUDMatrix(float width, float height,float offsetx=0,float offsety=0)
-{
-	XMMATRIX HUDMat=XMMatrixIdentity();
-	XMMATRIX m0 = XMMatrixScaling(2.0f / width, -2.0f / height, 1);
-	XMMATRIX m1 = XMMatrixTranslation(-1, 1, 0);
-	HUDMat = XMMatrixMultiply(m0, m1);
-
-	HUDMat._41 = -1.0f + offsetx*2.0f / WINDOW_WIDTH;
-	HUDMat._42 = 1.0f + offsety*2.0f / WINDOW_HEIGHT;
-
-	/*HUDMat._11 = 2.0f / (float)width;
-	HUDMat._22 = 2.0f / (float)height;
-	HUDMat._41 = -1;
-	HUDMat._42 = 1;*/
-	return HUDMat;
-}
-
-ID3D11Buffer* CreateHUDVertexBuffer(float top, float left, float width, float height)
-{
-	DeviceDx11& dev = DeviceDx11::Instance();
-	
-	std::vector<HUDVertex> vertices(4);
-	{
-		vertices[0] = { XMFLOAT3(left, top, 0.1f), XMFLOAT2(0.f, 0.f) };//左上
-		vertices[1] = { XMFLOAT3(left + width, top, 0.1f), XMFLOAT2(1.0f, 0.0f) };//右上
-		vertices[2] = { XMFLOAT3(left, top + height, 0.1f), XMFLOAT2(0.f, 1.f) };//左下
-		vertices[3] = { XMFLOAT3(left + width, top + height, 0.1f), XMFLOAT2(1.f, 1.f) };//右下
-	};
-	D3D11_SUBRESOURCE_DATA data;
-	data.pSysMem = &vertices[0];
-
-	D3D11_BUFFER_DESC desc = {};
-	desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	desc.ByteWidth = sizeof(HUDVertex)*4;
-	desc.Usage = D3D11_USAGE_DEFAULT;
-	desc.CPUAccessFlags = 0;
-	desc.MiscFlags = 0;
-	desc.StructureByteStride = sizeof(HUDVertex);
-
-	HRESULT result = S_OK;
-	ID3D11Buffer* vertexBuffer = nullptr;
-	result = dev.Device()->CreateBuffer(&desc, &data, &vertexBuffer);
-
-	XMMATRIX hudMatrix = CreateHUDMatrix(WINDOW_WIDTH, WINDOW_HEIGHT);
-
-	XMFLOAT3 pa[4] = {
-		vertices[0].pos,
-		vertices[1].pos,
-		vertices[2].pos,
-		vertices[3].pos
-	};
-
-	for (auto& p : pa)
-	{
-		XMVECTOR pos = XMLoadFloat3(&p);
-		XMMATRIX mat = hudMatrix;
-		XMVECTOR v = XMVector3Transform(pos, mat);
-		XMFLOAT3 r;
-		XMStoreFloat3(&r, v);
-		int b = 0;
-	}
-
-	return vertexBuffer;
-
-}
-
-HRESULT CreateHUDShader(
-	ID3D11VertexShader*& vs,
-	ID3D11InputLayout*& layout,
-	ID3D11PixelShader*& ps)
-{
-	HRESULT result;
-	D3D11_INPUT_ELEMENT_DESC inputElementDescs[] = {
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 }
-	};
-	int hh = sizeof(inputElementDescs) / sizeof(D3D11_INPUT_ELEMENT_DESC);
-	result = ShaderGenerator::CreateVertexShader(
-		"BaseShader.hlsl",
-		"HUDVS",
-		"vs_5_0",
-		vs,
-		inputElementDescs,
-		sizeof(inputElementDescs)/sizeof(D3D11_INPUT_ELEMENT_DESC),
-		layout);
-
-	result = ShaderGenerator::CreatePixelShader(
-		"BaseShader.hlsl",
-		"HUDPS",
-		"ps_5_0",
-		ps);
-
-	return result;
-}
 
 //DirectX11初期化関数
 
@@ -173,41 +86,29 @@ PlayingScene::Init()
 	HRESULT result;
 	DeviceDx11& dev = DeviceDx11::Instance();
 
-	
-	////ノーマルマップ用テクスチャ
-	//ID3D11ShaderResourceView* normalTex;
-	//result = D3DX11CreateShaderResourceViewFromFile(dev.Device(), "normal.png", nullptr, nullptr, &normalTex, &result);
-	//dev.Context()->PSSetShaderResources(5, 1, &normalTex);
-
-	////視差マッピング用テクスチャ
-	//ID3D11ShaderResourceView* heightMap;
-	//result = D3DX11CreateShaderResourceViewFromFile(dev.Device(), "height.png", nullptr, nullptr, &heightMap, &result);
-	//dev.Context()->PSSetShaderResources(6, 1, &heightMap);
-
-
-	//ID3D11ShaderResourceView* displaysmentMap;
-	//result = D3DX11CreateShaderResourceViewFromFile(dev.Device(), "disp.png", nullptr, nullptr, &displaysmentMap, &result);
-	//dev.Context()->VSSetShaderResources(7, 1, &displaysmentMap);
-
-	//float col[4] = { 0.5, 0.5, 0.5, 1.0 };
-	//clearColor = col;
 }
 
 //平面、シリンダも初期化子で初期化してるのは後でどうにかする
 //GameMainからウィンドウハンドルを受け取っている
 //最初にDirect3Dの初期化をするために_result作って初期化子でInitDirecct3Dを呼ぶ
 PlayingScene::PlayingScene(HWND hwnd) 
-	:_hwnd(hwnd),_result(InitDirect3D(_hwnd)),dev(DeviceDx11::Instance()),
-	_player(_camera), _plane(300, 300, Vector3(0, 1, 0), _camera), 
-	_cylinder(4, 20, 20,_camera),
-	_sphere(100,5,_camera),
-	_tessPlane(400,400,Vector3(0,1,0),_camera),
-	_decalBox(1,1,1,&_camera)
+	:_hwnd(hwnd),_result(InitDirect3D(_hwnd)),dev(DeviceDx11::Instance())
 {
 	//InitDirect3D(_hwnd);//初期化子で既に呼んでいる
 	Init();
-	_renderer.Init();//レンダラー初期化
-	_player.Init();
+	_renderer = std::make_unique<Renderer>();
+	_renderer->Init();//レンダラー初期化
+	//_player = new Player(&_camera);
+	//_player->Init();
+	_player = std::make_unique<Player>(&_camera);
+	_player->Init();
+
+	_plane = std::make_unique<Plane>(300, 300, Vector3(0, 1, 0), &_camera);
+	//_plane = new Plane(300, 300, Vector3(0, 1, 0), &_camera);
+	_cylinder = new Cylinder(4, 20, 20, &_camera);
+	_sphere = new Sphere(100, 5, &_camera);
+	_tessPlane = new TessPlane(400, 400, Vector3(0, 1, 0), &_camera);
+	_decalBox = new DecalBox(1, 1, 1, &_camera);
 
 	_skySphere = new SkySphere(100, SKYSPHERE_RADIUS, &_camera);
 
@@ -225,6 +126,7 @@ PlayingScene::PlayingScene(HWND hwnd)
 
 	_billBoard = new Billboard(&_camera,10,10);
 	_debugHUD = new HUD(&_camera,0,0,320,240);
+	_makerHUD = new HUD(&_camera, -8, -8, 16, 16);
 
 
 	_effect.Emit();
@@ -237,71 +139,11 @@ PlayingScene::PlayingScene(HWND hwnd)
 	//Inverse関数を使わなくていいので単純に転置させた方が軽い
 
 
-	//HUD用シェーダ
-	//HUD用頂点（ピクセル単位（2D座標系で指定）
-	//HUD用頂点返還Matrix
-	//ポイントは2Dピクセル指定をどうするのか
-	//→HUD用行列で2D用の行列にできないか
-	_hudMatrix = CreateHUDMatrix(WINDOW_WIDTH, WINDOW_HEIGHT);
-
-	XMFLOAT3 pa[2] = {
-		{ 0, 0, 0 },
-		{ (float)WINDOW_WIDTH, (float)WINDOW_HEIGHT, 0 }
-	};
-
-	for (auto& p : pa)
-	{
-		XMVECTOR pos = XMLoadFloat3(&p);
-		XMMATRIX mat = _hudMatrix;
-		XMVECTOR v = XMVector3Transform(pos, mat);
-		XMFLOAT3 r;
-		XMStoreFloat3(&r, v);
-		int b = 0;
-	}
-	_hudVS = nullptr;
-	_hudInputLayout = nullptr;
-	_hudPS = nullptr;
-	CreateHUDShader(_hudVS, _hudInputLayout, _hudPS);
-
-
-	_hudBuffer = CreateHUDVertexBuffer(0,0,320,240);
-
-	unsigned int hudstride = sizeof(HUDVertex);
-	unsigned int hudoffset = 0;
-
-	//マーカー頂点バッファ作成
-	_makerBuffer = CreateHUDVertexBuffer(-8, -8, 16, 16);
 	D3DX11CreateShaderResourceViewFromFile(dev.Device(), "texture/marker.dds", nullptr, nullptr, &_makerSRV, &result);
 
 
 	
-	//mvp行列用のバッファ作る HUD用に作っただけなので後でクラス化したら消す
-	D3D11_BUFFER_DESC matBuffDesc = {};
-	matBuffDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	matBuffDesc.ByteWidth = sizeof(WorldAndCamera);
-	matBuffDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;//バッファの中身はCPUで書き換える
-	matBuffDesc.Usage = D3D11_USAGE_DYNAMIC;//CPUによる書き込み、GPUによる読み込みが行われるという意味
-	//matBuffDesc.ByteWidth = sizeof(XMMATRIX);
-	//matBuffDesc.StructureByteStride = sizeof(XMMATRIX);
-
-
-	_worldAndCamera.world = _hudMatrix;
-	_worldAndCamera.cameraView = _camera.CameraView();
-	_worldAndCamera.cameraProj = _camera.CameraProjection();
-	D3D11_SUBRESOURCE_DATA d;
-	d.pSysMem = &_worldAndCamera;
-
-	result = dev.Device()->CreateBuffer(&matBuffDesc, &d, &_matrixBuffer);
-
-	dev.Context()->Map(_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &_mem);
-	//ここでこのメモリの塊に、マトリックスの値をコピーしてやる
-	memcpy(_mem.pData, (void*)(&_worldAndCamera), sizeof(_worldAndCamera));
-	//*(XMMATRIX*)mem.pData = matrix;//川野先生の書き方　memcpyで数値を間違
-	dev.Context()->Unmap(_matrixBuffer, 0);
-
-	dev.Context()->VSSetConstantBuffers(0, 1, &_matrixBuffer);
-
-
+	
 	//シェーダにフレーム単位で渡す定数バッファ
 	unsigned int globalTimer = 0;
 	_shaderGlobals.eyePos = _camera.GetEyePos();//XMFLOAT4(eyePoint.x, eyePoint.y, eyePoint.z, 1);//XMFLOAT3(gazePoint.x - eyePoint.x, gazePoint.y - eyePoint.y, gazePoint.z - eyePoint.z);//Vector3(gazePoint.x - eyePoint.x, gazePoint.y - eyePoint.y, gazePoint.z - eyePoint.z).Normalize();
@@ -409,7 +251,7 @@ PlayingScene::Update()
 	}
 	
 	XMFLOAT3 test = _camera.GetRotation();
-	_decalBox.SetPYR(XMFLOAT3(_decalBoxPitch, _camera.GetRotation().y, 0));
+	_decalBox->SetPYR(XMFLOAT3(_decalBoxPitch, _camera.GetRotation().y, 0));
 
 
 	if (keystate[VK_LBUTTON]&0x80)//マウス左
@@ -429,9 +271,9 @@ PlayingScene::Update()
 		XMVECTOR camerapos = XMLoadFloat3(&_camera.GetPos());
 
 		float d;
-		XMStoreFloat(&d, XMVector3Dot(camerapos, _plane.Normal()));
+		XMStoreFloat(&d, XMVector3Dot(camerapos, _plane->Normal()));
 		float t;
-		XMStoreFloat(&t, XMVector3Dot(-ray, _plane.Normal()));
+		XMStoreFloat(&t, XMVector3Dot(-ray, _plane->Normal()));
 
 		ray = XMVectorScale(ray, d / t);
 
@@ -442,23 +284,17 @@ PlayingScene::Update()
 		//_effect.Emit(pos);
 
 		//デカールボックスの位置セット
-		_decalBox.SetPos(pos);
+		_decalBox->SetPos(pos);
 		int j = 0;
 		
 		if (keystate[VK_RBUTTON] & 0x80)
 		{
 			if (!(lastkeystate[VK_RBUTTON] & 0x80)) 
 			{
-				_decalFac->CreateDecalBox(_decalBox.GetWorldMatrix());
+				_decalFac->CreateDecalBox(_decalBox->GetWorldMatrix());
 				//_decalFac->CreateDecalBox(_decalBox.GetPos(), _decalBox.GetRotation(), _decalBox.GetScale());
 			}
 		}
-		/*UINT num = 1;
-		dev.Context()->RSGetViewports(&num, &vp);
-		XMVECTOR retVec;
-		retVec = XMVector3Unproject(nullptr, 0, 0,
-			vp.Width, vp.Height, vp.MinDepth, vp.MaxDepth,
-			_camera.CameraProjection(), _camera.CameraView(), XMMatrixIdentity());*/
 
 	}
 
@@ -527,93 +363,94 @@ PlayingScene::Update()
 
 	_camera.Update();
 
-	_player.Update();
-	_plane.Update();
-	_cylinder.Update();
-	_tessPlane.Update();
-	_sphere.Update();
-	_decalBox.Update();
+	_player->Update();
+	_plane->Update();
+	_cylinder->Update();
+	_tessPlane->Update();
+	_sphere->Update();
+	_decalBox->Update();
 	_decalFac->Update();
 	_skySphere->SetPos(_camera.GetPos());
 	_skySphere->Update();
 	_billBoard->Update();
 	_debugHUD->Update();
+	_makerHUD->Update();
 
 	float color[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	//float white[4] = { 1.0, 1.0, 1.0, 1.0 };
 
 
-	_renderer.ChangePTForPMD();
-	_renderer.CullBack();
-	_renderer.ChangeRT_LightColor();
-	_sphere.DrawLightView_color();
+	_renderer->ChangePTForPMD();
+	_renderer->CullBack();
+	_renderer->ChangeRT_LightColor();
+	_sphere->DrawLightView_color();
 
 
 #pragma region ライトビュー描画
-	_renderer.ChangeRT_Light();
+	_renderer->ChangeRT_Light();
 
-	//_renderer.ZWriteOff();
-	_renderer.ChangePTForPrimitive();
+	//_renderer->ZWriteOff();
+	_renderer->ChangePTForPrimitive();
 	//_plane.DrawLightView();
-	_tessPlane.DrawLightView();
-	_cylinder.DrawLightView();
+	_tessPlane->DrawLightView();
+	_cylinder->DrawLightView();
 
-	_renderer.ChangePTForPMD();
-	_player.DrawLightView();
-	_sphere.DrawLightView();
-	//_renderer.ZWriteOn();
+	_renderer->ChangePTForPMD();
+	_player->DrawLightView();
+	_sphere->DrawLightView();
+	//_renderer->ZWriteOn();
 
 #pragma endregion
 
 #pragma region カメラデプス描画
-	_renderer.ChangeRT_CameraDepth();
-	_player.DrawCameraDepth();
+	_renderer->ChangeRT_CameraDepth();
+	_player->DrawCameraDepth();
 	//_plane.DrawCameraDepth();
-	_tessPlane.DrawCameraDepth();
-	_cylinder.DrawCameraDepth();
-	_sphere.DrawCameraDepth();
+	_tessPlane->DrawCameraDepth();
+	_cylinder->DrawCameraDepth();
+	_sphere->DrawCameraDepth();
 
 #pragma endregion
 	
 
 #pragma region カメラビュー描画
-	_renderer.ChangeRT_Camera();
-	_renderer.ZWriteOn();
+	_renderer->ChangeRT_Camera();
+	_renderer->ZWriteOn();
 	_skySphere->Draw();
 	//ライトビューからのレンダリング結果をテクスチャとしてGPUに渡す
 	//SetRenderTargetした後でSetShaderResourcesしないと渡らない
-	ID3D11ShaderResourceView* resource = _renderer.LightDepthShaderResource();
+	ID3D11ShaderResourceView* resource = _renderer->LightDepthShaderResource();
 	dev.Context()->PSSetShaderResources(TEXTURE_LIGHT_DEPTH, 1, &resource);
 
 
-	_renderer.ChangePTForPMD();
-	_player.Draw();//プレイヤーのメイン描画
+	_renderer->ChangePTForPMD();
+	_player->Draw();//プレイヤーのメイン描画
 
-	_renderer.ChangePTForPrimitive();
-	_cylinder.Draw();//柱
+	_renderer->ChangePTForPrimitive();
+	_cylinder->Draw();//柱
 
 	
-	_renderer.ChangePTForPMD();
+	_renderer->ChangePTForPMD();
 	dev.Context()->DSSetConstantBuffers(5, 1, &_globalBuffer);
-	_tessPlane.Draw();//テッセレーション平面
+	_tessPlane->Draw();//テッセレーション平面
 
 	//デカールボックスが頂点シェーダで深度バッファテクスチャ使うので渡す
-	resource = _renderer.LightDepthShaderResource();
+	resource = _renderer->LightDepthShaderResource();
 	dev.Context()->VSSetShaderResources(TEXTURE_CAMERA_DEPTH, 1, &resource);
 
 
-	_renderer.CullNone();//両面描画させる
-	_sphere.Draw();//半透明スライム
+	_renderer->CullNone();//両面描画させる
+	_sphere->Draw();//半透明スライム
 
 	//カメラからの深度バッファテクスチャ
-	resource = _renderer.CameraDepthShaderResource();
+	resource = _renderer->CameraDepthShaderResource();
 	dev.Context()->PSSetShaderResources(TEXTURE_CAMERA_DEPTH, 1, &resource);
-	_renderer.ZWriteOff();
-	_plane.Draw();//床
+	_renderer->ZWriteOff();
+	_plane->Draw();//床
 	_decalFac->Draw();//デカールボックス
-	_decalBox.DebugDraw();//デバッグ用デカールボックス
-	_renderer.ZWriteOn();
-	_renderer.CullBack();
+	_decalBox->DebugDraw();//デバッグ用デカールボックス
+	_renderer->ZWriteOn();
+	_renderer->CullBack();
 	_billBoard->Draw();
 
 #pragma endregion
@@ -627,51 +464,24 @@ PlayingScene::Update()
 #pragma region HUD描画
 	if (debugToggle)
 	{
-		resource = _renderer.LightDepthShaderResource();
+		resource = _renderer->LightDepthShaderResource();
 		dev.Context()->PSSetShaderResources(TEXTURE_LIGHT_DEPTH, 1, &resource);
-		//_debugHUD->Draw();
-
-
-		//_renderer.ChangePTForPrimitive();
-
-		//dev.Context()->VSSetConstantBuffers(0, 1, &_matrixBuffer);
-		////world書き換え（hudMatrixに）
-		//_worldAndCamera.world = _hudMatrix;// XMMatrixIdentity();
-		//_worldAndCamera.cameraView = _camera.CameraView();
-		//_worldAndCamera.cameraProj = _camera.CameraProjection();
-
-		//dev.Context()->Map(_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &_mem);
-		////ここでこのメモリの塊に、マトリックスの値をコピーしてやる
-		//memcpy(_mem.pData, (void*)(&_worldAndCamera), sizeof(_worldAndCamera));
-		////*(XMMATRIX*)mem.pData = matrix;//川野先生の書き方　memcpyで数値を間違
-		//dev.Context()->Unmap(_matrixBuffer, 0);
-
-		//dev.Context()->VSSetShader(_hudVS, nullptr, 0);
-		//dev.Context()->PSSetShader(_hudPS, nullptr, 0);
-		//dev.Context()->IASetInputLayout(_hudInputLayout);
-		////ライトからのレンダリング結果
-		//resource = _renderer.LightDepthShaderResource();
-		//dev.Context()->PSSetShaderResources(TEXTURE_LIGHT_DEPTH, 1, &resource);
-		//unsigned int hudstride = sizeof(HUDVertex);
-		//unsigned int hudoffset = 0;
-		//dev.Context()->IASetVertexBuffers(0, 1, &_hudBuffer, &hudstride, &hudoffset);
-		//
-		//dev.Context()->Draw(4, 0);
+		_debugHUD->Draw();
 
 	}
 #pragma endregion
 
 	{
 		//ikボーンの場所取ってくる
-		int ikboneIdx = _player.GetMesh()->GetBoneMap()["右足ＩＫ"];
-		XMFLOAT3 ikpos = _player.GetMesh()->
+		int ikboneIdx = _player->GetMesh()->GetBoneMap()["右足ＩＫ"];
+		XMFLOAT3 ikpos = _player->GetMesh()->
 			GetBoneVertices()[ikboneIdx].head.pos;
-		ikpos = _player.IKPos();
+		ikpos = _player->IKPos();
 		//↑の座標に対しｗ（ボーン行列含む）、ｖ、ｐ掛けてｗで割ればクリッピング空間上の位置posCSが求まる
 		//posCSはウィンドウの解像度Sw,Shを基にそれぞれx=-1~1→0~Sw,h=-1~1→0~Shにできる
 		//出てきたx,yの値分オフセットさせる行列をマーカーの頂点にかけてやる
 		//XMMATRIX bonemat = _player.GetMesh()->BoneMatrixies()[ikboneIdx];
-		XMMATRIX world = _player.GetModelMatrix();
+		XMMATRIX world = _player->GetModelMatrix();
 		//XMMATRIX wvp = XMMatrixMultiply(bonemat,world);
 		XMMATRIX view = _camera.CameraView();
 		XMMATRIX proj = _camera.CameraProjection();
@@ -693,36 +503,12 @@ PlayingScene::Update()
 
 		XMMATRIX h = _hudMatrix;
 		XMMATRIX m = XMMatrixMultiply(screenOfsMatrix, h);
-		_debugHUD->Offset(ikScreenPos.x, ikScreenPos.y);
 
 
-		_renderer.ChangePTForPrimitive();
-
-		dev.Context()->VSSetConstantBuffers(0, 1, &_matrixBuffer);
-		//world書き換え（hudMatrixに）
-		_worldAndCamera.world = m;// XMMatrixIdentity();
-		_worldAndCamera.cameraView = _camera.CameraView();
-		_worldAndCamera.cameraProj = _camera.CameraProjection();
-
-		dev.Context()->Map(_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &_mem);
-		//ここでこのメモリの塊に、マトリックスの値をコピーしてやる
-		memcpy(_mem.pData, (void*)(&_worldAndCamera), sizeof(_worldAndCamera));
-		//*(XMMATRIX*)mem.pData = matrix;//川野先生の書き方　memcpyで数値を間違
-		dev.Context()->Unmap(_matrixBuffer, 0);
-
-		dev.Context()->VSSetShader(_hudVS, nullptr, 0);
-		dev.Context()->PSSetShader(_hudPS, nullptr, 0);
-		dev.Context()->IASetInputLayout(_hudInputLayout);
-		//ライトからのレンダリング結果
-		resource = _makerSRV;
-		dev.Context()->PSSetShaderResources(TEXTURE_LIGHT_DEPTH, 1, &resource);
-		unsigned int hudstride = sizeof(HUDVertex);
-		unsigned int hudoffset = 0;
-		dev.Context()->IASetVertexBuffers(0, 1, &_makerBuffer, &hudstride, &hudoffset);
-
-		dev.Context()->Draw(4, 0);
-
-		int kkkk = 0;
+		_renderer->ChangePTForPrimitive();
+		dev.Context()->PSSetShaderResources(TEXTURE_LIGHT_DEPTH, 1, &_makerSRV);
+		_makerHUD->Offset(ikScreenPos.x, ikScreenPos.y);
+		_makerHUD->Draw();
 	}
 
 	dev.SwapChain()->Present(1, 0);

@@ -3,7 +3,7 @@
 #include"Primitive.h"
 #include"Primitive.h"
 #include"Define.h"
-#include"Camera.h"
+class Camera;
 
 struct ID3D11Buffer;
 
@@ -11,7 +11,7 @@ class TessPlane
 	:public Primitive
 {
 private:
-	Camera& _cameraRef;
+	Camera* _cameraPtr;
 	//MATRIXIES _mvp;
 	WorldAndCamera _worldAndCamera;
 	XMMATRIX _modelMatrix;
@@ -25,9 +25,9 @@ private:
 
 	ID3D11SamplerState* _samplerState_Wrap;
 public:
-	TessPlane(Camera&);
+	TessPlane(Camera*);
 	~TessPlane();
-	TessPlane(float width, float height, Vector3 normal, Camera& camera);
+	TessPlane(float width, float height, Vector3 normal, Camera* camera);
 
 	ID3D11Buffer* _vertexBuffer;
 	ID3D11Buffer* VertexBuffer(){ return _vertexBuffer; };

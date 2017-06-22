@@ -1,14 +1,14 @@
 #pragma once
 #include"Primitive.h"
 #include"Define.h"
-#include"Camera.h"
+class Camera;
 
 struct ID3D11Buffer;
 
 class DecalPlane
 {
 private:
-	Camera& _cameraRef;
+	Camera* _cameraPtr;
 	//MATRIXIES _mvp;
 	MatrixiesForDecal _matrixies;
 	XMMATRIX _modelMatrix;
@@ -32,9 +32,9 @@ public:
 		XMFLOAT3 normal;
 		XMFLOAT2 uv;
 	};
-	DecalPlane(Camera&);
+	DecalPlane(Camera*);
 	~DecalPlane();
-	DecalPlane(float width, float height, XMFLOAT3 normal, Camera& camera);
+	DecalPlane(float width, float height, XMFLOAT3 normal, Camera* camera);
 
 	ID3D11Buffer* VertexBuffer(){ return _vertexBuffer; };
 

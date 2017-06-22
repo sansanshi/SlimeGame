@@ -10,9 +10,9 @@
 #include"VMDData.h"
 #include"VMDLoader.h"
 #include"Define.h"
-#include"Camera.h"
 
 
+class Camera;
 class PMDMesh;
 
 
@@ -53,7 +53,7 @@ private:
 	XMFLOAT3 gazePoint;
 	XMFLOAT3 upVec;
 
-	Camera& _cameraRef;
+	Camera* _cameraPtr;
 	//MATRIXIES _matrixMVP;
 	WorldAndCamera _worldAndCamera;
 	XMFLOAT3 _pos;
@@ -106,7 +106,7 @@ private:
 
 
 public:
-	Player(Camera&);
+	Player(Camera*);
 	~Player();
 	PMDMesh* GetMesh(){ return _mesh; };
 

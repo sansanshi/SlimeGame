@@ -2,12 +2,13 @@
 #include<vector>
 #include"ShaderGenerator.h"
 #include"DeviceDx11.h"
+#include"Camera.h"
 
-DecalPlane::DecalPlane(Camera& camera) :_cameraRef(camera)
+DecalPlane::DecalPlane(Camera* camera) :_cameraPtr(camera)
 {
 };
 
-DecalPlane::DecalPlane(float width, float depth, XMFLOAT3 normal, Camera& camera) :_cameraRef(camera)
+DecalPlane::DecalPlane(float width, float depth, XMFLOAT3 normal, Camera* camera) :_cameraPtr(camera)
 {
 
 
@@ -53,19 +54,19 @@ DecalPlane::DecalPlane(float width, float depth, XMFLOAT3 normal, Camera& camera
 
 	_modelMatrix = XMMatrixIdentity();
 	_matrixies.world = _modelMatrix;
-	_matrixies.view = _cameraRef.CameraView();
-	_matrixies.proj = _cameraRef.CameraProjection();
+	_matrixies.view = _cameraPtr->CameraView();
+	_matrixies.proj = _cameraPtr->CameraProjection();
 	//_mvp.worldMatrix = _modelMatrix;//camera‚ÌUpdate‚ÅƒJƒƒ‰‚ÌworldMatrix‚ð•Ï‚¦‚é‚æ‚¤‚É‚È‚Á‚½‚ç2‚Â‚ðæŽZ‚·‚é
-	//_mvp.viewMatrix = _cameraRef.GetMatrixies().view;
-	//_mvp.projectionMatrix = _cameraRef.GetMatrixies().projection;
+	//_mvp.viewMatrix = _cameraPtr->GetMatrixies().view;
+	//_mvp.projectionMatrix = _cameraPtr->GetMatrixies().projection;
 
 	XMVECTOR dummy;
-	XMMATRIX view = _cameraRef.CameraView();
+	XMMATRIX view = _cameraPtr->CameraView();
 	_matrixies.invView = XMMatrixInverse(&dummy, view);
 	XMMATRIX world = _matrixies.world;
 	_matrixies.invWorld = XMMatrixInverse(&dummy, world);
 
-	XMMATRIX proj = _cameraRef.CameraProjection();
+	XMMATRIX proj = _cameraPtr->CameraProjection();
 	XMMATRIX vp = XMMatrixMultiply(proj, view);
 	XMMATRIX wvp = XMMatrixMultiply(vp, world);
 	XMMATRIX invWVP = XMMatrixInverse(&dummy, wvp);
@@ -143,16 +144,16 @@ DecalPlane::Update()
 	_modelMatrix = transMat;
 	_modelMatrix = XMMatrixMultiply( rotMatrix,transMat);
 	_matrixies.world = _modelMatrix;
-	_matrixies.view = _cameraRef.CameraView();
-	_matrixies.proj = _cameraRef.CameraProjection();
+	_matrixies.view = _cameraPtr->CameraView();
+	_matrixies.proj = _cameraPtr->CameraProjection();
 
 	XMVECTOR dummy;
-	XMMATRIX view = _cameraRef.CameraView();
+	XMMATRIX view = _cameraPtr->CameraView();
 	_matrixies.invView = XMMatrixInverse(&dummy, view);
 	XMMATRIX world = _matrixies.world;
 	_matrixies.invWorld = XMMatrixInverse(&dummy, world);
 
-	XMMATRIX proj = _cameraRef.CameraProjection();
+	XMMATRIX proj = _cameraPtr->CameraProjection();
 	XMMATRIX vp = XMMatrixMultiply(proj, view);
 	XMMATRIX wvp = XMMatrixMultiply(vp, world);
 	XMMATRIX invWVP = XMMatrixInverse(&dummy, wvp);

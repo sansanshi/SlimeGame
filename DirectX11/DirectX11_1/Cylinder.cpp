@@ -4,9 +4,9 @@
 #include<xnamath.h>
 #include"DeviceDx11.h"
 #include"ShaderGenerator.h"
+#include"Camera.h"
 
-
-Cylinder::Cylinder(float radius, float height, unsigned int div, Camera& camera) :_cameraRef(camera)
+Cylinder::Cylinder(float radius, float height, unsigned int div, Camera* camera) :_cameraPtr(camera)
 {
 	angle = 0.0f;
 	_height = height;
@@ -106,13 +106,13 @@ Cylinder::Cylinder(float radius, float height, unsigned int div, Camera& camera)
 
 	_modelMatrix = XMMatrixIdentity();
 	/*_mvp.worldMatrix = _modelMatrix;
-	_mvp.viewMatrix = _cameraRef.GetMatrixies().view;
-	_mvp.projectionMatrix = _cameraRef.GetMatrixies().projection;*/
+	_mvp.viewMatrix = _cameraPtr->GetMatrixies().view;
+	_mvp.projectionMatrix = _cameraPtr->GetMatrixies().projection;*/
 	_worldAndCamera.world = _modelMatrix;
-	_worldAndCamera.cameraView = _cameraRef.CameraView();
-	_worldAndCamera.cameraProj = _cameraRef.CameraProjection();
-	_worldAndCamera.lightView = _cameraRef.LightView();
-	_worldAndCamera.lightProj = _cameraRef.LightProjection();
+	_worldAndCamera.cameraView = _cameraPtr->CameraView();
+	_worldAndCamera.cameraProj = _cameraPtr->CameraProjection();
+	_worldAndCamera.lightView = _cameraPtr->LightView();
+	_worldAndCamera.lightProj = _cameraPtr->LightProjection();
 
 	//mvps—ñ—p‚Ìƒoƒbƒtƒ@ì‚é
 	D3D11_BUFFER_DESC matBuffDesc = {};
@@ -135,7 +135,7 @@ Cylinder::Cylinder(float radius, float height, unsigned int div, Camera& camera)
 	dev.Context()->Unmap(_matrixBuffer, 0);
 
 }
-Cylinder::Cylinder(Camera& camera) :_cameraRef(camera)
+Cylinder::Cylinder(Camera* camera) :_cameraPtr(camera)
 {
 }
 
@@ -154,8 +154,8 @@ Cylinder::Draw()
 
 	dev.Context()->VSSetConstantBuffers(0, 1, &_matrixBuffer);
 
-	_worldAndCamera.lightView = _cameraRef.LightView();
-	_worldAndCamera.lightProj = _cameraRef.LightProjection();
+	_worldAndCamera.lightView = _cameraPtr->LightView();
+	_worldAndCamera.lightProj = _cameraPtr->LightProjection();
 
 
 	dev.Context()->Map(_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &_mappedMatrixies);
@@ -188,8 +188,8 @@ Cylinder::DrawLightView()//ŒãXƒvƒŒƒCƒ„[‚©‚çƒJƒƒ‰‚ð˜M‚Á‚½ê‡‚Í‚±‚±‚Å‚àƒJƒƒ‰‚
 
 	dev.Context()->VSSetConstantBuffers(0, 1, &_matrixBuffer);
 
-	_worldAndCamera.lightView = _cameraRef.LightView();
-	_worldAndCamera.lightProj = _cameraRef.LightProjection();
+	_worldAndCamera.lightView = _cameraPtr->LightView();
+	_worldAndCamera.lightProj = _cameraPtr->LightProjection();
 
 	dev.Context()->Map(_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &_mappedMatrixies);
 	//‚±‚±‚Å‚±‚Ìƒƒ‚ƒŠ‚Ì‰ò‚ÉAƒ}ƒgƒŠƒbƒNƒX‚Ì’l‚ðƒRƒs[‚µ‚Ä‚â‚é
@@ -219,8 +219,8 @@ Cylinder::DrawCameraDepth()
 	dev.Context()->PSSetShader(_lightviewPS, nullptr, 0);
 	dev.Context()->VSSetConstantBuffers(0, 1, &_matrixBuffer);
 
-	XMMATRIX view = _cameraRef.CameraView();
-	XMMATRIX proj = _cameraRef.CameraProjection();
+	XMMATRIX view = _cameraPtr->CameraView();
+	XMMATRIX proj = _cameraPtr->CameraProjection();
 	_worldAndCamera.lightView = view;
 	_worldAndCamera.lightProj = proj;
 
@@ -260,9 +260,9 @@ Cylinder::Update()
 	_modelMatrix = modelMatrix;
 
 	_worldAndCamera.world = _modelMatrix;
-	_worldAndCamera.cameraView = _cameraRef.CameraView();
-	_worldAndCamera.cameraProj = _cameraRef.CameraProjection();
-	_worldAndCamera.lightView = _cameraRef.LightView();
-	_worldAndCamera.lightProj = _cameraRef.LightProjection();
+	_worldAndCamera.cameraView = _cameraPtr->CameraView();
+	_worldAndCamera.cameraProj = _cameraPtr->CameraProjection();
+	_worldAndCamera.lightView = _cameraPtr->LightView();
+	_worldAndCamera.lightProj = _cameraPtr->LightProjection();
 	
 }

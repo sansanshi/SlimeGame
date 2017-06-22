@@ -4,11 +4,11 @@
 #include"DeviceDx11.h"
 #include"ShaderDefine.h"
 
-Plane::Plane(Camera& camera) :_cameraRef(camera)
+Plane::Plane(Camera* camera) :_cameraPtr(camera)
 {
 };
 
-Plane::Plane(float width, float depth, Vector3 normal,Camera& camera) :_cameraRef(camera)
+Plane::Plane(float width, float depth, Vector3 normal,Camera* camera) :_cameraPtr(camera)
 {
 
 
@@ -68,13 +68,13 @@ Plane::Plane(float width, float depth, Vector3 normal,Camera& camera) :_cameraRe
 
 	_modelMatrix = XMMatrixIdentity();
 	_worldAndCamera.world = _modelMatrix;
-	_worldAndCamera.cameraView = _cameraRef.CameraView();
-	_worldAndCamera.cameraProj = _cameraRef.CameraProjection();
-	_worldAndCamera.lightView = _cameraRef.LightView();
-	_worldAndCamera.lightProj = _cameraRef.LightProjection();
+	_worldAndCamera.cameraView = _cameraPtr->CameraView();
+	_worldAndCamera.cameraProj = _cameraPtr->CameraProjection();
+	_worldAndCamera.lightView = _cameraPtr->LightView();
+	_worldAndCamera.lightProj = _cameraPtr->LightProjection();
 	//_mvp.worldMatrix = _modelMatrix;//cameraのUpdateでカメラのworldMatrixを変えるようになったら2つを乗算する
-	//_mvp.viewMatrix = _cameraRef.GetMatrixies().view;
-	//_mvp.projectionMatrix = _cameraRef.GetMatrixies().projection;
+	//_mvp.viewMatrix = _cameraPtr->GetMatrixies().view;
+	//_mvp.projectionMatrix = _cameraPtr->GetMatrixies().projection;
 
 	rot = 0.0f;
 
@@ -113,10 +113,10 @@ Plane::Draw()
 	DeviceDx11& dev = DeviceDx11::Instance();
 	dev.Context()->VSSetConstantBuffers(0, 1, &_matrixBuffer);
 	_worldAndCamera.world = _modelMatrix;
-	_worldAndCamera.cameraView = _cameraRef.CameraView();
-	_worldAndCamera.cameraProj = _cameraRef.CameraProjection();
-	_worldAndCamera.lightView = _cameraRef.LightView();
-	_worldAndCamera.lightProj = _cameraRef.LightProjection();
+	_worldAndCamera.cameraView = _cameraPtr->CameraView();
+	_worldAndCamera.cameraProj = _cameraPtr->CameraProjection();
+	_worldAndCamera.lightView = _cameraPtr->LightView();
+	_worldAndCamera.lightProj = _cameraPtr->LightProjection();
 
 	dev.Context()->Map(_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &_mappedMatrixies);
 	//ここでこのメモリの塊に、マトリックスの値をコピーしてやる
@@ -145,10 +145,10 @@ Plane::DrawLightView()
 	DeviceDx11& dev = DeviceDx11::Instance();
 	dev.Context()->VSSetConstantBuffers(0, 1, &_matrixBuffer);
 	_worldAndCamera.world = _modelMatrix;
-	_worldAndCamera.cameraView = _cameraRef.CameraView();
-	_worldAndCamera.cameraProj = _cameraRef.CameraProjection();
-	_worldAndCamera.lightView = _cameraRef.LightView();
-	_worldAndCamera.lightProj = _cameraRef.LightProjection();
+	_worldAndCamera.cameraView = _cameraPtr->CameraView();
+	_worldAndCamera.cameraProj = _cameraPtr->CameraProjection();
+	_worldAndCamera.lightView = _cameraPtr->LightView();
+	_worldAndCamera.lightProj = _cameraPtr->LightProjection();
 
 	dev.Context()->Map(_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &_mappedMatrixies);
 	//ここでこのメモリの塊に、マトリックスの値をコピーしてやる
@@ -174,9 +174,9 @@ Plane::DrawCameraDepth()
 	dev.Context()->VSSetConstantBuffers(0, 1, &_matrixBuffer);
 
 	//
-	XMMATRIX cameraView = _cameraRef.CameraView();
+	XMMATRIX cameraView = _cameraPtr->CameraView();
 	_worldAndCamera.lightView = cameraView;
-	_worldAndCamera.lightProj = _cameraRef.CameraProjection();
+	_worldAndCamera.lightProj = _cameraPtr->CameraProjection();
 
 	dev.Context()->Map(_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &_mappedMatrixies);
 	//ここでこのメモリの塊に、マトリックスの値をコピーしてやる
@@ -204,7 +204,7 @@ Plane::Update()
 	_modelMatrix = transMat;
 	//_modelMatrix = XMMatrixIdentity();
 	_worldAndCamera.world = _modelMatrix;
-	_worldAndCamera.cameraView = _cameraRef.CameraView();
-	_worldAndCamera.cameraProj=_cameraRef.CameraProjection();
+	_worldAndCamera.cameraView = _cameraPtr->CameraView();
+	_worldAndCamera.cameraProj=_cameraPtr->CameraProjection();
 
 }

@@ -9,6 +9,7 @@
 #include<cassert>
 #include"Geometry.h"
 #include"ShaderDefine.h"
+#include"Camera.h"
 
 
 
@@ -240,7 +241,7 @@ Player::CcdIkSolve(PMDMesh& mesh,const std::string& ikName,XMFLOAT3& offset)
 	}
 	_ikpos = ikTargetPos;
 	//------------------------------------------------------------------------------------
-
+	
 
 	if (ikOriginRootVec == ikTargetRootVec)
 	{
@@ -469,7 +470,7 @@ void DeformBones(PMDMesh* mesh, VMDData* vmddata, unsigned int frameNo)
 }
 
 
-Player::Player(Camera& camera) :dev(DeviceDx11::Instance()), _cameraRef(camera)
+Player::Player(Camera* camera) :dev(DeviceDx11::Instance()), _cameraPtr(camera)
 {
 
 }
@@ -544,16 +545,16 @@ Player::Init()
 
 
 	_worldAndCamera.world = XMMatrixIdentity();
-	_worldAndCamera.cameraView = _cameraRef.CameraView();
-	_worldAndCamera.cameraProj = _cameraRef.CameraProjection();
-	_worldAndCamera.lightView = _cameraRef.LightView();
-	_worldAndCamera.lightProj = _cameraRef.LightProjection();
+	_worldAndCamera.cameraView = _cameraPtr->CameraView();
+	_worldAndCamera.cameraProj = _cameraPtr->CameraProjection();
+	_worldAndCamera.lightView = _cameraPtr->LightView();
+	_worldAndCamera.lightProj = _cameraPtr->LightProjection();
 	/*_matrixMVP.worldMatrix = XMMatrixIdentity();
 
-	_matrixMVP.viewMatrix = _cameraRef.GetMatrixies().view;
+	_matrixMVP.viewMatrix = _cameraPtr->GetMatrixies().view;
 
 
-	_matrixMVP.projectionMatrix = _cameraRef.GetMatrixies().projection;*/
+	_matrixMVP.projectionMatrix = _cameraPtr->GetMatrixies().projection;*/
 
 
 	
@@ -777,10 +778,10 @@ Player::Update()
 
 
 	_worldAndCamera.world = XMMatrixIdentity();
-	_worldAndCamera.cameraView = _cameraRef.CameraView();
-	_worldAndCamera.cameraProj = _cameraRef.CameraProjection();
-	_worldAndCamera.lightView = _cameraRef.LightView();
-	_worldAndCamera.lightProj = _cameraRef.LightProjection();
+	_worldAndCamera.cameraView = _cameraPtr->CameraView();
+	_worldAndCamera.cameraProj = _cameraPtr->CameraProjection();
+	_worldAndCamera.lightView = _cameraPtr->LightView();
+	_worldAndCamera.lightProj = _cameraPtr->LightProjection();
 
 	dev.Context()->Map(_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &_mem);
 	//ここでこのメモリの塊に、マトリックスの値をコピーしてやる
@@ -901,10 +902,10 @@ Player::Draw()
 		//world = XMMatrixMultiply(transMatrix, world);
 
 
-		_worldAndCamera.cameraView = _cameraRef.CameraView();
-		_worldAndCamera.cameraProj = _cameraRef.CameraProjection();
-		_worldAndCamera.lightView = _cameraRef.LightView();
-		_worldAndCamera.lightProj = _cameraRef.LightProjection();
+		_worldAndCamera.cameraView = _cameraPtr->CameraView();
+		_worldAndCamera.cameraProj = _cameraPtr->CameraProjection();
+		_worldAndCamera.lightView = _cameraPtr->LightView();
+		_worldAndCamera.lightProj = _cameraPtr->LightProjection();
 
 		dev.Context()->Map(_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &_mem);
 		//ここでこのメモリの塊に、マトリックスの値をコピーしてやる
@@ -998,8 +999,8 @@ Player::DrawLightView()
 	dev.Context()->VSSetConstantBuffers(0, 1, &_matrixBuffer);
 	dev.Context()->IASetIndexBuffer(_mesh->GetIndexBuffer(), DXGI_FORMAT_R16_UINT, 0);
 
-	XMMATRIX view = _cameraRef.LightView();
-	XMMATRIX proj = _cameraRef.LightProjection();
+	XMMATRIX view = _cameraPtr->LightView();
+	XMMATRIX proj = _cameraPtr->LightProjection();
 	_worldAndCamera.lightView = view;
 	_worldAndCamera.lightProj = proj;
 
@@ -1024,8 +1025,8 @@ Player::DrawCameraDepth()
 	dev.Context()->VSSetConstantBuffers(0, 1, &_matrixBuffer);
 	dev.Context()->IASetIndexBuffer(_mesh->GetIndexBuffer(), DXGI_FORMAT_R16_UINT, 0);
 
-	XMMATRIX view = _cameraRef.CameraView();
-	XMMATRIX proj = _cameraRef.CameraProjection();
+	XMMATRIX view = _cameraPtr->CameraView();
+	XMMATRIX proj = _cameraPtr->CameraProjection();
 	_worldAndCamera.lightView = view;
 	_worldAndCamera.lightProj = proj;
 

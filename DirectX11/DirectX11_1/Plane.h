@@ -9,7 +9,7 @@ class Plane
 	:public Primitive
 {
 private:
-	Camera& _cameraRef;
+	Camera* _cameraPtr;
 	//MATRIXIES _mvp;
 	WorldAndCamera _worldAndCamera;
 	XMMATRIX _modelMatrix;
@@ -21,9 +21,9 @@ private:
 
 	float rot;
 public:
-	Plane(Camera&);
+	Plane(Camera*);
 	~Plane();
-	Plane(float width, float height, Vector3 normal,Camera& camera);
+	Plane(float width, float height, Vector3 normal,Camera* camera);
 	
 	ID3D11Buffer* _vertexBuffer;
 	ID3D11Buffer* VertexBuffer(){ return _vertexBuffer; };
