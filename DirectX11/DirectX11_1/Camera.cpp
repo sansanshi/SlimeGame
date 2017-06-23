@@ -23,16 +23,16 @@ Camera::Init()
 	_roll = 0.0f;
 
 	_rotAngle = 0.0f;
-	eyePoint = { 0, 20, -25 };//{ 15.3f, 25.3f, -14.3f };
-	gazePoint = { 0, 10, 0 };//{ 0.f, 8.f, 0.f };
-	upVec = { 0.f, 1.0f, 0.f };
+	_eyePoint = { 0, 20, -25 };//{ 15.3f, 25.3f, -14.3f };
+	_gazePoint = { 0, 10, 0 };//{ 0.f, 8.f, 0.f };
+	_upVec = { 0.f, 1.0f, 0.f };
 
-	lightPoint = { -10.3f, 35.3f, -10.3f };
+	_lightPoint = { -10.3f, 35.3f, -10.3f };
 
 	XMMATRIX view = XMMatrixLookAtLH(
-		XMLoadFloat3(&eyePoint),
-		XMLoadFloat3(&gazePoint),
-		XMLoadFloat3(&upVec));
+		XMLoadFloat3(&_eyePoint),
+		XMLoadFloat3(&_gazePoint),
+		XMLoadFloat3(&_upVec));
 	_view = view;
 
 	 XMMATRIX cameraProjection = XMMatrixPerspectiveFovLH(
@@ -54,16 +54,16 @@ Camera::Init()
 	 _lightProjection = lightProjection;//構造体アライメント対策
 
 	XMMATRIX lightView = XMMatrixLookAtLH(
-		XMLoadFloat3(&lightPoint),
-		XMLoadFloat3(&gazePoint),
-		XMLoadFloat3(&upVec));
+		XMLoadFloat3(&_lightPoint),
+		XMLoadFloat3(&_gazePoint),
+		XMLoadFloat3(&_upVec));
 	_light = lightView;
 	//_camera->cameraview = XMMatrixMultiply(view, cameraProjection);
 	//_camera->cameraview = camera;
 	//_camera->lightview = XMMatrixMultiply(lightView, lightProjection);
 	//_camera->lightview = light;
 
-	_originEyeVec = { gazePoint.x - eyePoint.x, gazePoint.y - eyePoint.y, gazePoint.z - eyePoint.z };
+	_originEyeVec = { _gazePoint.x - _eyePoint.x, _gazePoint.y - _eyePoint.y, _gazePoint.z - _eyePoint.z };
 }
 
 void
@@ -78,14 +78,14 @@ Camera::Update()
 
 
 	XMMATRIX view = XMMatrixLookAtLH(
-		XMLoadFloat3(&eyePoint),
-		XMLoadFloat3(&gazePoint),
-		XMLoadFloat3(&upVec));
+		XMLoadFloat3(&_eyePoint),
+		XMLoadFloat3(&_gazePoint),
+		XMLoadFloat3(&_upVec));
 	_view = view;
 	XMMATRIX light = XMMatrixLookAtLH(
-		XMLoadFloat3(&lightPoint),
+		XMLoadFloat3(&_lightPoint),
 		XMLoadFloat3(&XMFLOAT3(0,5,0)),
-		XMLoadFloat3(&upVec));
+		XMLoadFloat3(&_upVec));
 	_light = light;
 	int jjk = 0;
 
@@ -96,8 +96,8 @@ Camera::EyeVec()
 {
 	//プレイヤの進む方向を決めるために使うのでとりあえず高さは合わせておく
 	Vector3 eye,gaze;
-	eye = XMFLOAT3(eyePoint.x, eyePoint.y, eyePoint.z);
-	gaze = XMFLOAT3(gazePoint.x, eyePoint.y, gazePoint.z);
+	eye = XMFLOAT3(_eyePoint.x, _eyePoint.y, _eyePoint.z);
+	gaze = XMFLOAT3(_gazePoint.x, _eyePoint.y, _gazePoint.z);
 
 	Vector3 vec = (gaze - eye).Normalize();
 	return vec;
@@ -107,9 +107,9 @@ Camera::EyeVec()
 void
 Camera::SetEyeGazeUp(XMFLOAT3& eye, XMFLOAT3& gaze, XMFLOAT3& up)
 {
-	eyePoint = eye;
-	gazePoint = gaze;
-	upVec = up;
+	_eyePoint = eye;
+	_gazePoint = gaze;
+	_upVec = up;
 }
 
 XMVECTOR
@@ -145,13 +145,13 @@ void
 Camera::Move(float x, float y, float z)
 {
 
-	eyePoint.x += x;
-	eyePoint.y += y;
-	eyePoint.z += z;
+	_eyePoint.x += x;
+	_eyePoint.y += y;
+	_eyePoint.z += z;
 
-	gazePoint.x += x;
-	gazePoint.y += y;
-	gazePoint.z += z;
+	_gazePoint.x += x;
+	_gazePoint.y += y;
+	_gazePoint.z += z;
 
 	
 }
@@ -167,13 +167,13 @@ Camera::Rotate(float pitch, float yaw, float roll)
 	XMMATRIX rot = XMMatrixRotationRollPitchYaw(pitch, yaw, roll);
 
 	//視線ベクトルを作る
-	XMFLOAT3 v = { gazePoint.x - eyePoint.x, gazePoint.y - eyePoint.y, gazePoint.z - eyePoint.z };
+	XMFLOAT3 v = { _gazePoint.x - _eyePoint.x, _gazePoint.y - _eyePoint.y, _gazePoint.z - _eyePoint.z };
 	XMVECTOR ray = XMLoadFloat3(&v); //XMLoadFloat3(&_originEyeVec);//{ _target.x - _pos.x, _target.y - _pos.y, _target.z - _pos.z };
 	ray = XMVector3Transform(ray, rot);
 	XMFLOAT3 r;
 	XMStoreFloat3(&r, ray);
 
-	gazePoint = { eyePoint.x + r.x, eyePoint.y + r.y, eyePoint.z + r.z };
+	_gazePoint = { _eyePoint.x + r.x, _eyePoint.y + r.y, _eyePoint.z + r.z };
 }
 void
 Camera::Rotate(const XMFLOAT3& rotPYR)
@@ -189,13 +189,13 @@ Camera::Rotate(const XMFLOAT3& rotPYR)
 	XMStoreFloat3(&r, ray);
 
 
-	gazePoint = { eyePoint.x + r.x, eyePoint.y + r.y, eyePoint.z + r.z };
+	_gazePoint = { _eyePoint.x + r.x, _eyePoint.y + r.y, _eyePoint.z + r.z };
 }
 
 void
 Camera::MoveTPS(float front, float right)
 {
-	XMFLOAT3 frontVec = gazePoint - eyePoint;
+	XMFLOAT3 frontVec = _gazePoint - _eyePoint;
 	frontVec.y = 0.0f;
 	frontVec = Normalize(frontVec);
 

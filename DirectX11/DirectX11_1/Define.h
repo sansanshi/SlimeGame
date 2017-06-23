@@ -17,6 +17,8 @@ extern const float SKYSPHERE_RADIUS;
 
 extern const float SPEED_RISING;//カメラの上昇、下降スピード
 
+extern const XMFLOAT4 DIRECTIONAL_LIGHT_VECTOR;
+
 
 #pragma pack(1)
 struct HUDVertex {
@@ -131,8 +133,9 @@ struct Vector2{
 #pragma pack(1)
 struct ShaderGlobals
 {
-	XMFLOAT4 lightPos;//16
+	XMFLOAT4 lightPos;//16　ライト位置
 	XMFLOAT4 eyePos;//16
+	XMFLOAT4 directionalLightVec;//平行光源ベクトル
 	XMFLOAT4 fogColor;
 	XMFLOAT2 fog;//フォグ係数計算用：X成分にZfar/(Zfar-Znear)，Y成分に-1/(Zfar-Znear)
 	XMFLOAT2 windowSize;

@@ -163,6 +163,8 @@ PlayingScene::PlayingScene(HWND hwnd)
 	_shaderGlobals.windowSize.x = WINDOW_WIDTH;
 	_shaderGlobals.windowSize.y = WINDOW_HEIGHT;
 
+	_shaderGlobals.directionalLightVec = DIRECTIONAL_LIGHT_VECTOR;
+
 
 	D3D11_BUFFER_DESC globalBuffDesc;
 	globalBuffDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
@@ -433,7 +435,7 @@ PlayingScene::Update()
 	
 	_renderer->ChangePTForPMD();
 	dev.Context()->DSSetConstantBuffers(5, 1, &_globalBuffer);
-	_tessPlane->Draw();//テッセレーション平面
+	//_tessPlane->Draw();//テッセレーション平面
 
 	//デカールボックスが頂点シェーダで深度バッファテクスチャ使うので渡す
 	resource = _renderer->LightDepthShaderResource();

@@ -17,14 +17,14 @@ public:
 	//CameraMatrixies& GetMatrixies(){ return _camera; };
 	void Update();
 	void SetEyeGazeUp(XMFLOAT3&, XMFLOAT3&, XMFLOAT3&);
-	XMFLOAT4 GetEyePos(){ return XMFLOAT4(eyePoint.x,eyePoint.y,eyePoint.z,1); };
-	XMFLOAT4 GetLightPos(){ return XMFLOAT4(lightPoint.x,lightPoint.y,lightPoint.z,1); };
+	XMFLOAT4 GetEyePos(){ return XMFLOAT4(_eyePoint.x,_eyePoint.y,_eyePoint.z,1); };
+	XMFLOAT4 GetLightPos(){ return XMFLOAT4(_lightPoint.x,_lightPoint.y,_lightPoint.z,1); };
 
 	const XMMATRIX& CameraProjection(){ return _cameraProjection; };
 	const XMMATRIX& CameraView(){ return _view; };
 	const XMMATRIX& LightView() { return _light; };
 	const XMMATRIX& LightProjection() { return _lightProjection; };
-	const XMFLOAT3& GetPos(){ return eyePoint; };
+	const XMFLOAT3& GetPos(){ return _eyePoint; };
 	const XMFLOAT3& GetRotation() { return XMFLOAT3(_pitch, _yaw, _roll); };
 	Vector3 EyeVec();
 
@@ -49,11 +49,11 @@ private:
 
 	float _rotAngle;
 
-	XMFLOAT3 eyePoint;
-	XMFLOAT3 gazePoint;
-	XMFLOAT3 upVec;
+	XMFLOAT3 _eyePoint;
+	XMFLOAT3 _gazePoint;
+	XMFLOAT3 _upVec;
 
-	XMFLOAT3 lightPoint;
+	XMFLOAT3 _lightPoint;
 	XMMATRIX _view;
 	XMMATRIX _projection;
 	XMMATRIX _cameraProjection;

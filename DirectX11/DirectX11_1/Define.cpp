@@ -14,3 +14,5 @@ extern const XMFLOAT4 FOG_COLOR = { 0.5f, 0.9f, 1.0f, 1.0f };
 extern const float SKYSPHERE_RADIUS = 300.0f;
 
 extern const float SPEED_RISING = 0.5f;
+
+extern const XMFLOAT4 DIRECTIONAL_LIGHT_VECTOR = XMFLOAT4(1, -1, 1, 1);

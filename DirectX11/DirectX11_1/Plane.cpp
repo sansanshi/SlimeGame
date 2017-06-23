@@ -19,10 +19,10 @@ Plane::Plane(float width, float depth, Vector3 normal,const std::shared_ptr<Came
 	o = XMFLOAT3(0, 0, 0);
 
 	std::vector<PrimitiveVertex> vertices(4);
-	vertices[0] = { Vector3(-width / 2, 0, -depth / 2), Vector3(0, 1, 0), Vector2(0, 0), Vector3(0, 0, 0), Vector3(0, 0, 0) };
-	vertices[1] = { Vector3(-width / 2, 0, depth / 2), Vector3(0, 1, 0), Vector2(1, 0), Vector3(0, 0, 0), Vector3(0, 0, 0) };
-	vertices[2] = { Vector3(width / 2, 0, -depth / 2), Vector3(0, 1, 0), Vector2(0, 1), Vector3(0, 0, 0), Vector3(0, 0, 0) };
-	vertices[3] = { Vector3(width / 2, 0, depth / 2), Vector3(0, 1, 0), Vector2(1, 1), Vector3(0, 0, 0), Vector3(0, 0, 0) };
+	vertices[0] = { Vector3(-width / 2, 0, -depth / 2), Vector3(0, 1, 0), Vector2(0, 1), Vector3(1, 0, 0), Vector3(0, 0, -1) };
+	vertices[1] = { Vector3(-width / 2, 0, depth / 2), Vector3(0, 1, 0), Vector2(0, 0), Vector3(1, 0, 0), Vector3(0, 0, -1) };
+	vertices[2] = { Vector3(width / 2, 0, -depth / 2), Vector3(0, 1, 0), Vector2(1, 1), Vector3(1, 0, 0), Vector3(0, 0, -1) };
+	vertices[3] = { Vector3(width / 2, 0, depth / 2), Vector3(0, 1, 0), Vector2(1, 0), Vector3(1, 0, 0), Vector3(0, 0, -1) };
 
 	D3D11_SUBRESOURCE_DATA data;
 	data.pSysMem = &vertices[0];
@@ -62,11 +62,21 @@ Plane::Plane(float width, float depth, Vector3 normal,const std::shared_ptr<Came
 	ShaderGenerator::CreatePixelShader("lightview.hlsl", "PrimitiveLightViewPS", "ps_5_0", _lightviewPS);
 
 	D3DX11CreateShaderResourceViewFromFile(dev.Device(), 
-		"texture/water.png", nullptr, nullptr, &_mainTex, &result);
+		"texture/waterTex.png", nullptr, nullptr, &_mainTex, &result);
 	D3DX11CreateShaderResourceViewFromFile(dev.Device(),
-		"texture/water.png", nullptr, nullptr, &_subTex, &result);
+		"texture/noise.png", nullptr, nullptr, &_subTex, &result);
 	D3DX11CreateShaderResourceViewFromFile(dev.Device(),
 		"texture/normal2.png", nullptr, nullptr, &_normalTex, &result);
+	D3DX11CreateShaderResourceViewFromFile(dev.Device(),
+		"texture/flow.png", nullptr, nullptr, &_flowTex, &result);
+
+	D3D11_SAMPLER_DESC samplerDesc = {};
+	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+
+	dev.Device()->CreateSamplerState(&samplerDesc, &_samplerState);
 
 
 	_modelMatrix = XMMatrixIdentity();
@@ -135,6 +145,9 @@ Plane::Draw()
 	dev.Context()->PSSetShaderResources(TEXTURE_MAIN, 1, &_mainTex);
 	dev.Context()->PSSetShaderResources(TEXTURE_SUB, 1, &_subTex);
 	dev.Context()->PSSetShaderResources(TEXTURE_NORMAL, 1, &_normalTex);
+	dev.Context()->PSSetShaderResources(TEXTURE_FLOW, 1, &_flowTex);
+
+	dev.Context()->PSSetSamplers(0, 1, &_samplerState);
 
 	//プリミティブトポロジの切り替えを忘れない　切り替えを頻発させるのは良くない
 	dev.Context()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);

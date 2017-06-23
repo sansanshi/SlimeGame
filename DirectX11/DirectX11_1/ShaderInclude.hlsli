@@ -11,6 +11,7 @@ Texture2D _decalTex:register(t9);//デカール
 Texture2D _shadowTex:register(t10);//ライトからの深度値をテクスチャとして受け取る
 Texture2D _cameraDepthTex:register(t12);
 Texture2D _subTex:register(t13);//サブテクスチャ
+Texture2D _flowTex:register(t14);
 SamplerState _samplerState:register(s0);
 SamplerState _samplerStateDisp:register(s1);
 SamplerState _samplerState_clamp:register(s2);
@@ -56,6 +57,7 @@ float GetRandomNumber(float2 texCoord, int Seed)
 cbuffer Global2:register(b5) {
 	float4 lightPos;
 	float4 eyePos;
+	float4 directionalLightVec;
 	float4 fogColor;
 	float2 fogCoord;
 	float2 windowSize;

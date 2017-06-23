@@ -20,6 +20,8 @@ private:
 	ID3D11ShaderResourceView* _mainTex;
 	ID3D11ShaderResourceView* _subTex;
 	ID3D11ShaderResourceView* _normalTex;
+	ID3D11ShaderResourceView* _flowTex;
+	ID3D11SamplerState* _samplerState;
 
 	float rot;
 public:
