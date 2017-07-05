@@ -19,10 +19,10 @@ Plane::Plane(float width, float depth, Vector3 normal,const std::shared_ptr<Came
 	o = XMFLOAT3(0, 0, 0);
 
 	std::vector<PrimitiveVertex> vertices(4);
-	vertices[0] = { Vector3(-width / 2, 0, -depth / 2), Vector3(0, 1, 0), Vector2(0, 1), Vector3(1, 0, 0), Vector3(0, 0, -1) };
-	vertices[1] = { Vector3(-width / 2, 0, depth / 2), Vector3(0, 1, 0), Vector2(0, 0), Vector3(1, 0, 0), Vector3(0, 0, -1) };
-	vertices[2] = { Vector3(width / 2, 0, -depth / 2), Vector3(0, 1, 0), Vector2(1, 1), Vector3(1, 0, 0), Vector3(0, 0, -1) };
-	vertices[3] = { Vector3(width / 2, 0, depth / 2), Vector3(0, 1, 0), Vector2(1, 0), Vector3(1, 0, 0), Vector3(0, 0, -1) };
+	vertices[0] = { Vector3(-width / 2, 0, -depth / 2), Vector3(0, 1, 0), Vector2(0, 1), Vector3(1, 0, 0), Vector3(0, 0, 1) };
+	vertices[1] = { Vector3(-width / 2, 0, depth / 2), Vector3(0, 1, 0), Vector2(0, 0), Vector3(1, 0, 0), Vector3(0, 0, 1) };
+	vertices[2] = { Vector3(width / 2, 0, -depth / 2), Vector3(0, 1, 0), Vector2(1, 1), Vector3(1, 0, 0), Vector3(0, 0, 1) };
+	vertices[3] = { Vector3(width / 2, 0, depth / 2), Vector3(0, 1, 0), Vector2(1, 0), Vector3(1, 0, 0), Vector3(0, 0, 1) };
 
 	D3D11_SUBRESOURCE_DATA data;
 	data.pSysMem = &vertices[0];
@@ -66,9 +66,9 @@ Plane::Plane(float width, float depth, Vector3 normal,const std::shared_ptr<Came
 	D3DX11CreateShaderResourceViewFromFile(dev.Device(),
 		"texture/noise.png", nullptr, nullptr, &_subTex, &result);
 	D3DX11CreateShaderResourceViewFromFile(dev.Device(),
-		"texture/normal2.png", nullptr, nullptr, &_normalTex, &result);
+		"texture/normal3.png", nullptr, nullptr, &_normalTex, &result);
 	D3DX11CreateShaderResourceViewFromFile(dev.Device(),
-		"texture/flow.png", nullptr, nullptr, &_flowTex, &result);
+		"texture/flowmap_test.png", nullptr, nullptr, &_flowTex, &result);
 
 	D3D11_SAMPLER_DESC samplerDesc = {};
 	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
@@ -217,7 +217,7 @@ void
 Plane::Update()
 {
 	rot += -1 * XM_PI / 180;
-	XMMATRIX transMat=XMMatrixTranslation(0.0f,-0.5f,0.0f);
+	XMMATRIX transMat=XMMatrixTranslation(320.0f,-0.5f,0.0f);
 	_modelMatrix = transMat;
 	//_modelMatrix = XMMatrixIdentity();
 	_worldAndCamera.world = _modelMatrix;

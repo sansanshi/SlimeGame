@@ -110,7 +110,7 @@ PlayingScene::PlayingScene(HWND hwnd)
 	//_plane = new Plane(300, 300, Vector3(0, 1, 0), &_camera);
 	_cylinder = std::make_unique<Cylinder>(4, 20, 20, _camera);// new Cylinder(4, 20, 20, _camera);
 	_sphere = std::make_unique<Sphere>(100, 5, _camera);//new Sphere(100, 5, _camera);
-	_tessPlane = std::make_unique<TessPlane>(400, 400, Vector3(0, 1, 0), _camera);//new TessPlane(400, 400, Vector3(0, 1, 0), _camera);
+	_tessPlane = std::make_unique<TessPlane>(600, 600, Vector3(0, 1, 0), _camera);//new TessPlane(400, 400, Vector3(0, 1, 0), _camera);
 	_decalBox = std::make_unique<DecalBox>(1, 1, 1, _camera);//new DecalBox(1, 1, 1, _camera);
 
 	_skySphere = std::make_unique<SkySphere>(100, SKYSPHERE_RADIUS, _camera);//new SkySphere(100, SKYSPHERE_RADIUS, _camera);
@@ -435,7 +435,7 @@ PlayingScene::Update()
 	
 	_renderer->ChangePTForPMD();
 	dev.Context()->DSSetConstantBuffers(5, 1, &_globalBuffer);
-	//_tessPlane->Draw();//テッセレーション平面
+	_tessPlane->Draw();//テッセレーション平面
 
 	//デカールボックスが頂点シェーダで深度バッファテクスチャ使うので渡す
 	resource = _renderer->LightDepthShaderResource();

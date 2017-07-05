@@ -93,10 +93,16 @@ Cylinder::Cylinder(float radius, float height, unsigned int div,const std::share
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 	};
 
-	ShaderGenerator::CreateVertexShader("BaseShader.hlsl", "PrimitiveVS", "vs_5_0",
+	ShaderGenerator::CreateVertexShader("wood.hlsl", "woodVS", "vs_5_0",
 		_vertexShader, inputElementDescs, sizeof(inputElementDescs) / sizeof(D3D11_INPUT_ELEMENT_DESC), _inputlayout);
-	ShaderGenerator::CreatePixelShader("BaseShader.hlsl", "PrimitivePS", "ps_5_0", _pixelShader);
+	ShaderGenerator::CreatePixelShader("wood.hlsl", "woodPS", "ps_5_0", _pixelShader);
 
+	D3DX11CreateShaderResourceViewFromFile(dev.Device(),
+		"texture/waterTex.png", nullptr, nullptr, &_mainTex, &result);
+	D3DX11CreateShaderResourceViewFromFile(dev.Device(),
+		"texture/noise.png", nullptr, nullptr, &_subTex, &result);
+	D3DX11CreateShaderResourceViewFromFile(dev.Device(),
+		"texture/normal2.png", nullptr, nullptr, &_normalTex, &result);
 
 	//カメラからの描画に使ったinputElementDescsを使っても描画できた
 	//問題が起きた時はLightview用に新しくバーテックスバッファ作ってこの辺も書き換える

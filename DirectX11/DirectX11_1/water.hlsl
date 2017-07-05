@@ -23,17 +23,11 @@ struct Output {
 	float4 pos:SV_POSITION;
 	float4 normal:NORMAL;
 	float2 uv:TEXCOORD0;
-	float4 diffuse:COLOR0;
-	float3 specular:COLOR1;
-	float3 ambient:COLOR2;
 
 	float4 lightVec:TEXCOORD1;
 	float4 eyeVec:TEXCOORD2;
 
 	float4x4 tangentMatrix:TANGENTMATRIX;
-	float4x4 noTransMatrix:NOTRANS;
-	float4 tangent:TEXCOORD3;
-	float4 binormal:TEXCOORD4;
 
 	float4 postest:POSITION1;
 	float4 shadowposVS:POSITION2;//ライト視点の位置(ViewSpace)
@@ -67,8 +61,6 @@ Output WaterVS(float4 pos:POSITION, float4 normal : NORMAL, float2 uv : TEXCOORD
 	matrix model_noTrans = DisableTranslation(_world);
 	o.normal = normalize(mul(model_noTrans, normal));
 	o.uv = uv;
-	o.binormal = normalize(mul(model_noTrans, binormal));
-	o.tangent = normalize(mul(model_noTrans, tangent));
 
 	float3 posWorld = mul(_world, pos);
 	//o.lightVec = float4(normalize(lightPos.xyz - posWorld), 0);
@@ -76,8 +68,13 @@ Output WaterVS(float4 pos:POSITION, float4 normal : NORMAL, float2 uv : TEXCOORD
 
 	//matrix invTang = InvTangentMatrix(float4(1, 0, 0, 0), float4(0, 1, 0, 0), float4(0, 0, 1, 0));
 	//o.lightVec = mul(invTang, o.lightVec);
-	o.lightVec = float4(lightPos.xyz, 1);
-	o.tangentMatrix = TangentMatrix(o.tangent, o.binormal, o.normal);
+	o.lightVec = normalize(directionalLightVec);//float4(lightPos.xyz-posWorld.xyz, 1);
+	
+	float4 tang, binorm, norm;
+	norm =  normalize(mul(model_noTrans, normal));
+	binorm = normalize(mul(model_noTrans, binormal));
+	tang = normalize(mul(model_noTrans, tangent));
+	o.tangentMatrix = TangentMatrix(tang, binorm, norm);
 	o.posWorld = posWorld;
 
 	o.postest = mul(pos, m);
@@ -101,33 +98,41 @@ Output WaterVS(float4 pos:POSITION, float4 normal : NORMAL, float2 uv : TEXCOORD
 }
 float4 WaterPS(Output o) :SV_Target
 {
-	float Phase = 0.15f;
-float halfPhase = 0.15f / 2.0f;
+	float Phase = 2.5f;
+float halfPhase = 2.5f / 2.0f;
 
 //ノイズテクスチャ
-float noise = _subTex.Sample(_samplerState, o.uv).r;
+float noise = _subTex.Sample(_samplerState, o.uv).r*0.5f;
 //フロートテクスチャ
 float2 flowVector = _flowTex.Sample(_samplerState, o.uv).rg;
 flowVector = flowVector*2.0f - 1.0f;
+flowVector.x *= -1.0f;
+float Time = o.timer / 60.0f + noise;
 
-float flowOffs0 = fmod(o.timer / 60.0f + noise, Phase);
-float flowOffs1 = fmod(o.timer / 60.0f + halfPhase+noise, Phase);
+float flowOffs0 = fmod(Time, Phase);
+float flowOffs1 = fmod(Time - halfPhase, Phase);
 
 float phase0 =  flowOffs0;
 float phase1 =  flowOffs1;
 
-float3 norm0 = _normalTex.Sample(_samplerState, (o.uv * 4) + flowVector*phase0);
-float3 norm1 = _normalTex.Sample(_samplerState, (o.uv * 2) + flowVector*phase1);
+float2 shiftUV;
+shiftUV.x = floor(Time / Phase)*2.0f;
+shiftUV.y = phase0 > halfPhase ? shiftUV.x + 1.0f : shiftUV.x - 1.0f;
+shiftUV *= 0.125f;
+
+float3 norm0 = _normalTex.Sample(_samplerState, (o.uv * 1) + flowVector*phase0+shiftUV.x);
+float3 norm1 = _normalTex.Sample(_samplerState, (o.uv * 1) + flowVector*phase1+shiftUV.y);
 
 float f = (abs(halfPhase - flowOffs0) / halfPhase);
 
 float3 normT = lerp(norm0, norm1, f);
 normT = normalize(normT);
-float3 lightVec = normalize(o.lightVec.xyz - o.posWorld);
+float3 lightVec = normalize(o.lightVec.xyz);
 normT = mul(o.tangentMatrix, normT);
 
+//return float4(normT, 1);
+
 float b = saturate(dot(lightVec, normT));
-return float4(b, b, b, 1);
 //return float4(normT, 1);
 
 //float t = (float)o.timer / 60.0f + noise;
@@ -188,5 +193,6 @@ return float4(b, b, b, 1);
 	float4 col = _tex.Sample(_samplerState, o.uv);
 	float4 subCol = _subTex.Sample(_samplerState, o.uv);
 	col.rgb=col.rgb*bright;
+	col.a = 0.7f;
 	return col;
 }
