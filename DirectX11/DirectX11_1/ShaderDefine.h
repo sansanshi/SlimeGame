@@ -5,6 +5,7 @@ extern const int TEXTURE_SPH;
 extern const int TEXTURE_SPA;
 
 extern const int TEXTURE_SUB;
+extern const int TEXTURE_SUB2;
 extern const int TEXTURE_NORMAL;
 extern const int TEXTURE_HEIGHT;
 extern const int TEXTURE_DISPLACEMENT;

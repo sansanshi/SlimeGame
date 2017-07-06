@@ -110,7 +110,7 @@ TessPlane::TessPlane(float width, float depth, Vector3 normal, const std::shared
 
 	//サンプラの設定
 	D3D11_SAMPLER_DESC samplerDesc = {};
-	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
 	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
 	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
 	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
@@ -118,11 +118,18 @@ TessPlane::TessPlane(float width, float depth, Vector3 normal, const std::shared
 	dev.Device()->CreateSamplerState(&samplerDesc, &_samplerState_Wrap);
 
 
-	result=D3DX11CreateShaderResourceViewFromFile(dev.Device(), "texture/height.png", nullptr, nullptr, &_groundTex, &result);
-	dev.Context()->PSSetShaderResources(TEXTURE_MAIN, 1, &_groundTex);
-
-	result = D3DX11CreateShaderResourceViewFromFile(dev.Device(), "texture/yama.png", nullptr, nullptr, &_displacementTex, &result);
-	dev.Context()->DSSetShaderResources(TEXTURE_DISPLACEMENT, 1, &_displacementTex);
+	result=D3DX11CreateShaderResourceViewFromFile(dev.Device(),
+		"texture/height.png", nullptr, nullptr, 
+		&_mainTex, &result);
+	result = D3DX11CreateShaderResourceViewFromFile(dev.Device(),
+		"texture/stone.png", nullptr, nullptr, 
+		&_subTex, &result);
+	result = D3DX11CreateShaderResourceViewFromFile(dev.Device(),
+		"texture/decal.png", nullptr, nullptr,
+		&_subTex2, &result);
+	result = D3DX11CreateShaderResourceViewFromFile(dev.Device(), 
+		"texture/yama.png", nullptr, nullptr, 
+		&_displacementTex, &result);
 }
 
 
@@ -158,9 +165,12 @@ TessPlane::Draw()
 	//dev.Context()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 
 	//テクスチャセット
-	dev.Context()->PSSetShaderResources(TEXTURE_MAIN, 1, &_groundTex);
+	dev.Context()->PSSetShaderResources(TEXTURE_MAIN, 1, &_mainTex);
 	dev.Context()->DSSetShaderResources(TEXTURE_DISPLACEMENT, 1, &_displacementTex);
 	dev.Context()->DSSetSamplers(0, 1, &_samplerState_Wrap);
+	dev.Context()->PSSetShaderResources(TEXTURE_DISPLACEMENT, 1, &_displacementTex);
+	dev.Context()->PSSetShaderResources(TEXTURE_SUB, 1, &_subTex);
+	dev.Context()->PSSetShaderResources(TEXTURE_SUB2, 1, &_subTex2);
 
 	unsigned int stride = sizeof(float) * 14;
 	unsigned int offset = 0;
@@ -198,7 +208,7 @@ TessPlane::DrawLightView()
 	//dev.Context()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 
 	//テクスチャセット
-	dev.Context()->PSSetShaderResources(TEXTURE_MAIN, 1, &_groundTex);
+	dev.Context()->PSSetShaderResources(TEXTURE_MAIN, 1, &_mainTex);
 	dev.Context()->DSSetShaderResources(TEXTURE_DISPLACEMENT, 1, &_displacementTex);
 	dev.Context()->DSSetSamplers(0, 1, &_samplerState_Wrap);
 
@@ -255,7 +265,7 @@ TessPlane::DrawCameraDepth()
 	//dev.Context()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 
 	//テクスチャセット
-	dev.Context()->PSSetShaderResources(TEXTURE_MAIN, 1, &_groundTex);
+	dev.Context()->PSSetShaderResources(TEXTURE_MAIN, 1, &_mainTex);
 	dev.Context()->DSSetShaderResources(TEXTURE_DISPLACEMENT, 1, &_displacementTex);
 	dev.Context()->DSSetSamplers(0, 1, &_samplerState_Wrap);
 

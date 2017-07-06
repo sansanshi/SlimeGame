@@ -163,11 +163,19 @@ float4 TessPS(DS_OUTPUT o):SV_Target
 		shadowWeight = 0.3f;
 	}
 
-	float thickness = abs(ld - lightviewDepth)*100.0f;
-	float sss = 1.0f - saturate(thickness / 2.4f);
-	//return addCol;
-	//float4 col = float4(1, 1, 1, 1);
-	float4 col = float4(_tex.Sample(_samplerState, o.uv).rgb*shadowWeight, 1.0f);/*+addCol*sss*/
+	float disp = _dispMap.Sample(_samplerState, o.uv);
+	float4 texCol = _tex.Sample(_samplerState, o.uv);
+	float4 subTexCol = _subTex.Sample(_samplerState, o.uv);
+	float4 subTexCol2 = _subTex2.Sample(_samplerState, o.uv);
+
+	disp = disp*2.0f - 1.0f;
+	float4 col = lerp(texCol,subTexCol, saturate(disp*3.0f));
+	
+	col = float4(col.rgb*shadowWeight, 1.0f);/*+addCol*sss*/
+	if (disp < 0.0f)
+	{
+		col = lerp(subTexCol2, col, saturate(1.0f-abs(disp)*3.0f));
+	}
 	//ƒtƒHƒO‚ð‚©‚¯‚é
 	col = lerp(o.fogColor, col, o.fog);
 	//col = float4(lightviewDepth, 0, 0, 1);

@@ -68,7 +68,7 @@ Output WaterVS(float4 pos:POSITION, float4 normal : NORMAL, float2 uv : TEXCOORD
 
 	//matrix invTang = InvTangentMatrix(float4(1, 0, 0, 0), float4(0, 1, 0, 0), float4(0, 0, 1, 0));
 	//o.lightVec = mul(invTang, o.lightVec);
-	o.lightVec = normalize(directionalLightVec);//float4(lightPos.xyz-posWorld.xyz, 1);
+	o.lightVec =float4( normalize(directionalLightVec.xyz),1);//float4(lightPos.xyz-posWorld.xyz, 1);
 	
 	float4 tang, binorm, norm;
 	norm =  normalize(mul(model_noTrans, normal));
@@ -122,18 +122,16 @@ shiftUV *= 0.125f;
 
 float3 norm0 = _normalTex.Sample(_samplerState, (o.uv * 1) + flowVector*phase0+shiftUV.x);
 float3 norm1 = _normalTex.Sample(_samplerState, (o.uv * 1) + flowVector*phase1+shiftUV.y);
-
+norm0 = norm0*2.0f - 1.0f;
+norm1 = norm1*2.0f - 1.0f;
 float f = (abs(halfPhase - flowOffs0) / halfPhase);
 
 float3 normT = lerp(norm0, norm1, f);
+//normT = normT*2.0f - 1.0f;
 normT = normalize(normT);
 float3 lightVec = normalize(o.lightVec.xyz);
 normT = mul(o.tangentMatrix, normT);
 
-//return float4(normT, 1);
-
-float b = saturate(dot(lightVec, normT));
-//return float4(normT, 1);
 
 //float t = (float)o.timer / 60.0f + noise;
 //float phase0 = fmod(t, Phase);
@@ -170,7 +168,7 @@ float b = saturate(dot(lightVec, normT));
 	float3 normalVec = 2 * normalColor - 1.0f;
 	normalVec = normalize(normalVec);
 
-	float bright = saturate(dot(lightVec, normT));//saturate(dot(-o.lightVec, normalVec));
+	float bright = saturate(dot(-lightVec, normT));//saturate(dot(-o.lightVec, normalVec));
 	o.shadowposCS = float4(o.shadowposCS.xyz / o.shadowposCS.w, 1.0f);
 	float2 shadowUV = (float2(1, 1) + (o.shadowposCS.xy)*float2(1, -1))*0.5f;
 	shadowUV += float2(0.5f / o.windowSize.x, 0.5f / o.windowSize.y);

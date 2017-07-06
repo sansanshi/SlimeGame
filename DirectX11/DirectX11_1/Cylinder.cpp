@@ -5,6 +5,7 @@
 #include"DeviceDx11.h"
 #include"ShaderGenerator.h"
 #include"Camera.h"
+#include"ShaderDefine.h"
 
 Cylinder::Cylinder(float radius, float height, unsigned int div,const std::shared_ptr<Camera>& camera) :_cameraPtr(camera)
 {
@@ -27,9 +28,9 @@ Cylinder::Cylinder(float radius, float height, unsigned int div,const std::share
 		vertices[i+1].normal = { cos(angle), 0, sin(angle) };
 		vertices[i+1].uv = { (1.0f / (float)div)*(float)i, 0.0f };
 
-		vertices[i].binormal = Vector3(0, -1, 0);
+		vertices[i].binormal = Vector3(0, 1, 0);
 		vertices[i].tangent = vertices[i].normal.Cross(Vector3(0, 1, 0));
-		vertices[i+1].binormal = Vector3(0, -1, 0);
+		vertices[i+1].binormal = Vector3(0, 1, 0);
 		vertices[i+1].tangent = vertices[i+1].normal.Cross(Vector3(0, 1, 0));
 
 
@@ -61,9 +62,17 @@ Cylinder::Cylinder(float radius, float height, unsigned int div,const std::share
 	{
 		hatchVerts[i].pos = { XMFLOAT3(cos(rad)*radius, height, sin(rad)*radius) };
 		hatchVerts[i].normal = XMFLOAT3(0, 1, 0);
+		hatchVerts[i].uv.x = (hatchVerts[i].pos.x / radius + 1.0f) / 2.0f;
+		hatchVerts[i].uv.y = -(hatchVerts[i].pos.z / radius + 1.0f) / 2.0f;
+		hatchVerts[i].tangent = XMFLOAT3(1, 0, 0);
+		hatchVerts[i].binormal = XMFLOAT3(0, 0, 1);
 		rad += (360 / div)*XM_PI / 180;
 		hatchVerts[i+1].pos = {XMFLOAT3(cos(-rad)*radius,height,sin(-rad)*radius)};
 		hatchVerts[i+1].normal = XMFLOAT3(0, 1, 0);
+		hatchVerts[i+1].uv.x = (hatchVerts[i+1].pos.x / radius + 1.0f) / 2.0f;
+		hatchVerts[i+1].uv.y = -(hatchVerts[i+1].pos.z / radius + 1.0f) / 2.0f;
+		hatchVerts[i + 1].tangent = XMFLOAT3(1, 0, 0);
+		hatchVerts[i + 1].binormal = XMFLOAT3(0, 0,1);
 	}
 	D3D11_SUBRESOURCE_DATA hatchData;
 	hatchData.pSysMem = &hatchVerts[0];
@@ -98,11 +107,11 @@ Cylinder::Cylinder(float radius, float height, unsigned int div,const std::share
 	ShaderGenerator::CreatePixelShader("wood.hlsl", "woodPS", "ps_5_0", _pixelShader);
 
 	D3DX11CreateShaderResourceViewFromFile(dev.Device(),
-		"texture/waterTex.png", nullptr, nullptr, &_mainTex, &result);
+		"texture/wood.png", nullptr, nullptr, &_mainTex, &result);
 	D3DX11CreateShaderResourceViewFromFile(dev.Device(),
 		"texture/noise.png", nullptr, nullptr, &_subTex, &result);
 	D3DX11CreateShaderResourceViewFromFile(dev.Device(),
-		"texture/normal2.png", nullptr, nullptr, &_normalTex, &result);
+		"texture/woodnorm.png", nullptr, nullptr, &_normalTex, &result);
 
 	//カメラからの描画に使ったinputElementDescsを使っても描画できた
 	//問題が起きた時はLightview用に新しくバーテックスバッファ作ってこの辺も書き換える
@@ -169,6 +178,9 @@ Cylinder::Draw()
 	memcpy(_mappedMatrixies.pData, (void*)(&_worldAndCamera), sizeof(_worldAndCamera));
 	//↑　*(XMMATRIX*)mem.pData = matrix;//川野先生の書き方　memcpyで数値を間違えるとメモリがぐちゃぐちゃになる
 	dev.Context()->Unmap(_matrixBuffer, 0);
+
+	dev.Context()->PSSetShaderResources(TEXTURE_MAIN, 1, &_mainTex);
+	dev.Context()->PSSetShaderResources(TEXTURE_NORMAL, 1, &_normalTex);
 
 	//プリミティブトポロジの切り替えを忘れない　切り替えを頻発させるのは良くない
 	dev.Context()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);

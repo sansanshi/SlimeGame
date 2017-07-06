@@ -62,11 +62,11 @@ Plane::Plane(float width, float depth, Vector3 normal,const std::shared_ptr<Came
 	ShaderGenerator::CreatePixelShader("lightview.hlsl", "PrimitiveLightViewPS", "ps_5_0", _lightviewPS);
 
 	D3DX11CreateShaderResourceViewFromFile(dev.Device(), 
-		"texture/waterTex.png", nullptr, nullptr, &_mainTex, &result);
+		"texture/normal3.png", nullptr, nullptr, &_mainTex, &result);
 	D3DX11CreateShaderResourceViewFromFile(dev.Device(),
 		"texture/noise.png", nullptr, nullptr, &_subTex, &result);
 	D3DX11CreateShaderResourceViewFromFile(dev.Device(),
-		"texture/normal3.png", nullptr, nullptr, &_normalTex, &result);
+		"texture/normal2.png", nullptr, nullptr, &_normalTex, &result);
 	D3DX11CreateShaderResourceViewFromFile(dev.Device(),
 		"texture/flowmap_test.png", nullptr, nullptr, &_flowTex, &result);
 

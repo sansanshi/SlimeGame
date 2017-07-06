@@ -12,6 +12,7 @@ Texture2D _shadowTex:register(t10);//ƒ‰ƒCƒg‚©‚ç‚Ì[“x’l‚ğƒeƒNƒXƒ`ƒƒ‚Æ‚µ‚Äó‚¯æ‚
 Texture2D _cameraDepthTex:register(t12);
 Texture2D _subTex:register(t13);//ƒTƒuƒeƒNƒXƒ`ƒƒ
 Texture2D _flowTex:register(t14);
+Texture2D _subTex2:register(t15);
 SamplerState _samplerState:register(s0);
 SamplerState _samplerStateDisp:register(s1);
 SamplerState _samplerState_clamp:register(s2);
