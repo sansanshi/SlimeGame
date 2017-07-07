@@ -62,13 +62,13 @@ Plane::Plane(float width, float depth, Vector3 normal,const std::shared_ptr<Came
 	ShaderGenerator::CreatePixelShader("lightview.hlsl", "PrimitiveLightViewPS", "ps_5_0", _lightviewPS);
 
 	D3DX11CreateShaderResourceViewFromFile(dev.Device(), 
-		"texture/normal3.png", nullptr, nullptr, &_mainTex, &result);
+		"texture/watertest.png", nullptr, nullptr, &_mainTex, &result);
 	D3DX11CreateShaderResourceViewFromFile(dev.Device(),
-		"texture/noise.png", nullptr, nullptr, &_subTex, &result);
+		"texture/noise_.png", nullptr, nullptr, &_subTex, &result);
 	D3DX11CreateShaderResourceViewFromFile(dev.Device(),
-		"texture/normal2.png", nullptr, nullptr, &_normalTex, &result);
+		"texture/normal0.png", nullptr, nullptr, &_normalTex, &result);
 	D3DX11CreateShaderResourceViewFromFile(dev.Device(),
-		"texture/flowmap_test.png", nullptr, nullptr, &_flowTex, &result);
+		"texture/flow_.png", nullptr, nullptr, &_flowTex, &result);
 
 	D3D11_SAMPLER_DESC samplerDesc = {};
 	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
@@ -217,7 +217,7 @@ void
 Plane::Update()
 {
 	rot += -1 * XM_PI / 180;
-	XMMATRIX transMat=XMMatrixTranslation(320.0f,-0.5f,0.0f);
+	XMMATRIX transMat=XMMatrixTranslation(0.0f,-1.5f,0.0f);
 	_modelMatrix = transMat;
 	//_modelMatrix = XMMatrixIdentity();
 	_worldAndCamera.world = _modelMatrix;

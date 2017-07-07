@@ -38,6 +38,5 @@ c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamathvector.i
 c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamathmisc.inl(518): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
 c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamathmisc.inl(519): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
 c:\users\1401349\documents\workinggames\slimegame\directx11\directx11_1\define.h(62): warning C4244: 'return': 'double' から 'float' への変換です。データが失われる可能性があります。
-cl : コマンド ライン warning D9028: 簡易リビルド時のエラーです、通常のビルドに戻します
   DirectX11_1.vcxproj -> C:\Users\1401349\Documents\WorkingGames\SlimeGame\DirectX11\Debug\DirectX11_1.exe
   DirectX11_1.vcxproj -> C:\Users\1401349\Documents\WorkingGames\SlimeGame\DirectX11\Debug\DirectX11_1.pdb (Full PDB)

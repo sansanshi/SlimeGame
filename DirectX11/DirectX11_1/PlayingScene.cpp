@@ -106,7 +106,7 @@ PlayingScene::PlayingScene(HWND hwnd)
 	_player = std::make_unique<Player>(_camera);
 	_player->Init();
 
-	_plane = std::make_unique<Plane>(300, 300, Vector3(0, 1, 0), _camera);
+	_plane = std::make_unique<Plane>(600, 600, Vector3(0, 1, 0), _camera);
 	//_plane = new Plane(300, 300, Vector3(0, 1, 0), &_camera);
 	_cylinder = std::make_unique<Cylinder>(4, 20, 20, _camera);// new Cylinder(4, 20, 20, _camera);
 	_sphere = std::make_unique<Sphere>(100, 5, _camera);//new Sphere(100, 5, _camera);

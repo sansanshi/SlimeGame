@@ -21,9 +21,9 @@ SamplerState _samplerState_clamp:register(s2);
 matrix TangentMatrix(float4 tangent, float4 binormal, float4 normal)
 {
 	matrix mat = {
-		float4(normalize(tangent)),
-		float4(normalize(binormal)),
-		float4(normalize(normal)),
+		float4(normalize(tangent.xyz),0),
+		float4(normalize(binormal.xyz),0),
+		float4(normalize(normal.xyz),0),
 		float4(0, 0, 0, 1) };
 	matrix test = {
 		float4(1, 0, 0, 0),

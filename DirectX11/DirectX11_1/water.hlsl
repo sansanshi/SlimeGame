@@ -102,7 +102,7 @@ float4 WaterPS(Output o) :SV_Target
 float halfPhase = 2.5f / 2.0f;
 
 //ノイズテクスチャ
-float noise = _subTex.Sample(_samplerState, o.uv).r*0.5f;
+float noise = _subTex.Sample(_samplerState, o.uv*2).r;
 //フロートテクスチャ
 float2 flowVector = _flowTex.Sample(_samplerState, o.uv).rg;
 flowVector = flowVector*2.0f - 1.0f;
@@ -118,12 +118,15 @@ float phase1 =  flowOffs1;
 float2 shiftUV;
 shiftUV.x = floor(Time / Phase)*2.0f;
 shiftUV.y = phase0 > halfPhase ? shiftUV.x + 1.0f : shiftUV.x - 1.0f;
-shiftUV *= 0.125f;
+shiftUV *= 1.25f;
 
-float3 norm0 = _normalTex.Sample(_samplerState, (o.uv * 1) + flowVector*phase0+shiftUV.x);
-float3 norm1 = _normalTex.Sample(_samplerState, (o.uv * 1) + flowVector*phase1+shiftUV.y);
+float3 norm0 = _normalTex.Sample(_samplerState, (o.uv * 5) + flowVector*phase0);
+float3 norm1 = _normalTex.Sample(_samplerState, (o.uv * 5) + flowVector*phase1);
 norm0 = norm0*2.0f - 1.0f;
 norm1 = norm1*2.0f - 1.0f;
+
+float4 col0 = _tex.Sample(_samplerState, o.uv*5 + flowVector*phase0 );
+float4 col1 = _tex.Sample(_samplerState, o.uv*5 + flowVector*phase1 );
 float f = (abs(halfPhase - flowOffs0) / halfPhase);
 
 float3 normT = lerp(norm0, norm1, f);
@@ -188,9 +191,10 @@ normT = mul(o.tangentMatrix, normT);
 																   //フォグをかける
 	//col.a = 0.5f;
 	//col = lerp(o.fogColor, col, o.fog);
-	float4 col = _tex.Sample(_samplerState, o.uv);
+	float4 col = _tex.Sample(_samplerState, o.uv*5);
+	col = lerp(col0, col1, f);
 	float4 subCol = _subTex.Sample(_samplerState, o.uv);
 	col.rgb=col.rgb*bright;
-	col.a = 0.7f;
+	col.a = 0.4f;
 	return col;
 }

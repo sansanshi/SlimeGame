@@ -164,9 +164,9 @@ float4 TessPS(DS_OUTPUT o):SV_Target
 	}
 
 	float disp = _dispMap.Sample(_samplerState, o.uv);
-	float4 texCol = _tex.Sample(_samplerState, o.uv);
-	float4 subTexCol = _subTex.Sample(_samplerState, o.uv);
-	float4 subTexCol2 = _subTex2.Sample(_samplerState, o.uv);
+	float4 texCol = _tex.Sample(_samplerState, o.uv);//’n–Ê•”•ª
+	float4 subTexCol = _subTex.Sample(_samplerState, o.uv*5);//ŽR•”•ª
+	float4 subTexCol2 = _subTex2.Sample(_samplerState, o.uv*3);//‚­‚Ú‚Ý•”•ª
 
 	disp = disp*2.0f - 1.0f;
 	float4 col = lerp(texCol,subTexCol, saturate(disp*3.0f));

@@ -111,7 +111,7 @@ Cylinder::Cylinder(float radius, float height, unsigned int div,const std::share
 	D3DX11CreateShaderResourceViewFromFile(dev.Device(),
 		"texture/noise.png", nullptr, nullptr, &_subTex, &result);
 	D3DX11CreateShaderResourceViewFromFile(dev.Device(),
-		"texture/woodnorm.png", nullptr, nullptr, &_normalTex, &result);
+		"texture/normal_plane.png", nullptr, nullptr, &_normalTex, &result);
 
 	//カメラからの描画に使ったinputElementDescsを使っても描画できた
 	//問題が起きた時はLightview用に新しくバーテックスバッファ作ってこの辺も書き換える

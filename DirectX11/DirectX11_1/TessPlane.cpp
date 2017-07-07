@@ -21,10 +21,10 @@ TessPlane::TessPlane(float width, float depth, Vector3 normal, const std::shared
 	o = XMFLOAT3(0, 0, 0);
 
 	std::vector<PrimitiveVertex> vertices(4);
-	vertices[0] = { Vector3(-width / 2, 0, -depth / 2), Vector3(0, 1, 0), Vector2(0, 0), Vector3(0, 0, 0), Vector3(0, 0, 0) };
-	vertices[1] = { Vector3(-width / 2, 0, depth / 2), Vector3(0, 1, 0), Vector2(1, 0), Vector3(0, 0, 0), Vector3(0, 0, 0) };
-	vertices[3] = { Vector3(width / 2, 0, -depth / 2), Vector3(0, 1, 0), Vector2(0, 1), Vector3(0, 0, 0), Vector3(0, 0, 0) };//コントロールポイントの順番がよく分からん
-	vertices[2] = { Vector3(width / 2, 0, depth / 2), Vector3(0, 1, 0), Vector2(1, 1), Vector3(0, 0, 0), Vector3(0, 0, 0) };//とりあえずN字じゃ変になるっぽいので変更
+	vertices[0] = { Vector3(-width / 2, 0, -depth / 2), Vector3(0, 1, 0), Vector2(0, 1), Vector3(0, 0, 0), Vector3(0, 0, 0) };
+	vertices[1] = { Vector3(-width / 2, 0, depth / 2), Vector3(0, 1, 0), Vector2(0, 0), Vector3(0, 0, 0), Vector3(0, 0, 0) };
+	vertices[3] = { Vector3(width / 2, 0, -depth / 2), Vector3(0, 1, 0), Vector2(1, 1), Vector3(0, 0, 0), Vector3(0, 0, 0) };//コントロールポイントの順番がよく分からん
+	vertices[2] = { Vector3(width / 2, 0, depth / 2), Vector3(0, 1, 0), Vector2(1, 0), Vector3(0, 0, 0), Vector3(0, 0, 0) };//とりあえずN字じゃ変になるっぽいので変更
 
 	D3D11_SUBRESOURCE_DATA data;
 	data.pSysMem = &vertices[0];
@@ -119,16 +119,16 @@ TessPlane::TessPlane(float width, float depth, Vector3 normal, const std::shared
 
 
 	result=D3DX11CreateShaderResourceViewFromFile(dev.Device(),
-		"texture/height.png", nullptr, nullptr, 
+		"texture/ground.png", nullptr, nullptr, 
 		&_mainTex, &result);
 	result = D3DX11CreateShaderResourceViewFromFile(dev.Device(),
-		"texture/stone.png", nullptr, nullptr, 
+		"texture/rock.png", nullptr, nullptr, 
 		&_subTex, &result);
 	result = D3DX11CreateShaderResourceViewFromFile(dev.Device(),
-		"texture/decal.png", nullptr, nullptr,
+		"texture/sand1.png", nullptr, nullptr,
 		&_subTex2, &result);
 	result = D3DX11CreateShaderResourceViewFromFile(dev.Device(), 
-		"texture/yama.png", nullptr, nullptr, 
+		"texture/displace.png", nullptr, nullptr, 
 		&_displacementTex, &result);
 }
 
