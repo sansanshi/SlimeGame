@@ -169,6 +169,7 @@
     <ClCompile Include="PMXMesh.cpp" />
     <ClCompile Include="Primitive.cpp" />
     <ClCompile Include="Renderer.cpp" />
+    <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="ShaderDefine.cpp" />
     <ClCompile Include="ShaderGenarator.cpp" />
@@ -208,6 +209,7 @@
     <ClInclude Include="PMXMesh.h" />
     <ClInclude Include="Primitive.h" />
     <ClInclude Include="Renderer.h" />
+    <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="ShaderDefine.h" />
     <ClInclude Include="ShaderGenerator.h" />

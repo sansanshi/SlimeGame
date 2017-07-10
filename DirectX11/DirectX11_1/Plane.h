@@ -3,6 +3,7 @@
 #include"Define.h"
 #include"Camera.h"
 #include<memory>
+#include"ResourceManager.h"
 
 struct ID3D11Buffer;
 
@@ -11,23 +12,23 @@ class Plane
 {
 private:
 	std::weak_ptr<Camera> _cameraPtr;
-	//MATRIXIES _mvp;
 	WorldAndCamera _worldAndCamera;
 	XMMATRIX _modelMatrix;
 	ID3D11Buffer* _matrixBuffer;
 	D3D11_MAPPED_SUBRESOURCE _mappedMatrixies;
 
-	ID3D11ShaderResourceView* _mainTex;
-	ID3D11ShaderResourceView* _subTex;
-	ID3D11ShaderResourceView* _normalTex;
-	ID3D11ShaderResourceView* _flowTex;
+	std::weak_ptr<ID3D11ShaderResourceView*> _mainTex;
+	std::weak_ptr<ID3D11ShaderResourceView*> _subTex;
+	std::weak_ptr<ID3D11ShaderResourceView*> _normalTex;
+	std::weak_ptr<ID3D11ShaderResourceView*> _flowTex;
 	ID3D11SamplerState* _samplerState;
 
 	float rot;
 public:
 	Plane(const std::shared_ptr<Camera> cam);
 	~Plane();
-	Plane(float width, float height, Vector3 normal,const std::shared_ptr<Camera>& camera);
+	Plane(float width, float height, Vector3 normal,
+		const std::shared_ptr<Camera>& camera);
 	
 	ID3D11Buffer* _vertexBuffer;
 	ID3D11Buffer* VertexBuffer(){ return _vertexBuffer; };

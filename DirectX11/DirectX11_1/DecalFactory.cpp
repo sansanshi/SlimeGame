@@ -4,6 +4,7 @@
 #include"DeviceDx11.h"
 #include"ShaderGenerator.h"
 #include"ShaderDefine.h"
+#include"ResourceManager.h"
 
 const int MAX_DECAL_NUM = 300;
 
@@ -11,12 +12,12 @@ DecalFactory::DecalFactory(const std::shared_ptr<Camera>& cameraPtr):_cameraPtr(
 {
 	HRESULT result = S_OK;
 	DeviceDx11& dev = DeviceDx11::Instance();
-	_decalBoxes.reserve(MAX_DECAL_NUM);
-	ID3D11ShaderResourceView* temp;
-	D3DX11CreateShaderResourceViewFromFile(dev.Device(), "texture/bloodhand.png", nullptr, nullptr,
-		&temp, &result);
+	ResourceManager& resourceMgr = ResourceManager::Instance();
 
-	_decalTex = std::make_shared<ID3D11ShaderResourceView*>(temp);
+	_decalBoxes.reserve(MAX_DECAL_NUM);
+
+	_decalTex = resourceMgr.LoadSRV("Decal_main", "texture/bloodhand.png");
+
 
 	//バーテックスバッファ作成
 	std::vector<XMFLOAT3> verts(8);
@@ -220,7 +221,7 @@ DecalFactory::Draw()
 	dev.Context()->PSSetShader(_pixelShader, nullptr, 0);//PMDモデル表示用シェーダセット
 	dev.Context()->IASetInputLayout(_inputlayout);
 
-	ID3D11ShaderResourceView** temp = _decalTex.get();
+	ID3D11ShaderResourceView** temp = _decalTex._Get();
 	dev.Context()->PSSetShaderResources(TEXTURE_DECAL, 1, temp);
 
 

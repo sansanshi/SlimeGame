@@ -23,7 +23,7 @@ private:
 	std::vector<DecalBox*> _decalBoxes;
 	//ID3D11ShaderResourceView* _decalTex;
 
-	std::shared_ptr<ID3D11ShaderResourceView*> _decalTex;
+	std::weak_ptr<ID3D11ShaderResourceView*> _decalTex;
 
 	std::weak_ptr<Camera> _cameraPtr;
 

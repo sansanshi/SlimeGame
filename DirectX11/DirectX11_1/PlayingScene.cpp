@@ -14,6 +14,7 @@
 #include"Billboard.h"
 #include"HUD.h"
 #include"InputManager.h"
+#include"ResourceManager.h"
 
 
 //DirectX11‰Šú‰»ŠÖ”
