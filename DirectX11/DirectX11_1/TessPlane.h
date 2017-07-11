@@ -21,10 +21,10 @@ private:
 
 	float rot;
 
-	ID3D11ShaderResourceView* _mainTex;
-	ID3D11ShaderResourceView* _subTex;
-	ID3D11ShaderResourceView* _subTex2;
-	ID3D11ShaderResourceView* _displacementTex;
+	std::weak_ptr<ID3D11ShaderResourceView*> _mainTex;
+	std::weak_ptr<ID3D11ShaderResourceView*> _subTex;
+	std::weak_ptr<ID3D11ShaderResourceView*> _subTex2;
+	std::weak_ptr<ID3D11ShaderResourceView*> _displacementTex;
 
 	ID3D11SamplerState* _samplerState_Wrap;
 public:

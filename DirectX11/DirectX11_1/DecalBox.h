@@ -27,8 +27,7 @@ private:
 
 	ID3D11SamplerState* _samplerState;
 
-	ID3D11ShaderResourceView* _decalTexture;
-	std::shared_ptr<ID3D11ShaderResourceView*> _decalTex;
+	std::weak_ptr<ID3D11ShaderResourceView*> _decalTexture;
 
 
 public:

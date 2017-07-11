@@ -6,6 +6,7 @@
 #include"ShaderGenerator.h"
 #include"Camera.h"
 #include"ShaderDefine.h"
+#include"ResourceManager.h"
 
 Cylinder::Cylinder(float radius, float height, unsigned int div,const std::shared_ptr<Camera>& camera) :_cameraPtr(camera)
 {
@@ -106,12 +107,17 @@ Cylinder::Cylinder(float radius, float height, unsigned int div,const std::share
 		_vertexShader, inputElementDescs, sizeof(inputElementDescs) / sizeof(D3D11_INPUT_ELEMENT_DESC), _inputlayout);
 	ShaderGenerator::CreatePixelShader("wood.hlsl", "woodPS", "ps_5_0", _pixelShader);
 
+	ResourceManager& resourceMgr = ResourceManager::Instance();
+	_mainTex = resourceMgr.LoadSRV("Cylinder_main", "wood.png");
+	_subTex = resourceMgr.LoadSRV("Cylinder_sub", "noise.png");
+	_normalTex = resourceMgr.LoadSRV("Cylinder_normal", "normal_plane.png");
+
+	/*D3DX11CreateShaderResourceViewFromFile(dev.Device(),
+		"wood.png", nullptr, nullptr, &_mainTex, &result);
 	D3DX11CreateShaderResourceViewFromFile(dev.Device(),
-		"texture/wood.png", nullptr, nullptr, &_mainTex, &result);
+		"noise.png", nullptr, nullptr, &_subTex, &result);
 	D3DX11CreateShaderResourceViewFromFile(dev.Device(),
-		"texture/noise.png", nullptr, nullptr, &_subTex, &result);
-	D3DX11CreateShaderResourceViewFromFile(dev.Device(),
-		"texture/normal_plane.png", nullptr, nullptr, &_normalTex, &result);
+		"normal_plane.png", nullptr, nullptr, &_normalTex, &result);*/
 
 	//カメラからの描画に使ったinputElementDescsを使っても描画できた
 	//問題が起きた時はLightview用に新しくバーテックスバッファ作ってこの辺も書き換える
@@ -179,8 +185,8 @@ Cylinder::Draw()
 	//↑　*(XMMATRIX*)mem.pData = matrix;//川野先生の書き方　memcpyで数値を間違えるとメモリがぐちゃぐちゃになる
 	dev.Context()->Unmap(_matrixBuffer, 0);
 
-	dev.Context()->PSSetShaderResources(TEXTURE_MAIN, 1, &_mainTex);
-	dev.Context()->PSSetShaderResources(TEXTURE_NORMAL, 1, &_normalTex);
+	dev.Context()->PSSetShaderResources(TEXTURE_MAIN, 1, _mainTex._Get());
+	dev.Context()->PSSetShaderResources(TEXTURE_NORMAL, 1, _normalTex._Get());
 
 	//プリミティブトポロジの切り替えを忘れない　切り替えを頻発させるのは良くない
 	dev.Context()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);

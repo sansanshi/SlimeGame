@@ -17,7 +17,7 @@ ResourceManager::ResourceManager(HWND hwnd):_hwnd(hwnd)
 }
 
 std::shared_ptr<ID3D11ShaderResourceView*>
-ResourceManager::LoadSRV(std::string registerName, std::string path)
+ResourceManager::LoadSRV(std::string registerName, std::string filename)
 {
 	if (_srvMap.find(registerName)!=_srvMap.end())
 	{
@@ -26,6 +26,7 @@ ResourceManager::LoadSRV(std::string registerName, std::string path)
 	DeviceDx11& dev = DeviceDx11::Instance();
 	HRESULT result = S_OK;
 
+	std::string path = "texture/" + filename;
 
 	ID3D11ShaderResourceView* temp;
 	if (FAILED(D3DX11CreateShaderResourceViewFromFile(dev.Device(), path.c_str(), nullptr, nullptr,

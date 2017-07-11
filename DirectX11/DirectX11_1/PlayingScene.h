@@ -20,7 +20,6 @@ class Billboard;
 class HUD;
 class PMDMesh;
 class InputManager;
-class ResourceManager;
 
 class PlayingScene :
 	public Scene
@@ -33,7 +32,6 @@ private:
 	ID3D11Buffer* _globalBuffer;
 	std::unique_ptr<Renderer> _renderer;
 	std::shared_ptr<Camera> _camera;
-	std::shared_ptr<ResourceManager> _resourceMgr;
 	
 	void Init();
 	//Player* _player;
@@ -64,7 +62,7 @@ private:
 	ID3D11DepthStencilView* _lightDSV;
 	ID3D11ShaderResourceView* _shaderResourceViewForShadow;//レンダリング結果をテクスチャとして扱う
 
-	ID3D11ShaderResourceView* _makerSRV;
+	std::weak_ptr<ID3D11ShaderResourceView*> _makerSRV;
 
 	//HUD表示フラグ
 	bool debugToggle;

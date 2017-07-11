@@ -94,9 +94,6 @@ private:
 
 	unsigned int _frameNo;
 
-	ID3D11ShaderResourceView* _normalTex;
-
-	ID3D11ShaderResourceView* _decalTex;
 
 	VMDData* _currentVMD;
 

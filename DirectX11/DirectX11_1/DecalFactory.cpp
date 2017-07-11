@@ -16,7 +16,7 @@ DecalFactory::DecalFactory(const std::shared_ptr<Camera>& cameraPtr):_cameraPtr(
 
 	_decalBoxes.reserve(MAX_DECAL_NUM);
 
-	_decalTex = resourceMgr.LoadSRV("Decal_main", "texture/bloodhand.png");
+	_decalTex = resourceMgr.LoadSRV("Decal_main", "bloodhand.png");
 
 
 	//バーテックスバッファ作成

@@ -4,6 +4,7 @@
 #include"ShaderGenerator.h"
 #include"ShaderDefine.h"
 #include"Camera.h"
+#include"ResourceManager.h"
 
 SkySphere::SkySphere(unsigned int divNum, float radius,const std::shared_ptr<Camera>& cam) :_cameraPtr(cam)
 {
@@ -223,8 +224,11 @@ SkySphere::SkySphere(unsigned int divNum, float radius,const std::shared_ptr<Cam
 	dev.Context()->VSSetConstantBuffers(0, 1, &_matrixBuffer);
 
 	//テクスチャ
-	result = D3DX11CreateShaderResourceViewFromFile(dev.Device(), "texture/height00.png", nullptr, nullptr, &_texture, &result);
-	dev.Context()->VSSetShaderResources(TEXTURE_MAIN, 1, &_texture);
+	ResourceManager& resourceMgr = ResourceManager::Instance();
+	_texture = resourceMgr.LoadSRV("Skysphere_main", "height00.png");
+
+	/*result = D3DX11CreateShaderResourceViewFromFile(dev.Device(), "height00.png", nullptr, nullptr, &_texture, &result);
+	dev.Context()->VSSetShaderResources(TEXTURE_MAIN, 1, &_texture);*/
 
 
 	//サンプラの設定
@@ -369,7 +373,7 @@ SkySphere::Draw()
 	DeviceDx11& dev = DeviceDx11::Instance();
 
 	dev.Context()->PSSetSamplers(0, 1, &_samplerState_Wrap);
-	dev.Context()->PSSetShaderResources(TEXTURE_MAIN, 1, &_texture);
+	dev.Context()->PSSetShaderResources(TEXTURE_MAIN, 1, _texture._Get());
 
 	unsigned int stride = sizeof(float) * 14;
 	unsigned int offset = 0;

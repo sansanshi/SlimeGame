@@ -16,7 +16,7 @@ Billboard::Billboard(const std::shared_ptr<Camera>& cam, float width, float heig
 	_vertexBuffer = nullptr;
 	_vertexBuffer = CreateBillBoardVertexBuffer(width, height);
 	_texture = nullptr;
-	D3DX11CreateShaderResourceViewFromFile(dev.Device(), "texture/uvCheck_transparent.png", nullptr, nullptr, &_texture, &result);
+	D3DX11CreateShaderResourceViewFromFile(dev.Device(), "uvCheck_transparent.png", nullptr, nullptr, &_texture, &result);
 	_vs = nullptr;
 	_ps = nullptr;
 	_inputLayout = nullptr;

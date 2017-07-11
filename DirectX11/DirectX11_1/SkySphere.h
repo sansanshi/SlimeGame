@@ -47,7 +47,7 @@ private:
 	/*void CalculateTangent(TempVertex * v0, TempVertex* v1, TempVertex* v2,
 		std::vector<PrimitiveVertex>& vertsForBuff, const std::vector<unsigned short>& indices, int idx);*/
 
-	ID3D11ShaderResourceView* _texture;
+	std::weak_ptr<ID3D11ShaderResourceView*> _texture;
 public:
 	SkySphere(unsigned int divNum, float radius,const std::shared_ptr<Camera>& cam);
 	~SkySphere();

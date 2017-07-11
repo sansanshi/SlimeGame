@@ -142,8 +142,9 @@ PlayingScene::PlayingScene(HWND hwnd)
 	//ビュー行列の回転と平行移動は互いに干渉しないので、転置行列にすると逆行列になる
 	//Inverse関数を使わなくていいので単純に転置させた方が軽い
 
-
-	D3DX11CreateShaderResourceViewFromFile(dev.Device(), "texture/marker.dds", nullptr, nullptr, &_makerSRV, &result);
+	ResourceManager& resourceMgr = ResourceManager::Instance();
+	_makerSRV = resourceMgr.LoadSRV("Maker_main", "marker.dds");
+	//D3DX11CreateShaderResourceViewFromFile(dev.Device(), "marker.dds", nullptr, nullptr, &_makerSRV, &result);
 
 
 	
@@ -507,7 +508,7 @@ PlayingScene::Update()
 
 
 		_renderer->ChangePTForPrimitive();
-		dev.Context()->PSSetShaderResources(TEXTURE_LIGHT_DEPTH, 1, &_makerSRV);
+		dev.Context()->PSSetShaderResources(TEXTURE_LIGHT_DEPTH, 1, _makerSRV._Get());
 		_makerHUD->Offset(ikScreenPos.x, ikScreenPos.y);
 		_makerHUD->Draw();
 	}

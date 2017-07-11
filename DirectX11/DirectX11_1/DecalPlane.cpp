@@ -45,7 +45,7 @@ DecalPlane::DecalPlane(float width, float depth, XMFLOAT3 normal, Camera* camera
 
 	};
 
-	D3DX11CreateShaderResourceViewFromFile(dev.Device(), "texture/bloodhand.png", nullptr, nullptr, &_texture, &result);
+	D3DX11CreateShaderResourceViewFromFile(dev.Device(), "bloodhand.png", nullptr, nullptr, &_texture, &result);
 
 
 	ShaderGenerator::CreateVertexShader("Decal.hlsl", "DecalPlaneVS", "vs_5_0",

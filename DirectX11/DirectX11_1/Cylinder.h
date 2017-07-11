@@ -15,9 +15,9 @@ private:
 
 	ID3D11VertexShader* _vertexShader;
 	ID3D11PixelShader* _pixelShader;
-	ID3D11ShaderResourceView* _mainTex;
-	ID3D11ShaderResourceView* _subTex;
-	ID3D11ShaderResourceView* _normalTex;
+	std::weak_ptr<ID3D11ShaderResourceView*> _mainTex;
+	std::weak_ptr<ID3D11ShaderResourceView*> _subTex;
+	std::weak_ptr<ID3D11ShaderResourceView*> _normalTex;
 
 	ID3D11VertexShader* _lightviewVS;
 	ID3D11PixelShader* _lightviewPS;

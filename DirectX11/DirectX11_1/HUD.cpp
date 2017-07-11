@@ -46,7 +46,7 @@ HUD::HUD(const std::shared_ptr<Camera>& cam,const float top,const float left,con
 
 	dev.Context()->VSSetConstantBuffers(0, 1, &_matrixBuffer);
 
-	D3DX11CreateShaderResourceViewFromFile(dev.Device(), "texture/marker.dds", nullptr, nullptr, &_texture, &result);
+	D3DX11CreateShaderResourceViewFromFile(dev.Device(), "marker.dds", nullptr, nullptr, &_texture, &result);
 }
 
 

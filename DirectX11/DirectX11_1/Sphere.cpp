@@ -4,6 +4,7 @@
 #include"ShaderGenerator.h"
 #include"ShaderDefine.h"
 #include"Camera.h"
+#include"ResourceManager.h"
 
 Sphere::Sphere(unsigned int divNum,float radius,const std::shared_ptr<Camera>& camera) :_cameraPtr(camera)
 {
@@ -262,24 +263,29 @@ Sphere::Sphere(unsigned int divNum,float radius,const std::shared_ptr<Camera>& c
 
 	dev.Context()->VSSetConstantBuffers(0, 1, &_matrixBuffer);
 
+	ResourceManager& resourceMgr = ResourceManager::Instance();
 	//マスク（？）テクスチャ
-	result = D3DX11CreateShaderResourceViewFromFile(dev.Device(), "texture/disp0.png", nullptr, nullptr, &_dispMask, &result);
-	dev.Context()->VSSetShaderResources(TEXTURE_MASK, 1, &_dispMask);
+	_dispMask = resourceMgr.LoadSRV("Slime_mask", "disp0.png");
+	/*result = D3DX11CreateShaderResourceViewFromFile(dev.Device(), "disp0.png", nullptr, nullptr, &_dispMask, &result);
+	dev.Context()->VSSetShaderResources(TEXTURE_MASK, 1, &_dispMask);*/
 
 
 	//ディスプレースメントテクスチャ
-	result = D3DX11CreateShaderResourceViewFromFile(dev.Device(), "texture/wave__.png", nullptr, nullptr, &_displaysmentMap, &result);
-	dev.Context()->VSSetShaderResources(TEXTURE_DISPLACEMENT, 1, &_displaysmentMap);
+	_displaysmentMap = resourceMgr.LoadSRV("Slime_displacement", "wave__.png");
+	/*result = D3DX11CreateShaderResourceViewFromFile(dev.Device(), "wave__.png", nullptr, nullptr, &_displaysmentMap, &result);
+	dev.Context()->VSSetShaderResources(TEXTURE_DISPLACEMENT, 1, &_displaysmentMap);*/
 
 
 	// ノーマルマップ用テクスチャ
-	result = D3DX11CreateShaderResourceViewFromFile(dev.Device(), "texture/normal3.png", nullptr, nullptr, &_normalTex, &result);
-	dev.Context()->PSSetShaderResources(TEXTURE_NORMAL, 1, &_normalTex);
+	_normalTex = resourceMgr.LoadSRV("Slime_normal", "normal3.png");
+	/*result = D3DX11CreateShaderResourceViewFromFile(dev.Device(), "normal3.png", nullptr, nullptr, &_normalTex, &result);
+	dev.Context()->PSSetShaderResources(TEXTURE_NORMAL, 1, &_normalTex);*/
 
 
 	//視差マッピング用テクスチャ
-	result = D3DX11CreateShaderResourceViewFromFile(dev.Device(), "texture/height1_.png", nullptr, nullptr, &_heightMap, &result);
-	dev.Context()->PSSetShaderResources(TEXTURE_HEIGHT, 1, &_heightMap);
+	_heightMap = resourceMgr.LoadSRV("Slime_height", "height1_.png");
+	/*result = D3DX11CreateShaderResourceViewFromFile(dev.Device(), "height1_.png", nullptr, nullptr, &_heightMap, &result);
+	dev.Context()->PSSetShaderResources(TEXTURE_HEIGHT, 1, &_heightMap);*/
 
 
 	//サンプラの設定
@@ -427,7 +433,7 @@ Sphere::Draw()
 	DeviceDx11& dev = DeviceDx11::Instance();
 
 	dev.Context()->PSSetSamplers(0, 1, &_samplerState_Wrap);
-	dev.Context()->PSSetShaderResources(TEXTURE_NORMAL, 1, &_normalTex);
+	dev.Context()->PSSetShaderResources(TEXTURE_NORMAL, 1, _normalTex._Get());
 
 	unsigned int stride = sizeof(float) * 14;
 	unsigned int offset = 0;
@@ -436,8 +442,8 @@ Sphere::Draw()
 	dev.Context()->PSSetShader(_pixelShader, nullptr, 0);//PMDモデル表示用シェーダセット
 	dev.Context()->IASetInputLayout(_inputlayout);
 
-	dev.Context()->VSSetShaderResources(TEXTURE_DISPLACEMENT, 1, &_displaysmentMap);
-	dev.Context()->VSSetShaderResources(TEXTURE_MASK, 1, &_dispMask);
+	dev.Context()->VSSetShaderResources(TEXTURE_DISPLACEMENT, 1, _displaysmentMap._Get());
+	dev.Context()->VSSetShaderResources(TEXTURE_MASK, 1, _dispMask._Get());
 
 
 	
@@ -539,7 +545,7 @@ Sphere::DrawLightView_color()
 	DeviceDx11& dev = DeviceDx11::Instance();
 
 	dev.Context()->PSSetSamplers(0, 1, &_samplerState_Wrap);
-	dev.Context()->PSSetShaderResources(TEXTURE_NORMAL, 1, &_normalTex);
+	dev.Context()->PSSetShaderResources(TEXTURE_NORMAL, 1, _normalTex._Get());
 
 	unsigned int stride = sizeof(float) * 14;
 	unsigned int offset = 0;
@@ -548,8 +554,8 @@ Sphere::DrawLightView_color()
 	dev.Context()->PSSetShader(_pixelShader, nullptr, 0);//PMDモデル表示用シェーダセット
 	dev.Context()->IASetInputLayout(_inputlayout);
 
-	dev.Context()->VSSetShaderResources(TEXTURE_DISPLACEMENT, 1, &_displaysmentMap);
-	dev.Context()->VSSetShaderResources(TEXTURE_MASK, 1, &_dispMask);
+	dev.Context()->VSSetShaderResources(TEXTURE_DISPLACEMENT, 1, _displaysmentMap._Get());
+	dev.Context()->VSSetShaderResources(TEXTURE_MASK, 1, _dispMask._Get());
 
 	dev.Context()->VSSetConstantBuffers(0, 1, &_matrixBuffer);
 	dev.Context()->Map(_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &_mappedMatrixies);

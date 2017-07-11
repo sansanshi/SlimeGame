@@ -6,6 +6,7 @@
 #include"Camera.h"
 
 #include"ShaderDefine.h"
+#include"ResourceManager.h"
 
 DecalBox::DecalBox(float width, float height, float length, const std::shared_ptr<Camera>& cameraPtr) 
 	:_pos(0.f,0.f,0.f),_rot(45.f,0.f,0.f),_scale(16.f,16.f,16.f),_cameraPtr(cameraPtr)
@@ -120,8 +121,8 @@ DecalBox::DecalBox(float width, float height, float length, const std::shared_pt
 	dev.Context()->PSSetSamplers(0, 1, &_samplerState);
 	dev.Context()->VSSetSamplers(1, 1, &_samplerState);
 
-	D3DX11CreateShaderResourceViewFromFile(dev.Device(), "texture/bloodhand.png", nullptr, nullptr,
-		&_decalTexture, &result);
+	ResourceManager& resourceMgr = ResourceManager::Instance();
+	_decalTexture = resourceMgr.LoadSRV("Decal_main", "bloodhand.png");
 
 
 }
@@ -133,7 +134,7 @@ DecalBox::DecalBox(const XMFLOAT3& pos, const XMFLOAT3& rot, const XMFLOAT3& sca
 {
 	DeviceDx11& dev = DeviceDx11::Instance();
 	HRESULT result = S_OK;
-	_decalTex = texPtr;
+	_decalTexture = texPtr;
 	_vertexShader = vs;
 	_pixelShader = ps;
 	_inputlayout = layout;
@@ -249,9 +250,8 @@ DecalBox::DecalBox(const XMFLOAT3& pos, const XMFLOAT3& rot, const XMFLOAT3& sca
 	dev.Context()->PSSetSamplers(0, 1, &_samplerState);
 	dev.Context()->VSSetSamplers(1, 1, &_samplerState);
 
-	/*D3DX11CreateShaderResourceViewFromFile(dev.Device(), "texture/bloodhand.png", nullptr, nullptr,
+	/*D3DX11CreateShaderResourceViewFromFile(dev.Device(), "bloodhand.png", nullptr, nullptr,
 		&_decalTexture, &result);*/
-
 
 }
 
@@ -297,7 +297,7 @@ DecalBox::DebugDraw()
 	dev.Context()->IASetInputLayout(_inputlayout);
 
 
-	dev.Context()->PSSetShaderResources(TEXTURE_DECAL, 1, &_decalTexture);
+	dev.Context()->PSSetShaderResources(TEXTURE_DECAL, 1, _decalTexture._Get());
 
 
 
@@ -374,7 +374,7 @@ DecalBox::Draw()
 	dev.Context()->PSSetShader(_pixelShader, nullptr, 0);//PMDモデル表示用シェーダセット
 	dev.Context()->IASetInputLayout(_inputlayout);
 
-	ID3D11ShaderResourceView** temp = _decalTex.get();
+	ID3D11ShaderResourceView** temp = _decalTexture._Get();
 	dev.Context()->PSSetShaderResources(TEXTURE_DECAL, 1, temp);
 
 

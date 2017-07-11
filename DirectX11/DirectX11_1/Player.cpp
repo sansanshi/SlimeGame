@@ -682,9 +682,6 @@ Player::Init()
 	D3D11_TEXTURE2D_DESC textureDesc;
 	textureDesc.BindFlags = D3D11_BIND_RENDER_TARGET;
 	
-	result = D3DX11CreateShaderResourceViewFromFile(dev.Device(), "texture/decal_.png", nullptr, nullptr, &_decalTex, &result);
-	dev.Context()->PSSetShaderResources(TEXTURE_DECAL, 1, &_decalTex);
-	//dev.Device()->CreateShaderResourceView()
 	
 
 
@@ -887,7 +884,6 @@ Player::Draw()
 		dev.Context()->IASetVertexBuffers(0, 1, &pmdVertBuff, &stride, &offset);
 		dev.Context()->VSSetShader(_vertexShader, nullptr, 0);//ＰＭＤモデル表示用シェーダセット
 		dev.Context()->PSSetShader(_pixelShader, nullptr, 0);//PMDモデル表示用シェーダセット
-		dev.Context()->PSSetShaderResources(TEXTURE_DECAL, 1, &_decalTex);//デカールテクスチャセット
 		dev.Context()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 		//XMMATRIX world = XMMatrixIdentity();

@@ -65,20 +65,20 @@ Plane::Plane(float width, float depth, Vector3 normal,
 		_lightviewVS, inputElementDescs, sizeof(inputElementDescs) / sizeof(D3D11_INPUT_ELEMENT_DESC), _lightviewInputLayout);
 	ShaderGenerator::CreatePixelShader("lightview.hlsl", "PrimitiveLightViewPS", "ps_5_0", _lightviewPS);
 
-	_mainTex = resourceMgr.LoadSRV("Plane_main", "texture/watertest.png");
-	_subTex = resourceMgr.LoadSRV("Plane_sub", "texture/noise.png");
-	_normalTex = resourceMgr.LoadSRV("Plane_normal", "texture/normal0.png");
-	_flowTex = resourceMgr.LoadSRV("Plane_flow", "texture/flow_.png");
+	_mainTex = resourceMgr.LoadSRV("Plane_main", "watertest.png");
+	_subTex = resourceMgr.LoadSRV("Plane_sub", "noise.png");
+	_normalTex = resourceMgr.LoadSRV("Plane_normal", "normal0.png");
+	_flowTex = resourceMgr.LoadSRV("Plane_flow", "flow_.png");
 
 
 	/*D3DX11CreateShaderResourceViewFromFile(dev.Device(), 
-		"texture/watertest.png", nullptr, nullptr, &_mainTex, &result);
+		"watertest.png", nullptr, nullptr, &_mainTex, &result);
 	D3DX11CreateShaderResourceViewFromFile(dev.Device(),
-		"texture/noise_.png", nullptr, nullptr, &_subTex, &result);
+		"noise_.png", nullptr, nullptr, &_subTex, &result);
 	D3DX11CreateShaderResourceViewFromFile(dev.Device(),
-		"texture/normal0.png", nullptr, nullptr, &_normalTex, &result);
+		"normal0.png", nullptr, nullptr, &_normalTex, &result);
 	D3DX11CreateShaderResourceViewFromFile(dev.Device(),
-		"texture/flow_.png", nullptr, nullptr, &_flowTex, &result);*/
+		"flow_.png", nullptr, nullptr, &_flowTex, &result);*/
 
 	D3D11_SAMPLER_DESC samplerDesc = {};
 	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
