@@ -21,10 +21,6 @@ private:
 
 	float rot;
 
-	std::weak_ptr<ID3D11ShaderResourceView*> _mainTex;
-	std::weak_ptr<ID3D11ShaderResourceView*> _subTex;
-	std::weak_ptr<ID3D11ShaderResourceView*> _subTex2;
-	std::weak_ptr<ID3D11ShaderResourceView*> _displacementTex;
 
 	ID3D11SamplerState* _samplerState_Wrap;
 public:
@@ -35,15 +31,9 @@ public:
 	ID3D11Buffer* _vertexBuffer;
 	ID3D11Buffer* VertexBuffer(){ return _vertexBuffer; };
 
-	ID3D11VertexShader* _vertexShader;
-	ID3D11InputLayout* _inputlayout;
-	ID3D11PixelShader* _pixelShader;
 	ID3D11HullShader* _hullShader;
 	ID3D11DomainShader* _domainShader;
 
-	ID3D11VertexShader* _lightviewVS;
-	ID3D11InputLayout* _lightviewInputLayout;
-	ID3D11PixelShader* _lightviewPS;
 
 	ID3D11PixelShader* _cameraDepthPS;
 

@@ -10,6 +10,7 @@
 #include"Geometry.h"
 #include"ShaderDefine.h"
 #include"Camera.h"
+#include"ResourceManager.h"
 
 
 
@@ -479,7 +480,7 @@ void
 Player::Init()
 {
 	HRESULT result;
-
+	ResourceManager& resourceMgr = ResourceManager::Instance();
 	
 	//pmxはデフォルトでutf16（Unicode）を使うのでL付けてワイド文字列にする
 	//PMXLoader pmxloader;
@@ -517,31 +518,45 @@ Player::Init()
 
 
 	//シェーダコンパイル、ロード
-	_vertInputLayout = nullptr;
-	_vertexShader = nullptr;
-	ShaderGenerator::CreateVertexShader("BaseShader.hlsl", "BaseVS", "vs_5_0", _vertexShader, inputElementDescs,
+	resourceMgr.LoadVS("Player_VS",
+		"BaseShader.hlsl", "BaseVS", "vs_5_0", _vertexShader, inputElementDescs,
+		sizeof(inputElementDescs) / sizeof(D3D11_INPUT_ELEMENT_DESC),
+		_vertInputLayout);
+	resourceMgr.LoadPS("Player_PS",
+		"BaseShader.hlsl", "BasePS", "ps_5_0", _pixelShader);
+	/*ShaderGenerator::CreateVertexShader("BaseShader.hlsl", "BaseVS", "vs_5_0", _vertexShader, inputElementDescs,
 		sizeof(inputElementDescs) / sizeof(D3D11_INPUT_ELEMENT_DESC), _vertInputLayout);
-	_pixelShader = nullptr;
+	
 	ShaderGenerator::CreatePixelShader("BaseShader.hlsl", "BasePS", "ps_5_0", _pixelShader);
-	dev.Context()->IASetInputLayout(_vertInputLayout);
+	dev.Context()->IASetInputLayout(_vertInputLayout);*/
 
-	_boneInputLayout = nullptr;
-	_boneVertexShader = nullptr;
-	ShaderGenerator::CreateVertexShader("BaseShader.hlsl", "BoneVS", "vs_5_0", _boneVertexShader, boneInputElementDescs,
+	
+	resourceMgr.LoadVS("Player_boneVS",
+		"BaseShader.hlsl", "BoneVS", "vs_5_0", _boneVertexShader, boneInputElementDescs,
+		sizeof(boneInputElementDescs) / sizeof(D3D11_INPUT_ELEMENT_DESC),
+		_boneInputLayout);
+	resourceMgr.LoadPS("Player_bonePS",
+		"BaseShader.hlsl", "BonePS", "ps_5_0", _bonePixelShader);
+
+	/*ShaderGenerator::CreateVertexShader("BaseShader.hlsl", "BoneVS", "vs_5_0", _boneVertexShader, boneInputElementDescs,
 		sizeof(boneInputElementDescs) / sizeof(D3D11_INPUT_ELEMENT_DESC), _boneInputLayout);
-	_bonePixelShader = nullptr;
-	ShaderGenerator::CreatePixelShader("BaseShader.hlsl", "BonePS", "ps_5_0", _bonePixelShader);
+	
+	ShaderGenerator::CreatePixelShader("BaseShader.hlsl", "BonePS", "ps_5_0", _bonePixelShader);*/
 
-	dev.Context()->VSSetShader(_vertexShader, nullptr, 0);//ＰＭＤモデル表示用シェーダセット
-	dev.Context()->PSSetShader(_pixelShader, nullptr, 0);//PMDモデル表示用シェーダセット
+	dev.Context()->VSSetShader(*_vertexShader.lock(), nullptr, 0);//ＰＭＤモデル表示用シェーダセット
+	dev.Context()->PSSetShader(*_pixelShader.lock(), nullptr, 0);//PMDモデル表示用シェーダセット
 
-	_depthVS = nullptr;
-	_depthViewInputLayout = nullptr;
-	_depthPS = nullptr;
-	ShaderGenerator::CreateVertexShader("lightview.hlsl", "LightViewVS", "vs_5_0",_depthVS, 
+	resourceMgr.LoadVS("Player_lightVS",
+		"lightview.hlsl", "LightViewVS", "vs_5_0", _depthVS,
+		lightViewInputElementDescs, sizeof(lightViewInputElementDescs) / sizeof(D3D11_INPUT_ELEMENT_DESC),
+		_depthViewInputLayout);
+	resourceMgr.LoadPS("Player_lightPS",
+		"lightview.hlsl", "LightViewPS", "ps_5_0", _depthPS);
+
+	/*ShaderGenerator::CreateVertexShader("lightview.hlsl", "LightViewVS", "vs_5_0",_depthVS, 
 		lightViewInputElementDescs,sizeof(lightViewInputElementDescs) / sizeof(D3D11_INPUT_ELEMENT_DESC), 
 		_depthViewInputLayout);
-	ShaderGenerator::CreatePixelShader("lightview.hlsl", "LightViewPS", "ps_5_0", _depthPS);
+	ShaderGenerator::CreatePixelShader("lightview.hlsl", "LightViewPS", "ps_5_0", _depthPS);*/
 
 
 	_worldAndCamera.world = XMMatrixIdentity();
@@ -740,10 +755,6 @@ Player::Init()
 
 Player::~Player()
 {
-	_vertexShader->Release();
-	_boneVertexShader->Release();
-	_pixelShader->Release();
-	_bonePixelShader->Release();
 
 }
 
@@ -812,10 +823,10 @@ Player::Update()
 	{
 		unsigned int stride = _mesh->GetBoneVertStride();
 		unsigned int offset = 0;
-		dev.Context()->IASetInputLayout(_boneInputLayout);
+		dev.Context()->IASetInputLayout(*_boneInputLayout.lock());
 		dev.Context()->IASetVertexBuffers(0, 1, &boneVertBuff, &stride, &offset);
-		dev.Context()->VSSetShader(_boneVertexShader, nullptr, 0);//ボーン表示用シェーダセット
-		dev.Context()->PSSetShader(_bonePixelShader, nullptr, 0);//ボーン表示用シェーダセット
+		dev.Context()->VSSetShader(*_boneVertexShader.lock(), nullptr, 0);//ボーン表示用シェーダセット
+		dev.Context()->PSSetShader(*_bonePixelShader.lock(), nullptr, 0);//ボーン表示用シェーダセット
 		dev.Context()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
 	}
 	else
@@ -823,10 +834,10 @@ Player::Update()
 		unsigned int stride = _mesh->GetVertexStride();
 		unsigned int offset = 0;
 
-		dev.Context()->IASetInputLayout(_vertInputLayout);
+		dev.Context()->IASetInputLayout(*_vertInputLayout.lock());
 		dev.Context()->IASetVertexBuffers(0, 1, &pmdVertBuff, &stride, &offset);
-		dev.Context()->VSSetShader(_vertexShader, nullptr, 0);//ＰＭＤモデル表示用シェーダセット
-		dev.Context()->PSSetShader(_pixelShader, nullptr, 0);//PMDモデル表示用シェーダセット		dev.Context()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		dev.Context()->VSSetShader(*_vertexShader.lock(), nullptr, 0);//ＰＭＤモデル表示用シェーダセット
+		dev.Context()->PSSetShader(*_pixelShader.lock(), nullptr, 0);//PMDモデル表示用シェーダセット		dev.Context()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	}
 
 	if (_key[VK_UP] & 0x80)
@@ -880,10 +891,10 @@ Player::Draw()
 		unsigned int stride = _mesh->GetVertexStride();
 		unsigned int offset = 0;
 
-		dev.Context()->IASetInputLayout(_vertInputLayout);
+		dev.Context()->IASetInputLayout(*_vertInputLayout.lock());
 		dev.Context()->IASetVertexBuffers(0, 1, &pmdVertBuff, &stride, &offset);
-		dev.Context()->VSSetShader(_vertexShader, nullptr, 0);//ＰＭＤモデル表示用シェーダセット
-		dev.Context()->PSSetShader(_pixelShader, nullptr, 0);//PMDモデル表示用シェーダセット
+		dev.Context()->VSSetShader(*_vertexShader.lock(), nullptr, 0);//ＰＭＤモデル表示用シェーダセット
+		dev.Context()->PSSetShader(*_pixelShader.lock(), nullptr, 0);//PMDモデル表示用シェーダセット
 		dev.Context()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 		//XMMATRIX world = XMMatrixIdentity();
@@ -970,10 +981,10 @@ Player::Draw()
 
 		unsigned int stride = _mesh->GetBoneVertStride();
 		unsigned int offset = 0;
-		dev.Context()->IASetInputLayout(_boneInputLayout);
+		dev.Context()->IASetInputLayout(*_boneInputLayout.lock());
 		dev.Context()->IASetVertexBuffers(0, 1, &boneVertBuff, &stride, &offset);
-		dev.Context()->VSSetShader(_boneVertexShader, nullptr, 0);//ボーン表示用シェーダセット
-		dev.Context()->PSSetShader(_bonePixelShader, nullptr, 0);//ボーン表示用シェーダセット
+		dev.Context()->VSSetShader(*_boneVertexShader.lock(), nullptr, 0);//ボーン表示用シェーダセット
+		dev.Context()->PSSetShader(*_bonePixelShader.lock(), nullptr, 0);//ボーン表示用シェーダセット
 		dev.Context()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
 		dev.Context()->Draw(_mesh->BoneSize() * 2, 0);
 	}
@@ -986,10 +997,10 @@ Player::DrawLightView()
 	ID3D11Buffer* pmdVertBuff = _mesh->GetVertexBuffer();
 	unsigned int stride = _mesh->GetVertexStride();
 	unsigned int offset = 0;
-	dev.Context()->IASetInputLayout(_depthViewInputLayout);
+	dev.Context()->IASetInputLayout(*_depthViewInputLayout.lock());
 	dev.Context()->IASetVertexBuffers(0, 1, &pmdVertBuff, &stride, &offset);
-	dev.Context()->VSSetShader(_depthVS, nullptr, 0);//ＰＭＤモデル表示用シェーダセット
-	dev.Context()->PSSetShader(_depthPS, nullptr, 0);//PMDモデル表示用シェーダセット
+	dev.Context()->VSSetShader(*_depthVS.lock(), nullptr, 0);//ＰＭＤモデル表示用シェーダセット
+	dev.Context()->PSSetShader(*_depthPS.lock(), nullptr, 0);//PMDモデル表示用シェーダセット
 	dev.Context()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	dev.Context()->VSSetConstantBuffers(0, 1, &_matrixBuffer);
@@ -1037,10 +1048,10 @@ Player::DrawCameraDepth()
 	ID3D11Buffer* pmdVertBuff = _mesh->GetVertexBuffer();
 	unsigned int stride = _mesh->GetVertexStride();
 	unsigned int offset = 0;
-	dev.Context()->IASetInputLayout(_depthViewInputLayout);
+	dev.Context()->IASetInputLayout(*_depthViewInputLayout.lock());
 	dev.Context()->IASetVertexBuffers(0, 1, &pmdVertBuff, &stride, &offset);
-	dev.Context()->VSSetShader(_depthVS, nullptr, 0);//ＰＭＤモデル表示用シェーダセット
-	dev.Context()->PSSetShader(_depthPS, nullptr, 0);//PMDモデル表示用シェーダセット
+	dev.Context()->VSSetShader(*_depthVS.lock(), nullptr, 0);//ＰＭＤモデル表示用シェーダセット
+	dev.Context()->PSSetShader(*_depthPS.lock(), nullptr, 0);//PMDモデル表示用シェーダセット
 	dev.Context()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	std::vector<PMDMaterial> pmdMaterials = _mesh->GetMaterials();

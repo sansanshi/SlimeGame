@@ -1,18 +1,21 @@
 #include "DecalBox.h"
 #include<vector>
+#include<xnamath.h>
 #include"ShaderGenerator.h"
 #include"DeviceDx11.h"
-#include<xnamath.h>
 #include"Camera.h"
-
 #include"ShaderDefine.h"
 #include"ResourceManager.h"
 
 DecalBox::DecalBox(float width, float height, float length, const std::shared_ptr<Camera>& cameraPtr) 
-	:_pos(0.f,0.f,0.f),_rot(45.f,0.f,0.f),_scale(16.f,16.f,16.f),_cameraPtr(cameraPtr)
+	:_cameraPtr(cameraPtr)
 {
 	_pos = XMFLOAT3(0, 0, 0);
+	_rot = XMFLOAT3(45.f, 0.f, 0.f);
+	_scale = XMFLOAT3(16.f, 16.f, 16.f);
+
 	DeviceDx11& dev = DeviceDx11::Instance();
+	ResourceManager& resourceMgr = ResourceManager::Instance();
 
 	std::vector<XMFLOAT3> verts(8);
 	verts[0] = { -width / 2.0f, height / 2.0f, length / 2.0f };
@@ -44,10 +47,26 @@ DecalBox::DecalBox(float width, float height, float length, const std::shared_pt
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 	};
 
-	ShaderGenerator::CreateVertexShader("Decal.hlsl", "DecalBoxVS_Debug", "vs_5_0",
-		_vertexShader, inputElementDescs, sizeof(inputElementDescs) / sizeof(D3D11_INPUT_ELEMENT_DESC), _inputlayout);
-	ShaderGenerator::CreatePixelShader("Decal.hlsl", "DecalBoxPS_Debug", "ps_5_0", _pixelShader);
-
+	resourceMgr.LoadVS("DecalBoxVS_Debug",
+		"Decal.hlsl", "DecalBoxVS_Debug", "vs_5_0",
+		_vertexShader, inputElementDescs, sizeof(inputElementDescs) / sizeof(D3D11_INPUT_ELEMENT_DESC),
+		_inputlayout);
+	resourceMgr.LoadPS("DecalBoxPS_Debug",
+		"Decal.hlsl", "DecalBoxPS_Debug", "ps_5_0",
+		_pixelShader);
+	/*if (resourceMgr.IsRegisterdVS("DecalBoxVS"))
+	{
+		_vertexShader = resourceMgr.VertexShader("DecalBoxVS_Debug");
+	}
+	else
+	{
+		ID3D11VertexShader* tempVS;
+		ID3D11PixelShader* tempPS;
+		ShaderGenerator::CreateVertexShader("Decal.hlsl", "DecalBoxVS_Debug", "vs_5_0",
+			tempVS, inputElementDescs, sizeof(inputElementDescs) / sizeof(D3D11_INPUT_ELEMENT_DESC), _inputlayout);
+		resourceMgr.RegisterVS("DecalBoxVS_Debug", tempVS);
+		ShaderGenerator::CreatePixelShader("Decal.hlsl", "DecalBoxPS_Debug", "ps_5_0", tempPS);
+	}*/
 
 	std::vector<unsigned short> indices(36);
 	indices = { 2, 0, 1, 1, 3, 2, 4, 0, 2, 2, 6, 4,
@@ -121,17 +140,19 @@ DecalBox::DecalBox(float width, float height, float length, const std::shared_pt
 	dev.Context()->PSSetSamplers(0, 1, &_samplerState);
 	dev.Context()->VSSetSamplers(1, 1, &_samplerState);
 
-	ResourceManager& resourceMgr = ResourceManager::Instance();
 	_decalTexture = resourceMgr.LoadSRV("Decal_main", "bloodhand.png");
 
 
 }
 DecalBox::DecalBox(const XMFLOAT3& pos, const XMFLOAT3& rot, const XMFLOAT3& scale,
 	const std::shared_ptr<Camera>& cameraPtr,std::shared_ptr<ID3D11ShaderResourceView*> texPtr,
-	ID3D11VertexShader* vs,ID3D11PixelShader* ps,ID3D11InputLayout* layout,
+	std::weak_ptr<ID3D11VertexShader*> vs,std::weak_ptr<ID3D11PixelShader*> ps,std::weak_ptr<ID3D11InputLayout*> layout,
 	ID3D11Buffer* vertBuff,ID3D11Buffer* indexBuff,unsigned int indicesCnt) 
-	:_pos(pos),_rot(rot),_scale(scale),_cameraPtr(cameraPtr)
+	:_cameraPtr(cameraPtr)
 {
+	_pos = pos;
+	_rot = rot;
+	_scale = scale;
 	DeviceDx11& dev = DeviceDx11::Instance();
 	HRESULT result = S_OK;
 	_decalTexture = texPtr;
@@ -291,10 +312,10 @@ DecalBox::DebugDraw()
 
 	unsigned int stride = sizeof(float) * 3;
 	unsigned int offset = 0;
-
-	dev.Context()->VSSetShader(_vertexShader, nullptr, 0);//ＰＭＤモデル表示用シェーダセット
-	dev.Context()->PSSetShader(_pixelShader, nullptr, 0);//PMDモデル表示用シェーダセット
-	dev.Context()->IASetInputLayout(_inputlayout);
+	ID3D11VertexShader* temp = *_vertexShader.lock();
+	dev.Context()->VSSetShader(*_vertexShader.lock(), nullptr, 0);//ＰＭＤモデル表示用シェーダセット
+	dev.Context()->PSSetShader(*_pixelShader.lock(), nullptr, 0);//PMDモデル表示用シェーダセット
+	dev.Context()->IASetInputLayout(*_inputlayout.lock());
 
 
 	dev.Context()->PSSetShaderResources(TEXTURE_DECAL, 1, _decalTexture._Get());
@@ -370,9 +391,9 @@ DecalBox::Draw()
 	unsigned int stride = sizeof(float) * 3;
 	unsigned int offset = 0;
 
-	dev.Context()->VSSetShader(_vertexShader, nullptr, 0);//ＰＭＤモデル表示用シェーダセット
-	dev.Context()->PSSetShader(_pixelShader, nullptr, 0);//PMDモデル表示用シェーダセット
-	dev.Context()->IASetInputLayout(_inputlayout);
+	dev.Context()->VSSetShader(*_vertexShader._Get(), nullptr, 0);//ＰＭＤモデル表示用シェーダセット
+	dev.Context()->PSSetShader(*_pixelShader._Get(), nullptr, 0);//PMDモデル表示用シェーダセット
+	dev.Context()->IASetInputLayout(*_inputlayout._Get());
 
 	ID3D11ShaderResourceView** temp = _decalTexture._Get();
 	dev.Context()->PSSetShaderResources(TEXTURE_DECAL, 1, temp);

@@ -38,6 +38,9 @@ private:
 	std::unique_ptr<Player> _player;
 	std::unique_ptr<Plane> _plane;
 	std::unique_ptr<Cylinder> _cylinder;
+	std::unique_ptr<Cylinder> _cylinder2;
+	std::unique_ptr<Cylinder> _cylinder3;
+	std::unique_ptr<Cylinder> _cylinder4;
 	std::unique_ptr<Sphere> _sphere;
 	std::unique_ptr<TessPlane> _tessPlane;
 	std::unique_ptr<SkySphere> _skySphere;

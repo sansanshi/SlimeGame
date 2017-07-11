@@ -35,18 +35,18 @@ private:
 	std::string _folderPath;
 	PMDMesh* _mesh;
 	DeviceDx11& dev;
-	ID3D11InputLayout* _vertInputLayout;
-	ID3D11InputLayout* _boneInputLayout;
+	std::weak_ptr<ID3D11InputLayout*> _vertInputLayout;
+	std::weak_ptr<ID3D11InputLayout*> _boneInputLayout;
 
-	ID3D11VertexShader* _vertexShader;
-	ID3D11PixelShader* _pixelShader;
+	std::weak_ptr<ID3D11VertexShader*> _vertexShader;
+	std::weak_ptr<ID3D11PixelShader*> _pixelShader;
 
-	ID3D11VertexShader* _boneVertexShader;
-	ID3D11PixelShader* _bonePixelShader;
+	std::weak_ptr<ID3D11VertexShader*> _boneVertexShader;
+	std::weak_ptr<ID3D11PixelShader*> _bonePixelShader;
 
-	ID3D11VertexShader* _depthVS;
-	ID3D11InputLayout* _depthViewInputLayout;
-	ID3D11PixelShader* _depthPS;
+	std::weak_ptr<ID3D11VertexShader*> _depthVS;
+	std::weak_ptr<ID3D11InputLayout*> _depthViewInputLayout;
+	std::weak_ptr<ID3D11PixelShader*> _depthPS;
 
 	std::map<std::string, std::vector<VMDData::MotionData>> _keyframes;
 

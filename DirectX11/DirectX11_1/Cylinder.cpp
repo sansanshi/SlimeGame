@@ -3,13 +3,14 @@
 #include<D3D11.h>
 #include<xnamath.h>
 #include"DeviceDx11.h"
-#include"ShaderGenerator.h"
 #include"Camera.h"
 #include"ShaderDefine.h"
 #include"ResourceManager.h"
 
 Cylinder::Cylinder(float radius, float height, unsigned int div,const std::shared_ptr<Camera>& camera) :_cameraPtr(camera)
 {
+
+	ResourceManager& resourceMgr = ResourceManager::Instance();
 	angle = 0.0f;
 	_height = height;
 	_radius = radius;
@@ -103,11 +104,16 @@ Cylinder::Cylinder(float radius, float height, unsigned int div,const std::share
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 	};
 
-	ShaderGenerator::CreateVertexShader("wood.hlsl", "woodVS", "vs_5_0",
+	resourceMgr.LoadVS("Cylinder_VS",
+		"wood.hlsl", "woodVS", "vs_5_0",
+		_vertexShader, inputElementDescs, sizeof(inputElementDescs) / sizeof(D3D11_INPUT_ELEMENT_DESC),
+		_inputlayout);
+	resourceMgr.LoadPS("Cylinder_PS",
+		"wood.hlsl", "woodPS", "ps_5_0", _pixelShader);
+	/*ShaderGenerator::CreateVertexShader("wood.hlsl", "woodVS", "vs_5_0",
 		_vertexShader, inputElementDescs, sizeof(inputElementDescs) / sizeof(D3D11_INPUT_ELEMENT_DESC), _inputlayout);
 	ShaderGenerator::CreatePixelShader("wood.hlsl", "woodPS", "ps_5_0", _pixelShader);
-
-	ResourceManager& resourceMgr = ResourceManager::Instance();
+*/
 	_mainTex = resourceMgr.LoadSRV("Cylinder_main", "wood.png");
 	_subTex = resourceMgr.LoadSRV("Cylinder_sub", "noise.png");
 	_normalTex = resourceMgr.LoadSRV("Cylinder_normal", "normal_plane.png");
@@ -121,9 +127,17 @@ Cylinder::Cylinder(float radius, float height, unsigned int div,const std::share
 
 	//ƒJƒƒ‰‚©‚ç‚Ì•`‰æ‚ÉŽg‚Á‚½inputElementDescs‚ðŽg‚Á‚Ä‚à•`‰æ‚Å‚«‚½
 	//–â‘è‚ª‹N‚«‚½Žž‚ÍLightview—p‚ÉV‚µ‚­ƒo[ƒeƒbƒNƒXƒoƒbƒtƒ@ì‚Á‚Ä‚±‚Ì•Ó‚à‘‚«Š·‚¦‚é
-	ShaderGenerator::CreateVertexShader("lightview.hlsl", "PrimitiveLightViewVS", "vs_5_0",
+	resourceMgr.LoadVS("Cylinder_lightVS",
+		"lightview.hlsl", "PrimitiveLightViewVS", "vs_5_0",
+		_lightviewVS, lightViewInputElementDescs, sizeof(lightViewInputElementDescs) / sizeof(D3D11_INPUT_ELEMENT_DESC),
+		_lightviewInputLayout);
+	resourceMgr.LoadPS("Cylinder_lightPS",
+		"lightview.hlsl", "PrimitiveLightViewPS", "ps_5_0",
+		_lightviewPS);
+
+	/*ShaderGenerator::CreateVertexShader("lightview.hlsl", "PrimitiveLightViewVS", "vs_5_0",
 		_lightviewVS, lightViewInputElementDescs, sizeof(lightViewInputElementDescs) / sizeof(D3D11_INPUT_ELEMENT_DESC), _lightviewInputLayout);
-	ShaderGenerator::CreatePixelShader("lightview.hlsl", "PrimitiveLightViewPS", "ps_5_0", _lightviewPS);
+	ShaderGenerator::CreatePixelShader("lightview.hlsl", "PrimitiveLightViewPS", "ps_5_0", _lightviewPS);*/
 
 	_modelMatrix = XMMatrixIdentity();
 	/*_mvp.worldMatrix = _modelMatrix;
@@ -169,9 +183,9 @@ void
 Cylinder::Draw()
 {
 	DeviceDx11& dev = DeviceDx11::Instance();
-	dev.Context()->VSSetShader(_vertexShader, nullptr, 0);
-	dev.Context()->IASetInputLayout(_inputlayout);
-	dev.Context()->PSSetShader(_pixelShader, nullptr, 0);
+	dev.Context()->VSSetShader(*_vertexShader.lock(), nullptr, 0);
+	dev.Context()->IASetInputLayout(*_inputlayout.lock());
+	dev.Context()->PSSetShader(*_pixelShader.lock(), nullptr, 0);
 
 	dev.Context()->VSSetConstantBuffers(0, 1, &_matrixBuffer);
 
@@ -206,9 +220,9 @@ Cylinder::DrawLightView()//ŒãXƒvƒŒƒCƒ„[‚©‚çƒJƒƒ‰‚ð˜M‚Á‚½ê‡‚Í‚±‚±‚Å‚àƒJƒƒ‰‚
 {
 	DeviceDx11& dev = DeviceDx11::Instance();
 
-	dev.Context()->VSSetShader(_lightviewVS, nullptr, 0);
-	dev.Context()->IASetInputLayout(_lightviewInputLayout);
-	dev.Context()->PSSetShader(_lightviewPS, nullptr, 0);
+	dev.Context()->VSSetShader(*_lightviewVS.lock(), nullptr, 0);
+	dev.Context()->IASetInputLayout(*_lightviewInputLayout.lock());
+	dev.Context()->PSSetShader(*_lightviewPS.lock(), nullptr, 0);
 
 	dev.Context()->VSSetConstantBuffers(0, 1, &_matrixBuffer);
 
@@ -238,9 +252,9 @@ void
 Cylinder::DrawCameraDepth()
 {
 	DeviceDx11& dev = DeviceDx11::Instance();
-	dev.Context()->VSSetShader(_lightviewVS, nullptr, 0);
-	dev.Context()->IASetInputLayout(_lightviewInputLayout);
-	dev.Context()->PSSetShader(_lightviewPS, nullptr, 0);
+	dev.Context()->VSSetShader(*_lightviewVS.lock(), nullptr, 0);
+	dev.Context()->IASetInputLayout(*_lightviewInputLayout.lock());
+	dev.Context()->PSSetShader(*_lightviewPS.lock(), nullptr, 0);
 	dev.Context()->VSSetConstantBuffers(0, 1, &_matrixBuffer);
 
 	XMMATRIX view = _cameraPtr.lock()->CameraView();

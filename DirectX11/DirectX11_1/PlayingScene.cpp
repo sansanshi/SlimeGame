@@ -110,6 +110,11 @@ PlayingScene::PlayingScene(HWND hwnd)
 	_plane = std::make_unique<Plane>(600, 600, Vector3(0, 1, 0), _camera);
 	//_plane = new Plane(300, 300, Vector3(0, 1, 0), &_camera);
 	_cylinder = std::make_unique<Cylinder>(4, 20, 20, _camera);// new Cylinder(4, 20, 20, _camera);
+
+	_cylinder2 = std::make_unique<Cylinder>(4, 20, 20, _camera);
+	_cylinder3 = std::make_unique<Cylinder>(4, 20, 20, _camera);
+	_cylinder4 = std::make_unique<Cylinder>(4, 20, 20, _camera);
+
 	_sphere = std::make_unique<Sphere>(100, 5, _camera);//new Sphere(100, 5, _camera);
 	_tessPlane = std::make_unique<TessPlane>(600, 600, Vector3(0, 1, 0), _camera);//new TessPlane(400, 400, Vector3(0, 1, 0), _camera);
 	_decalBox = std::make_unique<DecalBox>(1, 1, 1, _camera);//new DecalBox(1, 1, 1, _camera);
@@ -371,6 +376,9 @@ PlayingScene::Update()
 	_player->Update();
 	_plane->Update();
 	_cylinder->Update();
+	_cylinder2->Update();
+	_cylinder3->Update();
+	_cylinder4->Update();
 	_tessPlane->Update();
 	_sphere->Update();
 	_decalBox->Update();
@@ -413,6 +421,9 @@ PlayingScene::Update()
 	//_plane.DrawCameraDepth();
 	_tessPlane->DrawCameraDepth();
 	_cylinder->DrawCameraDepth();
+	_cylinder2->DrawCameraDepth();
+	_cylinder3->DrawCameraDepth();
+	_cylinder4->DrawCameraDepth();
 	_sphere->DrawCameraDepth();
 
 #pragma endregion
@@ -433,6 +444,9 @@ PlayingScene::Update()
 
 	_renderer->ChangePTForPrimitive();
 	_cylinder->Draw();//’Œ
+	_cylinder2->Draw();
+	_cylinder3->Draw();
+	_cylinder4->Draw();
 
 	
 	_renderer->ChangePTForPMD();

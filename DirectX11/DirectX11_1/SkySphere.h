@@ -47,18 +47,11 @@ private:
 	/*void CalculateTangent(TempVertex * v0, TempVertex* v1, TempVertex* v2,
 		std::vector<PrimitiveVertex>& vertsForBuff, const std::vector<unsigned short>& indices, int idx);*/
 
-	std::weak_ptr<ID3D11ShaderResourceView*> _texture;
 public:
 	SkySphere(unsigned int divNum, float radius,const std::shared_ptr<Camera>& cam);
 	~SkySphere();
 
 	ID3D11Buffer* VertexBuffer() { return _vertexBuffer; };
-
-	ID3D11VertexShader* _vertexShader;
-	ID3D11InputLayout* _inputlayout;
-	ID3D11PixelShader* _pixelShader;
-
-	
 
 	XMFLOAT3 GetPos() { return _pos; };
 	void SetPos(const XMFLOAT3& pos) { _pos = pos; };

@@ -1,6 +1,5 @@
 #include "Plane.h"
 #include<vector>
-#include"ShaderGenerator.h"
 #include"DeviceDx11.h"
 #include"ShaderDefine.h"
 #include"Camera.h"
@@ -57,13 +56,23 @@ Plane::Plane(float width, float depth, Vector3 normal,
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 	};
 
-	ShaderGenerator::CreateVertexShader("water.hlsl", "WaterVS", "vs_5_0",
+	resourceMgr.LoadVS("Plane_VS", "water.hlsl", "WaterVS", "vs_5_0",
+		_vertexShader, inputElementDescs, sizeof(inputElementDescs) / sizeof(D3D11_INPUT_ELEMENT_DESC),
+		_inputlayout);
+	resourceMgr.LoadPS("Plane_PS", "water.hlsl", "WaterPS", "ps_5_0", _pixelShader);
+
+	resourceMgr.LoadVS("Plane_lightVS", "lightview.hlsl", "PrimitiveLightViewVS", "vs_5_0",
+		_lightviewVS, inputElementDescs, sizeof(inputElementDescs) / sizeof(D3D11_INPUT_ELEMENT_DESC),
+		_lightviewInputLayout);
+	resourceMgr.LoadPS("Plane_lightPS", "lightview.hlsl", "PrimitiveLightViewPS", "ps_5_0", _lightviewPS);
+
+	/*ShaderGenerator::CreateVertexShader("water.hlsl", "WaterVS", "vs_5_0",
 		_vertexShader, inputElementDescs, sizeof(inputElementDescs) / sizeof(D3D11_INPUT_ELEMENT_DESC),_inputlayout);
 	ShaderGenerator::CreatePixelShader("water.hlsl", "WaterPS", "ps_5_0", _pixelShader);
 
 	ShaderGenerator::CreateVertexShader("lightview.hlsl", "PrimitiveLightViewVS", "vs_5_0",
 		_lightviewVS, inputElementDescs, sizeof(inputElementDescs) / sizeof(D3D11_INPUT_ELEMENT_DESC), _lightviewInputLayout);
-	ShaderGenerator::CreatePixelShader("lightview.hlsl", "PrimitiveLightViewPS", "ps_5_0", _lightviewPS);
+	ShaderGenerator::CreatePixelShader("lightview.hlsl", "PrimitiveLightViewPS", "ps_5_0", _lightviewPS);*/
 
 	_mainTex = resourceMgr.LoadSRV("Plane_main", "watertest.png");
 	_subTex = resourceMgr.LoadSRV("Plane_sub", "noise.png");
@@ -148,9 +157,9 @@ Plane::Draw()
 	dev.Context()->Unmap(_matrixBuffer, 0);
 
 
-	dev.Context()->VSSetShader(_vertexShader,nullptr,0);
-	dev.Context()->IASetInputLayout(_inputlayout);
-	dev.Context()->PSSetShader(_pixelShader, nullptr, 0);
+	dev.Context()->VSSetShader(*_vertexShader.lock(),nullptr,0);
+	dev.Context()->IASetInputLayout(*_inputlayout.lock());
+	dev.Context()->PSSetShader(*_pixelShader.lock(), nullptr, 0);
 
 
 	dev.Context()->PSSetShaderResources(TEXTURE_MAIN, 1, _mainTex._Get());
@@ -185,9 +194,9 @@ Plane::DrawLightView()
 	dev.Context()->Unmap(_matrixBuffer, 0);
 
 
-	dev.Context()->VSSetShader(_lightviewVS, nullptr, 0);
-	dev.Context()->IASetInputLayout(_lightviewInputLayout);
-	dev.Context()->PSSetShader(_lightviewPS, nullptr, 0);
+	dev.Context()->VSSetShader(*_lightviewVS.lock(), nullptr, 0);
+	dev.Context()->IASetInputLayout(*_lightviewInputLayout.lock());
+	dev.Context()->PSSetShader(*_lightviewPS.lock(), nullptr, 0);
 	//プリミティブトポロジの切り替えを忘れない　切り替えを頻発させるのは良くない
 	dev.Context()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 	unsigned int stride = sizeof(float) * 14;
@@ -213,9 +222,9 @@ Plane::DrawCameraDepth()
 	dev.Context()->Unmap(_matrixBuffer, 0);
 
 
-	dev.Context()->VSSetShader(_lightviewVS, nullptr, 0);
-	dev.Context()->IASetInputLayout(_lightviewInputLayout);
-	dev.Context()->PSSetShader(_lightviewPS, nullptr, 0);
+	dev.Context()->VSSetShader(*_lightviewVS.lock(), nullptr, 0);
+	dev.Context()->IASetInputLayout(*_lightviewInputLayout.lock());
+	dev.Context()->PSSetShader(*_lightviewPS.lock(), nullptr, 0);
 	//プリミティブトポロジの切り替えを忘れない　切り替えを頻発させるのは良くない
 	dev.Context()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 	unsigned int stride = sizeof(float) * 14;

@@ -1,7 +1,6 @@
 #include "SkySphere.h"
 #include<vector>
 #include"DeviceDx11.h"
-#include"ShaderGenerator.h"
 #include"ShaderDefine.h"
 #include"Camera.h"
 #include"ResourceManager.h"
@@ -9,6 +8,7 @@
 SkySphere::SkySphere(unsigned int divNum, float radius,const std::shared_ptr<Camera>& cam) :_cameraPtr(cam)
 {
 	DeviceDx11& dev = DeviceDx11::Instance();
+	ResourceManager& resourceMgr = ResourceManager::Instance();
 	_pos = XMFLOAT3(0, 0, 0);
 
 	float theta;
@@ -182,9 +182,13 @@ SkySphere::SkySphere(unsigned int divNum, float radius,const std::shared_ptr<Cam
 		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 	};
 
-	ShaderGenerator::CreateVertexShader("SkySphere.hlsl", "SkySphereVS", "vs_5_0",
+	resourceMgr.LoadVS("Skysphere_VS", "SkySphere.hlsl", "SkySphereVS", "vs_5_0",
+		_vertexShader, inputElementDescs, sizeof(inputElementDescs) / sizeof(D3D11_INPUT_ELEMENT_DESC),
+		_inputlayout);
+	resourceMgr.LoadPS("Skysphere_PS", "SkySphere.hlsl", "SkySpherePS", "ps_5_0", _pixelShader);
+	/*ShaderGenerator::CreateVertexShader("SkySphere.hlsl", "SkySphereVS", "vs_5_0",
 		_vertexShader, inputElementDescs, sizeof(inputElementDescs) / sizeof(D3D11_INPUT_ELEMENT_DESC), _inputlayout);
-	ShaderGenerator::CreatePixelShader("SkySphere.hlsl", "SkySpherePS", "ps_5_0", _pixelShader);
+	ShaderGenerator::CreatePixelShader("SkySphere.hlsl", "SkySpherePS", "ps_5_0", _pixelShader);*/
 
 	
 	_modelMatrix = XMMatrixIdentity();
@@ -224,8 +228,7 @@ SkySphere::SkySphere(unsigned int divNum, float radius,const std::shared_ptr<Cam
 	dev.Context()->VSSetConstantBuffers(0, 1, &_matrixBuffer);
 
 	//テクスチャ
-	ResourceManager& resourceMgr = ResourceManager::Instance();
-	_texture = resourceMgr.LoadSRV("Skysphere_main", "height00.png");
+	_mainTex = resourceMgr.LoadSRV("Skysphere_main", "height00.png");
 
 	/*result = D3DX11CreateShaderResourceViewFromFile(dev.Device(), "height00.png", nullptr, nullptr, &_texture, &result);
 	dev.Context()->VSSetShaderResources(TEXTURE_MAIN, 1, &_texture);*/
@@ -373,14 +376,14 @@ SkySphere::Draw()
 	DeviceDx11& dev = DeviceDx11::Instance();
 
 	dev.Context()->PSSetSamplers(0, 1, &_samplerState_Wrap);
-	dev.Context()->PSSetShaderResources(TEXTURE_MAIN, 1, _texture._Get());
+	dev.Context()->PSSetShaderResources(TEXTURE_MAIN, 1, _mainTex._Get());
 
 	unsigned int stride = sizeof(float) * 14;
 	unsigned int offset = 0;
 
-	dev.Context()->VSSetShader(_vertexShader, nullptr, 0);//ＰＭＤモデル表示用シェーダセット
-	dev.Context()->PSSetShader(_pixelShader, nullptr, 0);//PMDモデル表示用シェーダセット
-	dev.Context()->IASetInputLayout(_inputlayout);
+	dev.Context()->VSSetShader(*_vertexShader.lock(), nullptr, 0);//ＰＭＤモデル表示用シェーダセット
+	dev.Context()->PSSetShader(*_pixelShader.lock(), nullptr, 0);//PMDモデル表示用シェーダセット
+	dev.Context()->IASetInputLayout(*_inputlayout.lock());
 
 	
 

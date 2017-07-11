@@ -7,21 +7,12 @@ class Cylinder:public Primitive
 {
 private:
 	ID3D11Buffer* _vertexBuffer;//‰~’Œ–{‘Ì
-	ID3D11InputLayout* _inputlayout;
 
 	ID3D11Buffer* _hatchBuffer;//ŠW
 	unsigned int _hatchVertCnt;
 
 
-	ID3D11VertexShader* _vertexShader;
-	ID3D11PixelShader* _pixelShader;
-	std::weak_ptr<ID3D11ShaderResourceView*> _mainTex;
-	std::weak_ptr<ID3D11ShaderResourceView*> _subTex;
-	std::weak_ptr<ID3D11ShaderResourceView*> _normalTex;
-
-	ID3D11VertexShader* _lightviewVS;
-	ID3D11PixelShader* _lightviewPS;
-	ID3D11InputLayout* _lightviewInputLayout;
+	
 
 	unsigned int _vertexCnt;
 	std::weak_ptr<Camera> _cameraPtr;
@@ -51,6 +42,8 @@ public:
 	~Cylinder();
 
 	ID3D11Buffer* VertexBuffer(){ return _vertexBuffer; };
+
+	void SetPos(const XMFLOAT3 pos);
 
 	void Draw();
 	void DrawLightView();

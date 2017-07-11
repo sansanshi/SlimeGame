@@ -1,7 +1,6 @@
 #include "Sphere.h"
 #include<vector>
 #include"DeviceDx11.h"
-#include"ShaderGenerator.h"
 #include"ShaderDefine.h"
 #include"Camera.h"
 #include"ResourceManager.h"
@@ -9,6 +8,7 @@
 Sphere::Sphere(unsigned int divNum,float radius,const std::shared_ptr<Camera>& camera) :_cameraPtr(camera)
 {
 	DeviceDx11& dev = DeviceDx11::Instance();
+	ResourceManager& resourceMgr = ResourceManager::Instance();
 	pos = Vector3(-10, 0, 0);
 
 	float theta;
@@ -223,13 +223,24 @@ Sphere::Sphere(unsigned int divNum,float radius,const std::shared_ptr<Camera>& c
 		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 	};
 
-	ShaderGenerator::CreateVertexShader("SlimeShader.hlsl", "SlimeVS", "vs_5_0",
+	resourceMgr.LoadVS("Slime_VS", "SlimeShader.hlsl", "SlimeVS", "vs_5_0",
+		_vertexShader, inputElementDescs, sizeof(inputElementDescs) / sizeof(D3D11_INPUT_ELEMENT_DESC),
+		_inputlayout);
+	resourceMgr.LoadPS("Slime_PS", "SlimeShader.hlsl", "SlimePS", "ps_5_0", _pixelShader);
+
+	resourceMgr.LoadVS("Slime_lightVS", "lightview.hlsl", "SlimeLightViewVS", "vs_5_0",
+		_lightviewVS, inputElementDescs, sizeof(inputElementDescs) / sizeof(D3D11_INPUT_ELEMENT_DESC),
+		_lightviewInputLayout);
+	resourceMgr.LoadPS("Slime_lightPS", "lightview.hlsl", "SlimeLightViewPS", "ps_5_0", _lightviewPS);
+
+
+	/*ShaderGenerator::CreateVertexShader("SlimeShader.hlsl", "SlimeVS", "vs_5_0",
 		_vertexShader, inputElementDescs, sizeof(inputElementDescs) / sizeof(D3D11_INPUT_ELEMENT_DESC), _inputlayout);
 	ShaderGenerator::CreatePixelShader("SlimeShader.hlsl", "SlimePS", "ps_5_0", _pixelShader);
 
 	ShaderGenerator::CreateVertexShader("lightview.hlsl", "SlimeLightViewVS", "vs_5_0",
 		_lightviewVS, inputElementDescs, sizeof(inputElementDescs) / sizeof(D3D11_INPUT_ELEMENT_DESC), _lightviewInputLayout);
-	ShaderGenerator::CreatePixelShader("lightview.hlsl", "SlimeLightViewPS", "ps_5_0", _lightviewPS);
+	ShaderGenerator::CreatePixelShader("lightview.hlsl", "SlimeLightViewPS", "ps_5_0", _lightviewPS);*/
 
 	_modelMatrix = XMMatrixIdentity();
 	_worldAndCamera.world = _modelMatrix;
@@ -263,7 +274,6 @@ Sphere::Sphere(unsigned int divNum,float radius,const std::shared_ptr<Camera>& c
 
 	dev.Context()->VSSetConstantBuffers(0, 1, &_matrixBuffer);
 
-	ResourceManager& resourceMgr = ResourceManager::Instance();
 	//マスク（？）テクスチャ
 	_dispMask = resourceMgr.LoadSRV("Slime_mask", "disp0.png");
 	/*result = D3DX11CreateShaderResourceViewFromFile(dev.Device(), "disp0.png", nullptr, nullptr, &_dispMask, &result);
@@ -271,7 +281,7 @@ Sphere::Sphere(unsigned int divNum,float radius,const std::shared_ptr<Camera>& c
 
 
 	//ディスプレースメントテクスチャ
-	_displaysmentMap = resourceMgr.LoadSRV("Slime_displacement", "wave__.png");
+	_displacementTex = resourceMgr.LoadSRV("Slime_displacement", "wave__.png");
 	/*result = D3DX11CreateShaderResourceViewFromFile(dev.Device(), "wave__.png", nullptr, nullptr, &_displaysmentMap, &result);
 	dev.Context()->VSSetShaderResources(TEXTURE_DISPLACEMENT, 1, &_displaysmentMap);*/
 
@@ -438,11 +448,11 @@ Sphere::Draw()
 	unsigned int stride = sizeof(float) * 14;
 	unsigned int offset = 0;
 
-	dev.Context()->VSSetShader(_vertexShader, nullptr, 0);//ＰＭＤモデル表示用シェーダセット
-	dev.Context()->PSSetShader(_pixelShader, nullptr, 0);//PMDモデル表示用シェーダセット
-	dev.Context()->IASetInputLayout(_inputlayout);
+	dev.Context()->VSSetShader(*_vertexShader.lock(), nullptr, 0);//ＰＭＤモデル表示用シェーダセット
+	dev.Context()->PSSetShader(*_pixelShader.lock(), nullptr, 0);//PMDモデル表示用シェーダセット
+	dev.Context()->IASetInputLayout(*_inputlayout.lock());
 
-	dev.Context()->VSSetShaderResources(TEXTURE_DISPLACEMENT, 1, _displaysmentMap._Get());
+	dev.Context()->VSSetShaderResources(TEXTURE_DISPLACEMENT, 1, _displacementTex._Get());
 	dev.Context()->VSSetShaderResources(TEXTURE_MASK, 1, _dispMask._Get());
 
 
@@ -478,8 +488,8 @@ Sphere::DrawLightView()
 	unsigned int stride = sizeof(float) * 14;
 	unsigned int offset = 0;
 
-	dev.Context()->VSSetShader(_lightviewVS, nullptr, 0);
-	dev.Context()->PSSetShader(_lightviewPS, nullptr, 0);
+	dev.Context()->VSSetShader(*_lightviewVS.lock(), nullptr, 0);
+	dev.Context()->PSSetShader(*_lightviewPS.lock(), nullptr, 0);
 
 	
 	_worldAndCamera.cameraView = _cameraPtr.lock()->CameraView();
@@ -494,7 +504,7 @@ Sphere::DrawLightView()
 	//↑　*(XMMATRIX*)mem.pData = matrix;//川野先生の書き方　memcpyで数値を間違えるとメモリがぐちゃぐちゃになる
 	dev.Context()->Unmap(_matrixBuffer, 0);
 
-	dev.Context()->IASetInputLayout(_lightviewInputLayout);
+	dev.Context()->IASetInputLayout(*_lightviewInputLayout.lock());
 	dev.Context()->IASetVertexBuffers(0, 1, &_vertexBuffer, &stride, &offset);
 	dev.Context()->IASetIndexBuffer(_indexBuffer, DXGI_FORMAT_R16_UINT, 0);
 
@@ -509,8 +519,8 @@ Sphere::DrawCameraDepth()
 	unsigned int stride = sizeof(float) * 14;
 	unsigned int offset = 0;
 
-	dev.Context()->VSSetShader(_lightviewVS, nullptr, 0);
-	dev.Context()->PSSetShader(_lightviewPS, nullptr, 0);
+	dev.Context()->VSSetShader(*_lightviewVS.lock(), nullptr, 0);
+	dev.Context()->PSSetShader(*_lightviewPS.lock(), nullptr, 0);
 
 
 	_worldAndCamera.world = _modelMatrix;
@@ -526,7 +536,7 @@ Sphere::DrawCameraDepth()
 	//↑　*(XMMATRIX*)mem.pData = matrix;//川野先生の書き方　memcpyで数値を間違えるとメモリがぐちゃぐちゃになる
 	dev.Context()->Unmap(_matrixBuffer, 0);
 
-	dev.Context()->IASetInputLayout(_lightviewInputLayout);
+	dev.Context()->IASetInputLayout(*_lightviewInputLayout.lock());
 	dev.Context()->IASetVertexBuffers(0, 1, &_vertexBuffer, &stride, &offset);
 	dev.Context()->IASetIndexBuffer(_indexBuffer, DXGI_FORMAT_R16_UINT, 0);
 
@@ -550,11 +560,11 @@ Sphere::DrawLightView_color()
 	unsigned int stride = sizeof(float) * 14;
 	unsigned int offset = 0;
 
-	dev.Context()->VSSetShader(_vertexShader, nullptr, 0);//ＰＭＤモデル表示用シェーダセット
-	dev.Context()->PSSetShader(_pixelShader, nullptr, 0);//PMDモデル表示用シェーダセット
-	dev.Context()->IASetInputLayout(_inputlayout);
+	dev.Context()->VSSetShader(*_vertexShader.lock(), nullptr, 0);//ＰＭＤモデル表示用シェーダセット
+	dev.Context()->PSSetShader(*_pixelShader.lock(), nullptr, 0);//PMDモデル表示用シェーダセット
+	dev.Context()->IASetInputLayout(*_inputlayout.lock());
 
-	dev.Context()->VSSetShaderResources(TEXTURE_DISPLACEMENT, 1, _displaysmentMap._Get());
+	dev.Context()->VSSetShaderResources(TEXTURE_DISPLACEMENT, 1, _displacementTex._Get());
 	dev.Context()->VSSetShaderResources(TEXTURE_MASK, 1, _dispMask._Get());
 
 	dev.Context()->VSSetConstantBuffers(0, 1, &_matrixBuffer);

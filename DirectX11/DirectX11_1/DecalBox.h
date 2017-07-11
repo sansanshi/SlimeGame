@@ -2,18 +2,13 @@
 #include<D3D11.h>
 #include"Define.h"
 #include<memory>
+#include"Primitive.h"
 class Camera;
-class DecalBox
+class DecalBox : public Primitive
 {
 
 private:
-	XMFLOAT3 _pos;
-	XMFLOAT3 _rot;
-	XMFLOAT3 _scale;
-
-	ID3D11VertexShader* _vertexShader;
-	ID3D11InputLayout* _inputlayout;
-	ID3D11PixelShader* _pixelShader;
+	
 
 	ID3D11Buffer* _vertexBuffer;
 	ID3D11Buffer* _indexBuffer;
@@ -34,7 +29,7 @@ public:
 	DecalBox(float width,float height,float length,const std::shared_ptr<Camera>& cameraPtr);
 	DecalBox(const XMFLOAT3& pos, const XMFLOAT3& rot,const XMFLOAT3& scale,
 		const std::shared_ptr<Camera>& cameraPtr,std::shared_ptr<ID3D11ShaderResourceView*> texPtr,
-		ID3D11VertexShader* vs,ID3D11PixelShader* ps,ID3D11InputLayout* lauout,
+		std::weak_ptr<ID3D11VertexShader*> vs,std::weak_ptr<ID3D11PixelShader*> ps,std::weak_ptr<ID3D11InputLayout*> lauout,
 		ID3D11Buffer* vertBuff,ID3D11Buffer* indexBuff,unsigned int indicesCnt);
 	~DecalBox();
 

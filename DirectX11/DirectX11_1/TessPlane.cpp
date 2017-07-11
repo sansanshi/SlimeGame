@@ -1,8 +1,5 @@
 #include "TessPlane.h"
-
-
 #include<vector>
-#include"ShaderGenerator.h"
 #include"DeviceDx11.h"
 #include"ShaderDefine.h"
 #include"Camera.h"
@@ -14,9 +11,8 @@ TessPlane::TessPlane(const std::shared_ptr<Camera>& camera) :_cameraPtr(camera)
 
 TessPlane::TessPlane(float width, float depth, Vector3 normal, const std::shared_ptr<Camera>& camera) :_cameraPtr(camera)
 {
-
-
 	DeviceDx11& dev = DeviceDx11::Instance();
+	ResourceManager& resourceMgr = ResourceManager::Instance();
 
 	Vector3 o;
 	o = XMFLOAT3(0, 0, 0);
@@ -56,18 +52,31 @@ TessPlane::TessPlane(float width, float depth, Vector3 normal, const std::shared
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 	};
 
-	ShaderGenerator::CreateVertexShader("Tessellation.hlsl", "TessVS", "vs_5_0",
+	resourceMgr.LoadVS("TessPlane_VS",
+		"Tessellation.hlsl", "TessVS", "vs_5_0",
+		_vertexShader, inputElementDescs, sizeof(inputElementDescs) / sizeof(D3D11_INPUT_ELEMENT_DESC),
+		_inputlayout);
+	resourceMgr.LoadPS("TessPlane_PS",
+		"Tessellation.hlsl", "TessPS", "ps_5_0", _pixelShader);
+
+	/*ShaderGenerator::CreateVertexShader("Tessellation.hlsl", "TessVS", "vs_5_0",
 		_vertexShader, inputElementDescs, sizeof(inputElementDescs) / sizeof(D3D11_INPUT_ELEMENT_DESC), _inputlayout);
-	ShaderGenerator::CreatePixelShader("Tessellation.hlsl", "TessPS", "ps_5_0", _pixelShader);
+	ShaderGenerator::CreatePixelShader("Tessellation.hlsl", "TessPS", "ps_5_0", _pixelShader);*/
 
 	//ハルシェーダ
 	ShaderGenerator::CreateHullShader("Tessellation.hlsl", "TessHS", "hs_5_0", _hullShader);
 	//ドメインシェーダ
 	ShaderGenerator::CreateDomainShader("Tessellation.hlsl", "TessDS", "ds_5_0", _domainShader);
 
-	ShaderGenerator::CreateVertexShader("lightview.hlsl", "PrimitiveLightViewVS", "vs_5_0",
+	resourceMgr.LoadVS("TessPlane_lightVS",
+		"lightview.hlsl", "PrimitiveLightViewVS", "vs_5_0",
+		_lightviewVS, inputElementDescs, sizeof(inputElementDescs) / sizeof(D3D11_INPUT_ELEMENT_DESC),
+		_lightviewInputLayout);
+	resourceMgr.LoadPS("TessPlane_lightPS",
+		"lightview.hlsl", "PrimitiveLightViewPS", "ps_5_0", _lightviewPS);
+	/*ShaderGenerator::CreateVertexShader("lightview.hlsl", "PrimitiveLightViewVS", "vs_5_0",
 		_lightviewVS, inputElementDescs, sizeof(inputElementDescs) / sizeof(D3D11_INPUT_ELEMENT_DESC), _lightviewInputLayout);
-	ShaderGenerator::CreatePixelShader("lightview.hlsl", "PrimitiveLightViewPS", "ps_5_0", _lightviewPS);
+	ShaderGenerator::CreatePixelShader("lightview.hlsl", "PrimitiveLightViewPS", "ps_5_0", _lightviewPS);*/
 
 
 	//カメラ深度用ピクセルシェーダ
@@ -118,7 +127,6 @@ TessPlane::TessPlane(float width, float depth, Vector3 normal, const std::shared
 
 	dev.Device()->CreateSamplerState(&samplerDesc, &_samplerState_Wrap);
 
-	ResourceManager& resourceMgr = ResourceManager::Instance();
 	_mainTex = resourceMgr.LoadSRV("Tessplane_main", "ground.png");
 	_subTex = resourceMgr.LoadSRV("Tessplane_sub", "rock.png");
 	_subTex2 = resourceMgr.LoadSRV("Tessplane_sub2", "sand1.png");
@@ -162,11 +170,11 @@ TessPlane::Draw()
 	dev.Context()->Unmap(_matrixBuffer, 0);
 
 
-	dev.Context()->VSSetShader(_vertexShader, nullptr, 0);
-	dev.Context()->IASetInputLayout(_inputlayout);
+	dev.Context()->VSSetShader(*_vertexShader.lock(), nullptr, 0);
+	dev.Context()->IASetInputLayout(*_inputlayout.lock());
 	dev.Context()->HSSetShader(_hullShader, nullptr, 0);
 	dev.Context()->DSSetShader(_domainShader, nullptr, 0);
-	dev.Context()->PSSetShader(_pixelShader, nullptr, 0);
+	dev.Context()->PSSetShader(*_pixelShader.lock(), nullptr, 0);
 	//プリミティブトポロジの切り替えを忘れない　切り替えを頻発させるのは良くない
 	//dev.Context()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 
@@ -205,8 +213,8 @@ TessPlane::DrawLightView()
 	dev.Context()->Unmap(_matrixBuffer, 0);
 
 
-	dev.Context()->VSSetShader(_vertexShader, nullptr, 0);
-	dev.Context()->IASetInputLayout(_inputlayout);
+	dev.Context()->VSSetShader(*_vertexShader.lock(), nullptr, 0);
+	dev.Context()->IASetInputLayout(*_inputlayout.lock());
 	dev.Context()->HSSetShader(_hullShader, nullptr, 0);
 	dev.Context()->DSSetShader(_domainShader, nullptr, 0);
 	dev.Context()->PSSetShader(_cameraDepthPS, nullptr, 0);
@@ -262,8 +270,8 @@ TessPlane::DrawCameraDepth()
 	dev.Context()->Unmap(_matrixBuffer, 0);
 
 
-	dev.Context()->VSSetShader(_vertexShader, nullptr, 0);
-	dev.Context()->IASetInputLayout(_inputlayout);
+	dev.Context()->VSSetShader(*_vertexShader.lock(), nullptr, 0);
+	dev.Context()->IASetInputLayout(*_inputlayout.lock());
 	dev.Context()->HSSetShader(_hullShader, nullptr, 0);
 	dev.Context()->DSSetShader(_domainShader, nullptr, 0);
 	dev.Context()->PSSetShader(_cameraDepthPS, nullptr, 0);

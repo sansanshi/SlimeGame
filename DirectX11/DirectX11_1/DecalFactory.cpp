@@ -67,9 +67,17 @@ DecalFactory::DecalFactory(const std::shared_ptr<Camera>& cameraPtr):_cameraPtr(
 	{
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 	};
-	ShaderGenerator::CreateVertexShader("Decal.hlsl", "DecalBoxVS", "vs_5_0",
+
+	resourceMgr.LoadVS("DecalBoxVS",
+		"Decal.hlsl", "DecalBoxVS", "vs_5_0",
+		_vertexShader, inputElementDescs, sizeof(inputElementDescs) / sizeof(D3D11_INPUT_ELEMENT_DESC),
+		_inputlayout);
+	resourceMgr.LoadPS("DecalBoxPS",
+		"Decal.hlsl", "DecalBoxPS", "ps_5_0",
+		_pixelShader);
+	/*ShaderGenerator::CreateVertexShader("Decal.hlsl", "DecalBoxVS", "vs_5_0",
 		_vertexShader, inputElementDescs, sizeof(inputElementDescs) / sizeof(D3D11_INPUT_ELEMENT_DESC), _inputlayout);
-	ShaderGenerator::CreatePixelShader("Decal.hlsl", "DecalBoxPS", "ps_5_0", _pixelShader);
+	ShaderGenerator::CreatePixelShader("Decal.hlsl", "DecalBoxPS", "ps_5_0", _pixelShader);*/
 
 	for (auto& w : _matrixies.world)
 	{
@@ -217,9 +225,9 @@ DecalFactory::Draw()
 	unsigned int stride = sizeof(float) * 3;
 	unsigned int offset = 0;
 
-	dev.Context()->VSSetShader(_vertexShader, nullptr, 0);//ＰＭＤモデル表示用シェーダセット
-	dev.Context()->PSSetShader(_pixelShader, nullptr, 0);//PMDモデル表示用シェーダセット
-	dev.Context()->IASetInputLayout(_inputlayout);
+	dev.Context()->VSSetShader(*_vertexShader.lock(), nullptr, 0);//ＰＭＤモデル表示用シェーダセット
+	dev.Context()->PSSetShader(*_pixelShader.lock(), nullptr, 0);//PMDモデル表示用シェーダセット
+	dev.Context()->IASetInputLayout(*_inputlayout.lock());
 
 	ID3D11ShaderResourceView** temp = _decalTex._Get();
 	dev.Context()->PSSetShaderResources(TEXTURE_DECAL, 1, temp);

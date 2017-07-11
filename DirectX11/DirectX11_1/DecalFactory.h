@@ -30,9 +30,9 @@ private:
 	ID3D11Buffer* _vertexBuffer;
 	ID3D11Buffer* _indexBuffer;
 	unsigned int _indicesCnt;
-	ID3D11VertexShader* _vertexShader;
-	ID3D11PixelShader* _pixelShader;
-	ID3D11InputLayout* _inputlayout;
+	std::weak_ptr<ID3D11VertexShader*> _vertexShader;
+	std::weak_ptr<ID3D11PixelShader*> _pixelShader;
+	std::weak_ptr<ID3D11InputLayout*> _inputlayout;
 
 
 	XMMATRIX _worldMatrixes[300];

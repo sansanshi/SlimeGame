@@ -1,4 +1,7 @@
 #pragma once
+#include<D3D11.h>
+#include<xnamath.h>
+#include<memory>
 #include"Define.h"
 
 struct PrimitiveVertex{
@@ -16,15 +19,39 @@ struct PrimitiveVertex{
 		:pos(p), normal(norm), uv(coord),tangent(tang),binormal(binorm){
 	}
 
-	//Å´ÇﬂÇÒÇ«Ç≠Ç≥Ç¢ÇµëΩï™égÇÌÇ»Ç¢ÇÃÇ≈ï˙íu
-	/*PrimitiveVertex(float x, float y, float z, float nx, float ny, float nz, float u, float v)
-		:pos(x, y, z), normal(nx, ny, nz), uv(u, v){
-	}*/
 
 };
 
 class Primitive
 {
+private:
+
+protected:
+
+	XMFLOAT3 _pos;
+	XMFLOAT3 _rot;
+	XMFLOAT3 _scale;
+
+	std::weak_ptr<ID3D11VertexShader*> _vertexShader;
+	std::weak_ptr<ID3D11InputLayout*> _inputlayout;
+	std::weak_ptr<ID3D11PixelShader*> _pixelShader;
+
+	std::weak_ptr<ID3D11VertexShader*> _lightviewVS;
+	std::weak_ptr<ID3D11PixelShader*> _lightviewPS;
+	std::weak_ptr<ID3D11InputLayout*> _lightviewInputLayout;
+
+
+
+	std::weak_ptr<ID3D11ShaderResourceView*> _mainTex;
+	std::weak_ptr<ID3D11ShaderResourceView*> _subTex;
+	std::weak_ptr<ID3D11ShaderResourceView*> _normalTex;
+	std::weak_ptr<ID3D11ShaderResourceView*> _flowTex;
+	std::weak_ptr<ID3D11ShaderResourceView*> _dispMask;
+	std::weak_ptr<ID3D11ShaderResourceView*> _displacementTex;
+	std::weak_ptr<ID3D11ShaderResourceView*> _heightMap;
+	std::weak_ptr<ID3D11ShaderResourceView*> _subTex2;
+
+
 public:
 	Primitive();
 	~Primitive();
