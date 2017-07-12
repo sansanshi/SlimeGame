@@ -18,7 +18,7 @@ ResourceManager::ResourceManager(HWND hwnd):_hwnd(hwnd)
 void
 ResourceManager::LoadVS(
 	std::string registerName,
-	std::string srcFileName, std::string functionName, std::string shaderModel,
+	LPCSTR srcFileName,LPCSTR functionName,LPCSTR shaderModel,
 	std::weak_ptr<ID3D11VertexShader*>& shader_out,
 	D3D11_INPUT_ELEMENT_DESC* inputElementDescs, int descCnt,
 	std::weak_ptr<ID3D11InputLayout*>& layout_out)
@@ -42,8 +42,8 @@ ResourceManager::LoadVS(
 			path.c_str(),
 			nullptr,
 			nullptr,
-			functionName.c_str(),
-			shaderModel.c_str(),
+			functionName,
+			shaderModel,
 			0,
 			0,
 			nullptr,
@@ -91,7 +91,7 @@ ResourceManager::LoadVS(
 void
 ResourceManager::LoadPS(
 	std::string registerName,
-	std::string srcFileName, std::string functionName, std::string shaderModel,
+	LPCSTR srcFileName,LPCSTR functionName,LPCSTR shaderModel,
 	std::weak_ptr<ID3D11PixelShader*>& shader_out)
 {
 	if (_pixelShaderMap.find(registerName) != _pixelShaderMap.end())
@@ -103,14 +103,15 @@ ResourceManager::LoadPS(
 	HRESULT result;
 	ID3DBlob* compiledPS = nullptr;
 	ID3DBlob* shaderError = nullptr;
-	std::string path =  srcFileName;
+
+	std::string path = srcFileName;
 
 	D3DX11CompileFromFile(
 		path.c_str(),
 		nullptr,
 		nullptr,
-		functionName.c_str(),
-		shaderModel.c_str(),
+		functionName,
+		shaderModel,
 		0,
 		0,
 		nullptr,
@@ -146,7 +147,7 @@ ResourceManager::LoadPS(
 void
 ResourceManager::LoadHS(
 	std::string registerName,
-	std::string srcFileName, std::string functionName, std::string shaderModel,
+	LPCSTR srcFileName,LPCSTR functionName,LPCSTR shaderModel,
 	std::weak_ptr<ID3D11HullShader*>& shader_out)
 {
 	if (_hullShaderMap.find(registerName) != _hullShaderMap.end())
@@ -164,8 +165,8 @@ ResourceManager::LoadHS(
 		path.c_str(),
 		nullptr,
 		nullptr,
-		functionName.c_str(),
-		shaderModel.c_str(),
+		functionName,
+		shaderModel,
 		0,
 		0,
 		nullptr,
@@ -201,7 +202,7 @@ ResourceManager::LoadHS(
 void
 ResourceManager::LoadDS(
 	std::string registerName,
-	std::string srcFileName, std::string functionName, std::string shaderModel,
+	LPCSTR srcFileName,LPCSTR functionName,LPCSTR shaderModel,
 	std::weak_ptr<ID3D11DomainShader*>& shader_out
 )
 {
@@ -220,8 +221,8 @@ ResourceManager::LoadDS(
 		path.c_str(),
 		nullptr,
 		nullptr,
-		functionName.c_str(),
-		shaderModel.c_str(),
+		functionName,
+		shaderModel,
 		0,
 		0,
 		nullptr,

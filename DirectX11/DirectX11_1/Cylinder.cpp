@@ -9,7 +9,6 @@
 
 Cylinder::Cylinder(float radius, float height, unsigned int div,const std::shared_ptr<Camera>& camera) :_cameraPtr(camera)
 {
-
 	ResourceManager& resourceMgr = ResourceManager::Instance();
 	angle = 0.0f;
 	_height = height;
