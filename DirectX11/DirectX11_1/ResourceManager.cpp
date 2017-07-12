@@ -98,7 +98,7 @@ ResourceManager::LoadPS(
 	ID3DBlob* compiledPS = nullptr;
 	ID3DBlob* shaderError = nullptr;
 
-	std::string path = srcFileName;
+	std::string path = "shaders/" + srcFileName;
 
 	D3DX11CompileFromFile(
 		path.c_str(),
@@ -150,7 +150,7 @@ ResourceManager::LoadHS(
 	HRESULT result;
 	ID3DBlob* compiledHS = nullptr;
 	ID3DBlob* shaderError = nullptr;
-	std::string path =   srcFileName;
+	std::string path =  "shaders/" + srcFileName;
 
 	D3DX11CompileFromFile(
 		path.c_str(),

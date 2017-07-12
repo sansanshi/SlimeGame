@@ -53,9 +53,20 @@ protected:
 	std::weak_ptr<ID3D11ShaderResourceView*> _heightMap;
 	std::weak_ptr<ID3D11ShaderResourceView*> _subTex2;
 
+	void InitTransform();
+
 
 public:
 	Primitive();
 	~Primitive();
+
+	void SetPos(XMFLOAT3 pos);
+	XMFLOAT3 GetPos();
+	
+	void SetRotate(XMFLOAT3 yawPitchRoll);
+	XMFLOAT3 GetRotate();
+
+	void SetScale(XMFLOAT3 scale);
+	XMFLOAT3 GetScale();
 };
 

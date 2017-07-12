@@ -9,6 +9,7 @@
 
 Cylinder::Cylinder(float radius, float height, unsigned int div,const std::shared_ptr<Camera>& camera) :_cameraPtr(camera)
 {
+	InitTransform();
 	ResourceManager& resourceMgr = ResourceManager::Instance();
 	angle = 0.0f;
 	_height = height;
@@ -109,21 +110,12 @@ Cylinder::Cylinder(float radius, float height, unsigned int div,const std::share
 		_inputlayout);
 	resourceMgr.LoadPS("Cylinder_PS",
 		"wood.hlsl", "woodPS", "ps_5_0", _pixelShader);
-	/*ShaderGenerator::CreateVertexShader("wood.hlsl", "woodVS", "vs_5_0",
-		_vertexShader, inputElementDescs, sizeof(inputElementDescs) / sizeof(D3D11_INPUT_ELEMENT_DESC), _inputlayout);
-	ShaderGenerator::CreatePixelShader("wood.hlsl", "woodPS", "ps_5_0", _pixelShader);
-*/
+	
 	_mainTex = resourceMgr.LoadSRV("Cylinder_main", "wood.png");
 	_subTex = resourceMgr.LoadSRV("Cylinder_sub", "noise.png");
 	_normalTex = resourceMgr.LoadSRV("Cylinder_normal", "normal_plane.png");
 
-	/*D3DX11CreateShaderResourceViewFromFile(dev.Device(),
-		"wood.png", nullptr, nullptr, &_mainTex, &result);
-	D3DX11CreateShaderResourceViewFromFile(dev.Device(),
-		"noise.png", nullptr, nullptr, &_subTex, &result);
-	D3DX11CreateShaderResourceViewFromFile(dev.Device(),
-		"normal_plane.png", nullptr, nullptr, &_normalTex, &result);*/
-
+	
 	//ƒJƒƒ‰‚©‚ç‚Ì•`‰æ‚Ég‚Á‚½inputElementDescs‚ğg‚Á‚Ä‚à•`‰æ‚Å‚«‚½
 	//–â‘è‚ª‹N‚«‚½‚ÍLightview—p‚ÉV‚µ‚­ƒo[ƒeƒbƒNƒXƒoƒbƒtƒ@ì‚Á‚Ä‚±‚Ì•Ó‚à‘‚«Š·‚¦‚é
 	resourceMgr.LoadVS("Cylinder_lightVS",
@@ -134,10 +126,7 @@ Cylinder::Cylinder(float radius, float height, unsigned int div,const std::share
 		"lightview.hlsl", "PrimitiveLightViewPS", "ps_5_0",
 		_lightviewPS);
 
-	/*ShaderGenerator::CreateVertexShader("lightview.hlsl", "PrimitiveLightViewVS", "vs_5_0",
-		_lightviewVS, lightViewInputElementDescs, sizeof(lightViewInputElementDescs) / sizeof(D3D11_INPUT_ELEMENT_DESC), _lightviewInputLayout);
-	ShaderGenerator::CreatePixelShader("lightview.hlsl", "PrimitiveLightViewPS", "ps_5_0", _lightviewPS);*/
-
+	
 	_modelMatrix = XMMatrixIdentity();
 	/*_mvp.worldMatrix = _modelMatrix;
 	_mvp.viewMatrix = _cameraPtr.lock()->GetMatrixies().view;
@@ -165,7 +154,7 @@ Cylinder::Cylinder(float radius, float height, unsigned int div,const std::share
 	dev.Context()->Map(_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &_mappedMatrixies);
 	//‚±‚±‚Å‚±‚Ìƒƒ‚ƒŠ‚Ì‰ò‚ÉAƒ}ƒgƒŠƒbƒNƒX‚Ì’l‚ğƒRƒs[‚µ‚Ä‚â‚é
 	memcpy(_mappedMatrixies.pData, (void*)(&_worldAndCamera), sizeof(_worldAndCamera));
-	//*(XMMATRIX*)mem.pData = matrix;//ì–ìæ¶‚Ì‘‚«•û@memcpy‚Å”’l‚ğŠÔˆá‚¦‚é‚Æƒƒ‚ƒŠ‚ª‚®‚¿‚á‚®‚¿‚á‚É‚È‚é
+	
 	dev.Context()->Unmap(_matrixBuffer, 0);
 
 }
@@ -195,7 +184,7 @@ Cylinder::Draw()
 	dev.Context()->Map(_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &_mappedMatrixies);
 	//‚±‚±‚Å‚±‚Ìƒƒ‚ƒŠ‚Ì‰ò‚ÉAƒ}ƒgƒŠƒbƒNƒX‚Ì’l‚ğƒRƒs[‚µ‚Ä‚â‚é
 	memcpy(_mappedMatrixies.pData, (void*)(&_worldAndCamera), sizeof(_worldAndCamera));
-	//ª@*(XMMATRIX*)mem.pData = matrix;//ì–ìæ¶‚Ì‘‚«•û@memcpy‚Å”’l‚ğŠÔˆá‚¦‚é‚Æƒƒ‚ƒŠ‚ª‚®‚¿‚á‚®‚¿‚á‚É‚È‚é
+	
 	dev.Context()->Unmap(_matrixBuffer, 0);
 
 	dev.Context()->PSSetShaderResources(TEXTURE_MAIN, 1, _mainTex._Get());
@@ -231,7 +220,7 @@ Cylinder::DrawLightView()//ŒãXƒvƒŒƒCƒ„[‚©‚çƒJƒƒ‰‚ğ˜M‚Á‚½ê‡‚Í‚±‚±‚Å‚àƒJƒƒ‰‚
 	dev.Context()->Map(_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &_mappedMatrixies);
 	//‚±‚±‚Å‚±‚Ìƒƒ‚ƒŠ‚Ì‰ò‚ÉAƒ}ƒgƒŠƒbƒNƒX‚Ì’l‚ğƒRƒs[‚µ‚Ä‚â‚é
 	memcpy(_mappedMatrixies.pData, (void*)(&_worldAndCamera), sizeof(_worldAndCamera));
-	//ª@*(XMMATRIX*)mem.pData = matrix;//ì–ìæ¶‚Ì‘‚«•û@memcpy‚Å”’l‚ğŠÔˆá‚¦‚é‚Æƒƒ‚ƒŠ‚ª‚®‚¿‚á‚®‚¿‚á‚É‚È‚é
+	
 	//*(WorldAndCamera*)_mappedMatrixies.pData=_worldAndCamera;
 	dev.Context()->Unmap(_matrixBuffer, 0);
 
@@ -265,7 +254,7 @@ Cylinder::DrawCameraDepth()
 	dev.Context()->Map(_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &_mappedMatrixies);
 	//‚±‚±‚Å‚±‚Ìƒƒ‚ƒŠ‚Ì‰ò‚ÉAƒ}ƒgƒŠƒbƒNƒX‚Ì’l‚ğƒRƒs[‚µ‚Ä‚â‚é
 	memcpy(_mappedMatrixies.pData, (void*)(&_worldAndCamera), sizeof(_worldAndCamera));
-	//ª@*(XMMATRIX*)mem.pData = matrix;//ì–ìæ¶‚Ì‘‚«•û@memcpy‚Å”’l‚ğŠÔˆá‚¦‚é‚Æƒƒ‚ƒŠ‚ª‚®‚¿‚á‚®‚¿‚á‚É‚È‚é
+	
 	dev.Context()->Unmap(_matrixBuffer, 0);
 
 	//ƒvƒŠƒ~ƒeƒBƒuƒgƒ|ƒƒW‚ÌØ‚è‘Ö‚¦‚ğ–Y‚ê‚È‚¢@Ø‚è‘Ö‚¦‚ğ•p”­‚³‚¹‚é‚Ì‚Í—Ç‚­‚È‚¢
@@ -282,16 +271,12 @@ Cylinder::DrawCameraDepth()
 void
 Cylinder::Update()
 {
-	XMMATRIX transMatrix = XMMatrixTranslation(3, -_height/2, 0);
 	XMMATRIX modelMatrix = XMMatrixIdentity();
-	angle += 1.0f * XM_PI / 180.0f;
-	XMMATRIX scaleMat = XMMatrixScaling(3.0f, 1.0f, 3.0f);
-	XMMATRIX rotMat = XMMatrixRotationZ(angle);
-	rotMat = XMMatrixIdentity();
-	//«“›‚Ì’†S‚ğŒ´“_‚ÉˆÚ“®‚³‚¹‚Ä‰ñ“]AŠg‘å
+	XMMATRIX transMatrix = XMMatrixTranslation(_pos.x, _pos.y, _pos.z);
+	XMMATRIX scaleMat = XMMatrixScaling(_scale.x, _scale.y, _scale.z);
+	XMMATRIX rotMat = XMMatrixRotationRollPitchYaw(_rot.x, _rot.y, _rot.z);
+
 	modelMatrix = XMMatrixMultiply(transMatrix,XMMatrixMultiply(rotMat, scaleMat));
-	transMatrix = XMMatrixTranslation(10, _height/2, 10);
-	modelMatrix = XMMatrixMultiply(modelMatrix,transMatrix);
 	
 
 	_modelMatrix = modelMatrix;

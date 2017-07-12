@@ -1,5 +1,4 @@
 #include "PlayingScene.h"
-#include"ShaderGenerator.h"
 #include"ShaderDefine.h"
 #include"Player.h"
 #include"DecalBox.h"
@@ -102,8 +101,7 @@ PlayingScene::PlayingScene(HWND hwnd)
 	_camera = std::make_shared<Camera>();
 	_renderer = std::make_unique<Renderer>();
 	_renderer->Init();//レンダラー初期化
-	//_player = new Player(&_camera);
-	//_player->Init();
+
 	_player = std::make_unique<Player>(_camera);
 	_player->Init();
 
@@ -190,7 +188,7 @@ PlayingScene::PlayingScene(HWND hwnd)
 	dev.Context()->Map(_globalBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &_mappedGlobals);
 	//ここでこのメモリの塊に、マトリックスの値をコピーしてやる
 	memcpy(_mappedGlobals.pData, (void*)(&_shaderGlobals), sizeof(ShaderGlobals));
-	//*(XMMATRIX*)mem.pData = matrix;//川野先生の書き方　memcpyで数値を間違えるとメモリがぐちゃぐちゃになる
+	
 	dev.Context()->Unmap(_globalBuffer, 0);
 
 	dev.Context()->VSSetConstantBuffers(5, 1, &_globalBuffer);
@@ -482,7 +480,7 @@ PlayingScene::Update()
 #pragma region HUD描画
 	if (debugToggle)
 	{
-		resource = _renderer->LightDepthShaderResource();
+		resource = _renderer->CameraDepthShaderResource();
 		dev.Context()->PSSetShaderResources(TEXTURE_LIGHT_DEPTH, 1, &resource);
 		_debugHUD->Draw();
 

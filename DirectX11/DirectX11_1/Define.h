@@ -143,15 +143,6 @@ struct ShaderGlobals
 	float farZ;
 	int timer;//4
 	
-
-	//XMFLOAT3 lightVec;//12
-	//int timer;//4
-	//XMFLOAT3 eyeVec;//12
-
-	//XMFLOAT3 lightVec;//12
-	//int dummy;//4
-	//XMFLOAT3 eyeVec;//12
-	//int timer;//4
 };
 #pragma pack()
 
@@ -164,11 +155,8 @@ struct MatrixiesForDecal{
 	XMMATRIX invWorld;
 	XMMATRIX invView;
 	XMMATRIX invProj;
-
-	XMMATRIX invWVP;
-	XMMATRIX wvp;
 };
-struct MatrixiesForDecalTest {
+struct MatrixiesForDecalFac {
 	XMMATRIX world[300];
 	XMMATRIX view;
 	XMMATRIX proj;
@@ -183,7 +171,6 @@ struct MatrixiesForDecalTest {
 struct Material{
 	XMFLOAT3 diffuse;
 	float alpha;
-	//Ç±Ç±Ç…Ç‡êFÅXí«â¡Ç∑ÇÈ
 	XMFLOAT3 specularColor;
 	float specularity;
 	XMFLOAT3 ambient;

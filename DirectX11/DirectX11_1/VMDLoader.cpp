@@ -13,8 +13,9 @@ VMDLoader::~VMDLoader()
 }
 
 VMDData*
-VMDLoader::Load(std::string filepath,bool isRepeat)
+VMDLoader::Load(std::string filename,bool isRepeat)
 {
+	std::string filepath = "motions/" + filename;
 	if ((_fp = fopen(filepath.c_str(), "rb"))==nullptr)
 	{
 		return nullptr;

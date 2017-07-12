@@ -89,66 +89,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <FxCompile Include="BaseShader.hlsl" />
-    <FxCompile Include="Decal.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
-      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-      </EntryPointName>
-    </FxCompile>
-    <FxCompile Include="lightview.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
-      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-      </EntryPointName>
-    </FxCompile>
-    <FxCompile Include="PBR_Test.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
-      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-      </EntryPointName>
-    </FxCompile>
-    <FxCompile Include="SkySphere.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Geometry</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4.0</ShaderModel>
-    </FxCompile>
-    <FxCompile Include="SlimeShader.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Geometry</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4.0</ShaderModel>
-      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-      </EntryPointName>
-    </FxCompile>
-    <FxCompile Include="Tessellation.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Hull</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
-    </FxCompile>
-    <FxCompile Include="water.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Geometry</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4.0</ShaderModel>
-    </FxCompile>
-    <FxCompile Include="wood.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Geometry</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4.0</ShaderModel>
-    </FxCompile>
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="Billboard.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="ClearScene.cpp" />
     <ClCompile Include="Cylinder.cpp" />
     <ClCompile Include="DecalBox.cpp" />
     <ClCompile Include="DecalFactory.cpp" />
-    <ClCompile Include="DecalPlane.cpp" />
     <ClCompile Include="Define.cpp" />
     <ClCompile Include="DeviceDx11.cpp" />
     <ClCompile Include="Effect.cpp" />
@@ -158,21 +104,16 @@
     <ClCompile Include="HUD.cpp" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="Main.cpp" />
-    <ClCompile Include="OBJLoader.cpp" />
-    <ClCompile Include="OBJMesh.cpp" />
     <ClCompile Include="Plane.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayingScene.cpp" />
     <ClCompile Include="PMDLoader.cpp" />
     <ClCompile Include="PMDMesh.cpp" />
-    <ClCompile Include="PMXLoader.cpp" />
-    <ClCompile Include="PMXMesh.cpp" />
     <ClCompile Include="Primitive.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="ShaderDefine.cpp" />
-    <ClCompile Include="ShaderGenarator.cpp" />
     <ClCompile Include="SkyBox.cpp" />
     <ClCompile Include="SkySphere.cpp" />
     <ClCompile Include="SoundManager.cpp" />
@@ -189,7 +130,6 @@
     <ClInclude Include="Cylinder.h" />
     <ClInclude Include="DecalBox.h" />
     <ClInclude Include="DecalFactory.h" />
-    <ClInclude Include="DecalPlane.h" />
     <ClInclude Include="Define.h" />
     <ClInclude Include="DeviceDx11.h" />
     <ClInclude Include="Effect.h" />
@@ -198,21 +138,16 @@
     <ClInclude Include="Geometry.h" />
     <ClInclude Include="HUD.h" />
     <ClInclude Include="InputManager.h" />
-    <ClInclude Include="OBJLoader.h" />
-    <ClInclude Include="OBJMesh.h" />
     <ClInclude Include="Plane.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayingScene.h" />
     <ClInclude Include="PMDLoader.h" />
     <ClInclude Include="PMDMesh.h" />
-    <ClInclude Include="PMXLoader.h" />
-    <ClInclude Include="PMXMesh.h" />
     <ClInclude Include="Primitive.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="ShaderDefine.h" />
-    <ClInclude Include="ShaderGenerator.h" />
     <ClInclude Include="SkyBox.h" />
     <ClInclude Include="SkySphere.h" />
     <ClInclude Include="SoundManager.h" />
@@ -224,6 +159,18 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="ShaderInclude.hlsli" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="shaders\BaseShader.hlsl" />
+    <FxCompile Include="shaders\Decal.hlsl" />
+    <FxCompile Include="shaders\Decal_old.hlsl" />
+    <FxCompile Include="shaders\lightview.hlsl" />
+    <FxCompile Include="shaders\PBR_Test.hlsl" />
+    <FxCompile Include="shaders\SkySphere.hlsl" />
+    <FxCompile Include="shaders\SlimeShader.hlsl" />
+    <FxCompile Include="shaders\Tessellation.hlsl" />
+    <FxCompile Include="shaders\water.hlsl" />
+    <FxCompile Include="shaders\wood.hlsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -9,13 +9,13 @@ class Camera;
 class Billboard
 {
 private:
-	ID3D11ShaderResourceView* _texture;
+	std::weak_ptr<ID3D11ShaderResourceView*> _texture;
 	ID3D11Buffer* _vertexBuffer;
 	XMFLOAT3 _pos;
 	std::weak_ptr<Camera> _cameraPtr;
-	ID3D11VertexShader* _vs;
-	ID3D11PixelShader* _ps;
-	ID3D11InputLayout* _inputLayout;
+	std::weak_ptr<ID3D11VertexShader*> _vs;
+	std::weak_ptr<ID3D11PixelShader*> _ps;
+	std::weak_ptr<ID3D11InputLayout*> _inputLayout;
 
 	ID3D11Buffer* _matrixBuffer;
 	WorldAndCamera _worldAndCamera;
@@ -44,8 +44,7 @@ public:
 
 	ID3D11Buffer* CreateBillBoardVertexBuffer(float width, float height);
 
-	HRESULT CreateBillBoardShader(ID3D11VertexShader*&, ID3D11InputLayout*&, ID3D11PixelShader*&);
-
+	
 	//ワールドビュープロジェクションバッファ生成
 	//後で消す　　「3d空間内に頂点を持つオブジェクトで共有する」ため
 	void CreateWVPConstBuffer();

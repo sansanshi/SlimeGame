@@ -2,25 +2,39 @@
 #include "DeviceDx11.h"
 #include<vector>
 #include"Camera.h"
-#include"ShaderGenerator.h"
 #include"ShaderDefine.h"
+#include"ResourceManager.h"
 
 
 Billboard::Billboard(const std::shared_ptr<Camera>& cam, float width, float height) :_cameraPtr(cam)
 {
 	DeviceDx11& dev = DeviceDx11::Instance();
 	HRESULT result = S_OK;
-
+	ResourceManager& resourceMgr = ResourceManager::Instance();
 	
 	//ビルボードテスト
 	_vertexBuffer = nullptr;
 	_vertexBuffer = CreateBillBoardVertexBuffer(width, height);
-	_texture = nullptr;
-	D3DX11CreateShaderResourceViewFromFile(dev.Device(), "uvCheck_transparent.png", nullptr, nullptr, &_texture, &result);
-	_vs = nullptr;
-	_ps = nullptr;
-	_inputLayout = nullptr;
-	result=CreateBillBoardShader(_vs, _inputLayout, _ps);
+	_texture = resourceMgr.LoadSRV("Billboard_main", "uvCheck_transparent.png");
+
+	D3D11_INPUT_ELEMENT_DESC inputElementDescs[] = {
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+	};
+	resourceMgr.LoadVS("Billboard_VS",
+		"BaseShader.hlsl",
+		"BillBoardVS",
+		"vs_5_0",
+		_vs,
+		inputElementDescs,
+		sizeof(inputElementDescs) / sizeof(D3D11_INPUT_ELEMENT_DESC),
+		_inputLayout);
+	resourceMgr.LoadPS("Billboard_PS",
+		"BaseShader.hlsl",
+		"BillBoardPS",
+		"ps_5_0",
+		_ps);
+
 
 
 	_worldAndCamera.world = XMMatrixIdentity();
@@ -43,7 +57,7 @@ Billboard::Billboard(const std::shared_ptr<Camera>& cam, float width, float heig
 	dev.Context()->Map(_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &_mem);
 	//ここでこのメモリの塊に、マトリックスの値をコピーしてやる
 	memcpy(_mem.pData, (void*)(&_worldAndCamera), sizeof(_worldAndCamera));
-	//*(XMMATRIX*)mem.pData = matrix;//川野先生の書き方　memcpyで数値を間違
+	
 	dev.Context()->Unmap(_matrixBuffer, 0);
 
 	dev.Context()->VSSetConstantBuffers(0, 1, &_matrixBuffer);
@@ -84,13 +98,13 @@ Billboard::Draw()
 
 	
 
-	dev.Context()->VSSetShader(_vs, nullptr, 0);
-	dev.Context()->PSSetShader(_ps, nullptr, 0);
-	dev.Context()->IASetInputLayout(_inputLayout);
+	dev.Context()->VSSetShader(*_vs.lock(), nullptr, 0);
+	dev.Context()->PSSetShader(*_ps.lock(), nullptr, 0);
+	dev.Context()->IASetInputLayout(*_inputLayout.lock());
 
 	dev.Context()->VSSetConstantBuffers(0, 1, &_matrixBuffer);
 
-	dev.Context()->PSSetShaderResources(TEXTURE_MAIN, 1, &_texture);
+	dev.Context()->PSSetShaderResources(TEXTURE_MAIN, 1, _texture._Get());
 	unsigned int hudstride = sizeof(HUDVertex);
 	unsigned int hudoffset = 0;
 	dev.Context()->IASetVertexBuffers(0, 1, &_vertexBuffer, &hudstride, &hudoffset);
@@ -132,7 +146,7 @@ Billboard::Update()
 	dev.Context()->Map(_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &_mem);
 	//ここでこのメモリの塊に、マトリックスの値をコピーしてやる
 	memcpy(_mem.pData, (void*)(&_worldAndCamera), sizeof(_worldAndCamera));
-	//*(XMMATRIX*)mem.pData = matrix;//川野先生の書き方　memcpyで数値を間違
+	
 	dev.Context()->Unmap(_matrixBuffer, 0);
 
 	
@@ -201,32 +215,3 @@ Billboard::CreateBillBoardVertexBuffer(float width, float height)
 }
 
 
-HRESULT
-Billboard::CreateBillBoardShader(
-	ID3D11VertexShader*& vs,
-	ID3D11InputLayout*& layout,
-	ID3D11PixelShader*& ps)
-{
-	HRESULT result;
-	D3D11_INPUT_ELEMENT_DESC inputElementDescs[] = {
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 }
-	};
-	int hh = sizeof(inputElementDescs) / sizeof(D3D11_INPUT_ELEMENT_DESC);
-	result = ShaderGenerator::CreateVertexShader(
-		"BaseShader.hlsl",
-		"BillBoardVS",
-		"vs_5_0",
-		vs,
-		inputElementDescs,
-		sizeof(inputElementDescs) / sizeof(D3D11_INPUT_ELEMENT_DESC),
-		layout);
-
-	result = ShaderGenerator::CreatePixelShader(
-		"BaseShader.hlsl",
-		"BillBoardPS",
-		"ps_5_0",
-		ps);
-
-	return result;
-}

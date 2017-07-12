@@ -11,6 +11,7 @@ TessPlane::TessPlane(const std::shared_ptr<Camera>& camera) :_cameraPtr(camera)
 
 TessPlane::TessPlane(float width, float depth, Vector3 normal, const std::shared_ptr<Camera>& camera) :_cameraPtr(camera)
 {
+	InitTransform();
 	DeviceDx11& dev = DeviceDx11::Instance();
 	ResourceManager& resourceMgr = ResourceManager::Instance();
 
@@ -59,35 +60,26 @@ TessPlane::TessPlane(float width, float depth, Vector3 normal, const std::shared
 	resourceMgr.LoadPS("TessPlane_PS",
 		"Tessellation.hlsl", "TessPS", "ps_5_0", _pixelShader);
 
-	/*ShaderGenerator::CreateVertexShader("Tessellation.hlsl", "TessVS", "vs_5_0",
-		_vertexShader, inputElementDescs, sizeof(inputElementDescs) / sizeof(D3D11_INPUT_ELEMENT_DESC), _inputlayout);
-	ShaderGenerator::CreatePixelShader("Tessellation.hlsl", "TessPS", "ps_5_0", _pixelShader);*/
-
+	
 	//ハルシェーダ
 	resourceMgr.LoadHS("TessPlane_HS",
 		"Tessellation.hlsl", "TessHS", "hs_5_0", _hullShader);
-	//ShaderGenerator::CreateHullShader("Tessellation.hlsl", "TessHS", "hs_5_0", _hullShader);
 	//ドメインシェーダ
 	resourceMgr.LoadDS("TessPlane_DS",
 		"Tessellation.hlsl", "TessDS", "ds_5_0", _domainShader);
-	//ShaderGenerator::CreateDomainShader("Tessellation.hlsl", "TessDS", "ds_5_0", _domainShader);
-
+	
 	resourceMgr.LoadVS("TessPlane_lightVS",
 		"lightview.hlsl", "PrimitiveLightViewVS", "vs_5_0",
 		_lightviewVS, inputElementDescs, sizeof(inputElementDescs) / sizeof(D3D11_INPUT_ELEMENT_DESC),
 		_lightviewInputLayout);
 	resourceMgr.LoadPS("TessPlane_lightPS",
 		"lightview.hlsl", "PrimitiveLightViewPS", "ps_5_0", _lightviewPS);
-	/*ShaderGenerator::CreateVertexShader("lightview.hlsl", "PrimitiveLightViewVS", "vs_5_0",
-		_lightviewVS, inputElementDescs, sizeof(inputElementDescs) / sizeof(D3D11_INPUT_ELEMENT_DESC), _lightviewInputLayout);
-	ShaderGenerator::CreatePixelShader("lightview.hlsl", "PrimitiveLightViewPS", "ps_5_0", _lightviewPS);*/
-
+	
 
 	//カメラ深度用ピクセルシェーダ
 	resourceMgr.LoadPS("TessPlane_depthPS",
 		"Tessellation.hlsl", "DepthTessPS", "ps_5_0", _cameraDepthPS);
-	//ShaderGenerator::CreatePixelShader("Tessellation.hlsl", "DepthTessPS", "ps_5_0", _cameraDepthPS);
-
+	
 
 	_modelMatrix = XMMatrixIdentity();
 	_worldAndCamera.world = _modelMatrix;
@@ -119,7 +111,7 @@ TessPlane::TessPlane(float width, float depth, Vector3 normal, const std::shared
 	dev.Context()->Map(_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &_mappedMatrixies);
 	//ここでこのメモリの塊に、マトリックスの値をコピーしてやる
 	memcpy(_mappedMatrixies.pData, (void*)(&_worldAndCamera), sizeof(_worldAndCamera));
-	//*(XMMATRIX*)mem.pData = matrix;//川野先生の書き方　memcpyで数値を間違えるとメモリがぐちゃぐちゃになる
+	
 	dev.Context()->Unmap(_matrixBuffer, 0);
 
 	dev.Context()->DSSetConstantBuffers(0, 1, &_matrixBuffer);
@@ -138,18 +130,6 @@ TessPlane::TessPlane(float width, float depth, Vector3 normal, const std::shared
 	_subTex2 = resourceMgr.LoadSRV("Tessplane_sub2", "sand1.png");
 	_displacementTex = resourceMgr.LoadSRV("Tessplane_disp", "displace.png");
 
-	/*result=D3DX11CreateShaderResourceViewFromFile(dev.Device(),
-		"ground.png", nullptr, nullptr, 
-		&_mainTex, &result);
-	result = D3DX11CreateShaderResourceViewFromFile(dev.Device(),
-		"rock.png", nullptr, nullptr, 
-		&_subTex, &result);
-	result = D3DX11CreateShaderResourceViewFromFile(dev.Device(),
-		"sand1.png", nullptr, nullptr,
-		&_subTex2, &result);
-	result = D3DX11CreateShaderResourceViewFromFile(dev.Device(), 
-		"displace.png", nullptr, nullptr, 
-		&_displacementTex, &result);*/
 }
 
 
@@ -172,7 +152,7 @@ TessPlane::Draw()
 	dev.Context()->Map(_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &_mappedMatrixies);
 	//ここでこのメモリの塊に、マトリックスの値をコピーしてやる
 	memcpy(_mappedMatrixies.pData, (void*)(&_worldAndCamera), sizeof(_worldAndCamera));
-	//↑　*(XMMATRIX*)mem.pData = matrix;//川野先生の書き方　memcpyで数値を間違えるとメモリがぐちゃぐちゃになる
+	
 	dev.Context()->Unmap(_matrixBuffer, 0);
 
 
@@ -215,7 +195,7 @@ TessPlane::DrawLightView()
 	dev.Context()->Map(_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &_mappedMatrixies);
 	//ここでこのメモリの塊に、マトリックスの値をコピーしてやる
 	memcpy(_mappedMatrixies.pData, (void*)(&_worldAndCamera), sizeof(_worldAndCamera));
-	//*(WorldAndCamera*)_mappedMatrixies.pData = _worldAndCamera;//川野先生の書き方　memcpyで数値を間違えるとメモリがぐちゃぐちゃになる
+	
 	dev.Context()->Unmap(_matrixBuffer, 0);
 
 
@@ -244,11 +224,16 @@ TessPlane::DrawLightView()
 void
 TessPlane::Update()
 {
-	rot += 0.2f * XM_PI / 180;
-	XMMATRIX rotMatrix = XMMatrixRotationY(rot);
-	//_modelMatrix = rotMatrix;
-	_modelMatrix = XMMatrixIdentity();
-	_worldAndCamera.world = XMMatrixIdentity();
+	XMMATRIX modelMatrix = XMMatrixIdentity();
+	XMMATRIX transMatrix = XMMatrixTranslation(_pos.x, _pos.y, _pos.z);
+	XMMATRIX scaleMat = XMMatrixScaling(_scale.x, _scale.y, _scale.z);
+	XMMATRIX rotMat = XMMatrixRotationRollPitchYaw(_rot.x, _rot.y, _rot.z);
+
+	modelMatrix = XMMatrixMultiply(transMatrix, XMMatrixMultiply(rotMat, scaleMat));
+
+
+	_modelMatrix = modelMatrix;
+	_worldAndCamera.world = modelMatrix;
 	_worldAndCamera.cameraView = _cameraPtr.lock()->CameraView();
 	_worldAndCamera.cameraProj = _cameraPtr.lock()->CameraProjection();
 	_worldAndCamera.lightView = _cameraPtr.lock()->LightView();
@@ -272,7 +257,7 @@ TessPlane::DrawCameraDepth()
 	dev.Context()->Map(_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &_mappedMatrixies);
 	//ここでこのメモリの塊に、マトリックスの値をコピーしてやる
 	memcpy(_mappedMatrixies.pData, (void*)(&_worldAndCamera), sizeof(_worldAndCamera));
-	//↑　*(XMMATRIX*)mem.pData = matrix;//川野先生の書き方　memcpyで数値を間違えるとメモリがぐちゃぐちゃになる
+	
 	dev.Context()->Unmap(_matrixBuffer, 0);
 
 

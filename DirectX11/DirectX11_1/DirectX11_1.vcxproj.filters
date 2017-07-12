@@ -34,56 +34,15 @@
     <Filter Include="ソース ファイル\Decal">
       <UniqueIdentifier>{21ee6db2-d568-4c71-bb46-4f4f336ec782}</UniqueIdentifier>
     </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="BaseShader.hlsl">
-      <Filter>ソース ファイル\HLSL</Filter>
-    </FxCompile>
-    <FxCompile Include="lightview.hlsl">
-      <Filter>ソース ファイル\HLSL</Filter>
-    </FxCompile>
-    <FxCompile Include="SlimeShader.hlsl">
-      <Filter>ソース ファイル\HLSL</Filter>
-    </FxCompile>
-    <FxCompile Include="Tessellation.hlsl">
-      <Filter>ソース ファイル\HLSL</Filter>
-    </FxCompile>
-    <FxCompile Include="Decal.hlsl">
-      <Filter>ソース ファイル\HLSL</Filter>
-    </FxCompile>
-    <FxCompile Include="PBR_Test.hlsl">
-      <Filter>ソース ファイル\HLSL</Filter>
-    </FxCompile>
-    <FxCompile Include="SkySphere.hlsl">
-      <Filter>ソース ファイル\HLSL</Filter>
-    </FxCompile>
-    <FxCompile Include="water.hlsl">
-      <Filter>ソース ファイル\HLSL</Filter>
-    </FxCompile>
-    <FxCompile Include="wood.hlsl">
-      <Filter>ソース ファイル\HLSL</Filter>
-    </FxCompile>
+    <Filter Include="ソース ファイル\Player">
+      <UniqueIdentifier>{84ce01b1-c783-4ba3-b5d6-956ef3c80420}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DeviceDx11.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Main.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="PMXLoader.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="PMDLoader.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="PMDMesh.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="VMDLoader.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="VMDData.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="ClearScene.cpp">
@@ -104,25 +63,7 @@
     <ClCompile Include="GameMain.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Player.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Primitive.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="Camera.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="OBJMesh.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="OBJLoader.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="PMXMesh.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SkyBox.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Cylinder.cpp">
@@ -133,9 +74,6 @@
     </ClCompile>
     <ClCompile Include="Sphere.cpp">
       <Filter>ソース ファイル\Primitive</Filter>
-    </ClCompile>
-    <ClCompile Include="ShaderGenarator.cpp">
-      <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Renderer.cpp">
       <Filter>ソース ファイル</Filter>
@@ -152,14 +90,8 @@
     <ClCompile Include="Geometry.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Billboard.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="SoundManager.cpp">
       <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="DecalPlane.cpp">
-      <Filter>ソース ファイル\Decal</Filter>
     </ClCompile>
     <ClCompile Include="SkySphere.cpp">
       <Filter>ソース ファイル\Primitive</Filter>
@@ -173,14 +105,38 @@
     <ClCompile Include="ShaderDefine.cpp">
       <Filter>ソース ファイル\HLSL</Filter>
     </ClCompile>
-    <ClCompile Include="HUD.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="InputManager.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="ResourceManager.cpp">
       <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>ソース ファイル\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="PMDLoader.cpp">
+      <Filter>ソース ファイル\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="PMDMesh.cpp">
+      <Filter>ソース ファイル\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="VMDData.cpp">
+      <Filter>ソース ファイル\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="VMDLoader.cpp">
+      <Filter>ソース ファイル\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Billboard.cpp">
+      <Filter>ソース ファイル\Primitive</Filter>
+    </ClCompile>
+    <ClCompile Include="HUD.cpp">
+      <Filter>ソース ファイル\Primitive</Filter>
+    </ClCompile>
+    <ClCompile Include="SkyBox.cpp">
+      <Filter>ソース ファイル\Primitive</Filter>
+    </ClCompile>
+    <ClCompile Include="Primitive.cpp">
+      <Filter>ソース ファイル\Primitive</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -190,58 +146,10 @@
     <ClInclude Include="DeviceDx11.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="PMXLoader.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="PMDLoader.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="PMDMesh.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="VMDLoader.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="VMDData.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="ClearScene.h">
-      <Filter>ヘッダー ファイル\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="GameOverScene.h">
-      <Filter>ヘッダー ファイル\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="PlayingScene.h">
-      <Filter>ヘッダー ファイル\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="Scene.h">
-      <Filter>ヘッダー ファイル\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="TitleScene.h">
-      <Filter>ヘッダー ファイル\Scene</Filter>
-    </ClInclude>
     <ClInclude Include="GameMain.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Player.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="ShaderGenerator.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="Camera.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="OBJMesh.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="OBJLoader.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="PMXMesh.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SkyBox.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Renderer.h">
@@ -271,14 +179,8 @@
     <ClInclude Include="Geometry.h">
       <Filter>ソース ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Billboard.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="SoundManager.h">
       <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="DecalPlane.h">
-      <Filter>ソース ファイル\Decal</Filter>
     </ClInclude>
     <ClInclude Include="SkySphere.h">
       <Filter>ソース ファイル\Primitive</Filter>
@@ -289,19 +191,87 @@
     <ClInclude Include="ShaderDefine.h">
       <Filter>ソース ファイル\HLSL</Filter>
     </ClInclude>
-    <ClInclude Include="HUD.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="InputManager.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="ResourceManager.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>ソース ファイル\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="PMDLoader.h">
+      <Filter>ソース ファイル\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="PMDMesh.h">
+      <Filter>ソース ファイル\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="VMDData.h">
+      <Filter>ソース ファイル\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="VMDLoader.h">
+      <Filter>ソース ファイル\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="ClearScene.h">
+      <Filter>ソース ファイル\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="GameOverScene.h">
+      <Filter>ソース ファイル\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayingScene.h">
+      <Filter>ソース ファイル\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>ソース ファイル\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="TitleScene.h">
+      <Filter>ソース ファイル\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Billboard.h">
+      <Filter>ソース ファイル\Primitive</Filter>
+    </ClInclude>
+    <ClInclude Include="HUD.h">
+      <Filter>ソース ファイル\Primitive</Filter>
+    </ClInclude>
+    <ClInclude Include="SkyBox.h">
+      <Filter>ソース ファイル\Primitive</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="ShaderInclude.hlsli">
       <Filter>ソース ファイル\HLSL</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="shaders\BaseShader.hlsl">
+      <Filter>ソース ファイル\HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="shaders\Decal.hlsl">
+      <Filter>ソース ファイル\HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="shaders\Decal_old.hlsl">
+      <Filter>ソース ファイル\HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="shaders\lightview.hlsl">
+      <Filter>ソース ファイル\HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="shaders\PBR_Test.hlsl">
+      <Filter>ソース ファイル\HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="shaders\SkySphere.hlsl">
+      <Filter>ソース ファイル\HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="shaders\SlimeShader.hlsl">
+      <Filter>ソース ファイル\HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="shaders\Tessellation.hlsl">
+      <Filter>ソース ファイル\HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="shaders\water.hlsl">
+      <Filter>ソース ファイル\HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="shaders\wood.hlsl">
+      <Filter>ソース ファイル\HLSL</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

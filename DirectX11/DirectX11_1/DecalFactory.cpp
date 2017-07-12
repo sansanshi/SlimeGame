@@ -2,7 +2,6 @@
 #include"DecalBox.h"
 #include"Camera.h"
 #include"DeviceDx11.h"
-#include"ShaderGenerator.h"
 #include"ShaderDefine.h"
 #include"ResourceManager.h"
 
@@ -75,9 +74,6 @@ DecalFactory::DecalFactory(const std::shared_ptr<Camera>& cameraPtr):_cameraPtr(
 	resourceMgr.LoadPS("DecalBoxPS",
 		"Decal.hlsl", "DecalBoxPS", "ps_5_0",
 		_pixelShader);
-	/*ShaderGenerator::CreateVertexShader("Decal.hlsl", "DecalBoxVS", "vs_5_0",
-		_vertexShader, inputElementDescs, sizeof(inputElementDescs) / sizeof(D3D11_INPUT_ELEMENT_DESC), _inputlayout);
-	ShaderGenerator::CreatePixelShader("Decal.hlsl", "DecalBoxPS", "ps_5_0", _pixelShader);*/
 
 	for (auto& w : _matrixies.world)
 	{
@@ -100,7 +96,7 @@ DecalFactory::DecalFactory(const std::shared_ptr<Camera>& cameraPtr):_cameraPtr(
 
 	D3D11_BUFFER_DESC matBuffDesc = {};
 	matBuffDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	matBuffDesc.ByteWidth = sizeof(MatrixiesForDecalTest);
+	matBuffDesc.ByteWidth = sizeof(MatrixiesForDecalFac);
 	matBuffDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;//バッファの中身はCPUで書き換える
 	matBuffDesc.Usage = D3D11_USAGE_DYNAMIC;//CPUによる書き込み、GPUによる読み込みが行われるという意味
 											//matBuffDesc.ByteWidth = sizeof(XMMATRIX);
@@ -114,7 +110,7 @@ DecalFactory::DecalFactory(const std::shared_ptr<Camera>& cameraPtr):_cameraPtr(
 	dev.Context()->Map(_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &_mappedMatrixies);
 	//ここでこのメモリの塊に、マトリックスの値をコピーしてやる
 	memcpy(_mappedMatrixies.pData, (void*)(&_matrixies), sizeof(_matrixies));
-	//*(XMMATRIX*)mem.pData = matrix;//川野先生の書き方　memcpyで数値を間違えるとメモリがぐちゃぐちゃになる
+	
 	dev.Context()->Unmap(_matrixBuffer, 0);
 
 	dev.Context()->VSSetConstantBuffers(0, 1, &_matrixBuffer);
@@ -238,7 +234,7 @@ DecalFactory::Draw()
 	dev.Context()->Map(_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &_mappedMatrixies);
 	//ここでこのメモリの塊に、マトリックスの値をコピーしてやる
 	memcpy(_mappedMatrixies.pData, (void*)(&_matrixies), sizeof(_matrixies));
-	//↑　*(XMMATRIX*)mem.pData = matrix;//川野先生の書き方　memcpyで数値を間違えるとメモリがぐちゃぐちゃになる
+	
 	dev.Context()->Unmap(_matrixBuffer, 0);
 	dev.Context()->IASetVertexBuffers(0, 1, &_vertexBuffer, &stride, &offset);
 	dev.Context()->IASetIndexBuffer(_indexBuffer, DXGI_FORMAT_R16_UINT, 0);

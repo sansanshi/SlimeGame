@@ -1,16 +1,31 @@
 #include "HUD.h"
 #include"DeviceDx11.h"
 #include<vector>
-#include"ShaderGenerator.h"
+#include"ResourceManager.h"
 #include"Camera.h"
 
 HUD::HUD(const std::shared_ptr<Camera>& cam,const float top,const float left,const float width,const float height):_cameraPtr(cam)
 {
 	DeviceDx11& dev = DeviceDx11::Instance();
-	_vs = nullptr;
-	_inputLayout = nullptr;
-	_ps = nullptr;
-	CreateHUDShader(_vs, _inputLayout, _ps);
+	ResourceManager& resourceMgr = ResourceManager::Instance();
+
+	D3D11_INPUT_ELEMENT_DESC inputElementDescs[] = {
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+	};
+	resourceMgr.LoadVS("HUD_VS",
+		"BaseShader.hlsl",
+		"HUDVS",
+		"vs_5_0",
+		_vs,
+		inputElementDescs,
+		sizeof(inputElementDescs) / sizeof(D3D11_INPUT_ELEMENT_DESC),
+		_inputLayout);
+	resourceMgr.LoadPS("HUD_PS",
+		"BaseShader.hlsl",
+		"HUDPS",
+		"ps_5_0",
+		_ps);
 
 
 	_vertexBuffer = CreateHUDVertexBuffer(top, left, width, height);
@@ -41,12 +56,13 @@ HUD::HUD(const std::shared_ptr<Camera>& cam,const float top,const float left,con
 	dev.Context()->Map(_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &_mem);
 	//ここでこのメモリの塊に、マトリックスの値をコピーしてやる
 	memcpy(_mem.pData, (void*)(&_worldAndCamera), sizeof(_worldAndCamera));
-	//*(XMMATRIX*)mem.pData = matrix;//川野先生の書き方　memcpyで数値を間違
+	
 	dev.Context()->Unmap(_matrixBuffer, 0);
 
 	dev.Context()->VSSetConstantBuffers(0, 1, &_matrixBuffer);
 
-	D3DX11CreateShaderResourceViewFromFile(dev.Device(), "marker.dds", nullptr, nullptr, &_texture, &result);
+	resourceMgr.LoadSRV("Marker_main", "marker.dds");
+	//D3DX11CreateShaderResourceViewFromFile(dev.Device(), "marker.dds", nullptr, nullptr, &_texture, &result);
 }
 
 
@@ -105,35 +121,7 @@ HUD::CreateHUDVertexBuffer(float top, float left, float width, float height)
 
 }
 
-HRESULT
-HUD::CreateHUDShader(
-	ID3D11VertexShader*& vs,
-	ID3D11InputLayout*& layout,
-	ID3D11PixelShader*& ps)
-{
-	HRESULT result;
-	D3D11_INPUT_ELEMENT_DESC inputElementDescs[] = {
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 }
-	};
-	int hh = sizeof(inputElementDescs) / sizeof(D3D11_INPUT_ELEMENT_DESC);
-	result = ShaderGenerator::CreateVertexShader(
-		"BaseShader.hlsl",
-		"HUDVS",
-		"vs_5_0",
-		vs,
-		inputElementDescs,
-		sizeof(inputElementDescs) / sizeof(D3D11_INPUT_ELEMENT_DESC),
-		layout);
 
-	result = ShaderGenerator::CreatePixelShader(
-		"BaseShader.hlsl",
-		"HUDPS",
-		"ps_5_0",
-		ps);
-
-	return result;
-}
 
 XMMATRIX
 HUD::CreateHUDMatrix(float width, float height, float offsetx = 0, float offsety = 0)
@@ -172,12 +160,12 @@ HUD::Draw()
 	dev.Context()->Map(_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &_mem);
 	//ここでこのメモリの塊に、マトリックスの値をコピーしてやる
 	memcpy(_mem.pData, (void*)(&_worldAndCamera), sizeof(_worldAndCamera));
-	//*(XMMATRIX*)mem.pData = matrix;//川野先生の書き方　memcpyで数値を間違
+	
 	dev.Context()->Unmap(_matrixBuffer, 0);
 
-	dev.Context()->VSSetShader(_vs, nullptr, 0);
-	dev.Context()->PSSetShader(_ps, nullptr, 0);
-	dev.Context()->IASetInputLayout(_inputLayout);
+	dev.Context()->VSSetShader(*_vs.lock(), nullptr, 0);
+	dev.Context()->PSSetShader(*_ps.lock(), nullptr, 0);
+	dev.Context()->IASetInputLayout(*_inputLayout.lock());
 	unsigned int hudstride = sizeof(HUDVertex);
 	unsigned int hudoffset = 0;
 	dev.Context()->IASetVertexBuffers(0, 1, &_vertexBuffer, &hudstride, &hudoffset);

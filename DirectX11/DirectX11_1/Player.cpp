@@ -2,10 +2,8 @@
 #include<xnamath.h>
 #include<algorithm>
 #include<thread>
-#include"PMXLoader.h"
+#include<string>
 
-#include"Plane.h"
-#include"ShaderGenerator.h"
 #include<cassert>
 #include"Geometry.h"
 #include"ShaderDefine.h"
@@ -524,11 +522,6 @@ Player::Init()
 		_vertInputLayout);
 	resourceMgr.LoadPS("Player_PS",
 		"BaseShader.hlsl", "BasePS", "ps_5_0", _pixelShader);
-	/*ShaderGenerator::CreateVertexShader("BaseShader.hlsl", "BaseVS", "vs_5_0", _vertexShader, inputElementDescs,
-		sizeof(inputElementDescs) / sizeof(D3D11_INPUT_ELEMENT_DESC), _vertInputLayout);
-	
-	ShaderGenerator::CreatePixelShader("BaseShader.hlsl", "BasePS", "ps_5_0", _pixelShader);
-	dev.Context()->IASetInputLayout(_vertInputLayout);*/
 
 	
 	resourceMgr.LoadVS("Player_boneVS",
@@ -538,11 +531,7 @@ Player::Init()
 	resourceMgr.LoadPS("Player_bonePS",
 		"BaseShader.hlsl", "BonePS", "ps_5_0", _bonePixelShader);
 
-	/*ShaderGenerator::CreateVertexShader("BaseShader.hlsl", "BoneVS", "vs_5_0", _boneVertexShader, boneInputElementDescs,
-		sizeof(boneInputElementDescs) / sizeof(D3D11_INPUT_ELEMENT_DESC), _boneInputLayout);
 	
-	ShaderGenerator::CreatePixelShader("BaseShader.hlsl", "BonePS", "ps_5_0", _bonePixelShader);*/
-
 	dev.Context()->VSSetShader(*_vertexShader.lock(), nullptr, 0);//ＰＭＤモデル表示用シェーダセット
 	dev.Context()->PSSetShader(*_pixelShader.lock(), nullptr, 0);//PMDモデル表示用シェーダセット
 
@@ -553,11 +542,7 @@ Player::Init()
 	resourceMgr.LoadPS("Player_lightPS",
 		"lightview.hlsl", "LightViewPS", "ps_5_0", _depthPS);
 
-	/*ShaderGenerator::CreateVertexShader("lightview.hlsl", "LightViewVS", "vs_5_0",_depthVS, 
-		lightViewInputElementDescs,sizeof(lightViewInputElementDescs) / sizeof(D3D11_INPUT_ELEMENT_DESC), 
-		_depthViewInputLayout);
-	ShaderGenerator::CreatePixelShader("lightview.hlsl", "LightViewPS", "ps_5_0", _depthPS);*/
-
+	
 
 	_worldAndCamera.world = XMMatrixIdentity();
 	_worldAndCamera.cameraView = _cameraPtr.lock()->CameraView();
@@ -593,7 +578,7 @@ Player::Init()
 	dev.Context()->Map(_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &_mem);
 	//ここでこのメモリの塊に、マトリックスの値をコピーしてやる
 	memcpy(_mem.pData, (void*)(&_worldAndCamera), sizeof(_worldAndCamera));
-	//*(XMMATRIX*)mem.pData = matrix;//川野先生の書き方　memcpyで数値を間違えるとメモリがぐちゃぐちゃになる
+	
 	dev.Context()->Unmap(_matrixBuffer, 0);
 
 	dev.Context()->VSSetConstantBuffers(0, 1, &_matrixBuffer);
@@ -794,7 +779,7 @@ Player::Update()
 	dev.Context()->Map(_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &_mem);
 	//ここでこのメモリの塊に、マトリックスの値をコピーしてやる
 	memcpy(_mem.pData, (void*)(&_worldAndCamera), sizeof(_worldAndCamera));
-	//↑　*(XMMATRIX*)mem.pData = matrix;//川野先生の書き方　memcpyで数値を間違えるとメモリがぐちゃぐちゃになる
+	
 	dev.Context()->Unmap(_matrixBuffer, 0);
 
 	//dev.Context()->VSSetConstantBuffers(0, 1, &matrixBuffer);
@@ -917,7 +902,7 @@ Player::Draw()
 		dev.Context()->Map(_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &_mem);
 		//ここでこのメモリの塊に、マトリックスの値をコピーしてやる
 		memcpy(_mem.pData, (void*)(&_worldAndCamera), sizeof(_worldAndCamera));
-		//↑　*(XMMATRIX*)mem.pData = matrix;//川野先生の書き方　memcpyで数値を間違えるとメモリがぐちゃぐちゃになる
+		
 		dev.Context()->Unmap(_matrixBuffer, 0);
 
 
@@ -1015,7 +1000,7 @@ Player::DrawLightView()
 	dev.Context()->Map(_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &_mem);
 	//ここでこのメモリの塊に、マトリックスの値をコピーしてやる
 	memcpy(_mem.pData, (void*)(&_worldAndCamera), sizeof(_worldAndCamera));
-	//↑　*(XMMATRIX*)mem.pData = matrix;//川野先生の書き方　memcpyで数値を間違えるとメモリがぐちゃぐちゃになる
+	
 	dev.Context()->Unmap(_matrixBuffer, 0);
 
 	std::vector<PMDMaterial> pmdMaterials = _mesh->GetMaterials();
@@ -1041,7 +1026,7 @@ Player::DrawCameraDepth()
 	dev.Context()->Map(_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &_mem);
 	//ここでこのメモリの塊に、マトリックスの値をコピーしてやる
 	memcpy(_mem.pData, (void*)(&_worldAndCamera), sizeof(_worldAndCamera));
-	//↑　*(XMMATRIX*)mem.pData = matrix;//川野先生の書き方　memcpyで数値を間違えるとメモリがぐちゃぐちゃになる
+	
 	dev.Context()->Unmap(_matrixBuffer, 0);
 
 

@@ -7,9 +7,9 @@
 
 SkySphere::SkySphere(unsigned int divNum, float radius,const std::shared_ptr<Camera>& cam) :_cameraPtr(cam)
 {
+	InitTransform();
 	DeviceDx11& dev = DeviceDx11::Instance();
 	ResourceManager& resourceMgr = ResourceManager::Instance();
-	_pos = XMFLOAT3(0, 0, 0);
 
 	float theta;
 	float phi;
@@ -186,10 +186,7 @@ SkySphere::SkySphere(unsigned int divNum, float radius,const std::shared_ptr<Cam
 		_vertexShader, inputElementDescs, sizeof(inputElementDescs) / sizeof(D3D11_INPUT_ELEMENT_DESC),
 		_inputlayout);
 	resourceMgr.LoadPS("Skysphere_PS", "SkySphere.hlsl", "SkySpherePS", "ps_5_0", _pixelShader);
-	/*ShaderGenerator::CreateVertexShader("SkySphere.hlsl", "SkySphereVS", "vs_5_0",
-		_vertexShader, inputElementDescs, sizeof(inputElementDescs) / sizeof(D3D11_INPUT_ELEMENT_DESC), _inputlayout);
-	ShaderGenerator::CreatePixelShader("SkySphere.hlsl", "SkySpherePS", "ps_5_0", _pixelShader);*/
-
+	
 	
 	_modelMatrix = XMMatrixIdentity();
 	_worldAndCamera.world = _modelMatrix;
@@ -222,7 +219,7 @@ SkySphere::SkySphere(unsigned int divNum, float radius,const std::shared_ptr<Cam
 	dev.Context()->Map(_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &_mappedMatrixies);
 	//ここでこのメモリの塊に、マトリックスの値をコピーしてやる
 	memcpy(_mappedMatrixies.pData, (void*)(&_worldAndCamera), sizeof(_worldAndCamera));
-	//*(XMMATRIX*)mem.pData = matrix;//川野先生の書き方　memcpyで数値を間違えるとメモリがぐちゃぐちゃになる
+	
 	dev.Context()->Unmap(_matrixBuffer, 0);
 
 	dev.Context()->VSSetConstantBuffers(0, 1, &_matrixBuffer);
@@ -318,49 +315,18 @@ SkySphere::~SkySphere()
 void
 SkySphere::Update()
 {
-	std::copy(_keystate, _keystate + sizeof(_keystate), _lastkeystate);
-	GetKeyboardState(_keystate);
-	moveForward = 0;
-	moveRight = 0;
-	if (_keystate['W'] & 0x80)
-	{
-		moveForward = 1;
-	}
-
-	if (_keystate['A'] & 0x80)
-	{
-		moveRight = -1;
-	}
-	if (_keystate['S'] & 0x80)
-	{
-		moveForward = -1;
-	}
-	if (_keystate['D'] & 0x80)
-	{
-		moveRight = 1;
-	}
-
-	if (moveForward != 0 || moveRight != 0)
-	{
-		Vector3 forward = _cameraPtr.lock()->EyeVec();
-		Vector3 right = forward.Cross(Vector3(0, 1, 0));
-		right = -right;
-
-		Vector3 fvec = forward*moveForward;
-		Vector3 rvec = right*moveRight;
-
-		Vector3 moveVec = (fvec + rvec).Normalize();
-
-		//pos =pos + moveVec*0.2f;
-		int i = 0;
-	}
+	
 
 	
-	rot += -1 * XM_PI / 180;
-	XMMATRIX rotMatrix = XMMatrixRotationY(rot);
-	_modelMatrix = rotMatrix;
+	XMMATRIX modelMatrix = XMMatrixIdentity();
 	XMMATRIX transMatrix = XMMatrixTranslation(_pos.x, _pos.y, _pos.z);
-	_modelMatrix = transMatrix;
+	XMMATRIX scaleMat = XMMatrixScaling(_scale.x, _scale.y, _scale.z);
+	XMMATRIX rotMat = XMMatrixRotationRollPitchYaw(_rot.x, _rot.y, _rot.z);
+
+	modelMatrix = XMMatrixMultiply(transMatrix, XMMatrixMultiply(rotMat, scaleMat));
+
+
+	_modelMatrix = modelMatrix;
 	//_modelMatrix = XMMatrixIdentity();
 	_worldAndCamera.world = _modelMatrix;
 	_worldAndCamera.cameraView = _cameraPtr.lock()->CameraView();
@@ -399,7 +365,7 @@ SkySphere::Draw()
 	dev.Context()->Map(_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &_mappedMatrixies);
 	//ここでこのメモリの塊に、マトリックスの値をコピーしてやる
 	memcpy(_mappedMatrixies.pData, (void*)(&_worldAndCamera), sizeof(_worldAndCamera));
-	//↑　*(XMMATRIX*)mem.pData = matrix;//川野先生の書き方　memcpyで数値を間違えるとメモリがぐちゃぐちゃになる
+	
 	dev.Context()->Unmap(_matrixBuffer, 0);
 	dev.Context()->IASetVertexBuffers(0, 1, &_vertexBuffer, &stride, &offset);
 	dev.Context()->IASetIndexBuffer(_indexBuffer, DXGI_FORMAT_R16_UINT, 0);

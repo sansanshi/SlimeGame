@@ -39,7 +39,7 @@ private:
 	XMMATRIX _invWorldMatrixes[300];
 	unsigned int _decalBoxCnt;
 
-	MatrixiesForDecalTest _matrixies;
+	MatrixiesForDecalFac _matrixies;
 	ID3D11Buffer* _matrixBuffer;
 	D3D11_MAPPED_SUBRESOURCE _mappedMatrixies;
 	ID3D11SamplerState* _samplerState;

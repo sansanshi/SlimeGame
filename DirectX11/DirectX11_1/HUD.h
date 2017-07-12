@@ -20,19 +20,18 @@ public:
 
 	ID3D11Buffer* CreateHUDVertexBuffer(float top, float left, float width, float height);
 
-	HRESULT CreateHUDShader(ID3D11VertexShader*&, ID3D11InputLayout*&, ID3D11PixelShader*&);
 	XMMATRIX CreateHUDMatrix(float width, float height, float offsetx, float offsety );
 
 	void Offset(const float x,const float y);
 
 private:
-	ID3D11ShaderResourceView* _texture;
+	std::weak_ptr<ID3D11ShaderResourceView*> _texture;
 	ID3D11Buffer* _vertexBuffer;
 	XMFLOAT3 _pos;
 	std::weak_ptr<Camera> _cameraPtr;
-	ID3D11VertexShader* _vs;
-	ID3D11PixelShader* _ps;
-	ID3D11InputLayout* _inputLayout;
+	std::weak_ptr<ID3D11VertexShader*> _vs;
+	std::weak_ptr<ID3D11PixelShader*> _ps;
+	std::weak_ptr<ID3D11InputLayout*> _inputLayout;
 
 	ID3D11Buffer* _matrixBuffer;
 	WorldAndCamera _worldAndCamera;

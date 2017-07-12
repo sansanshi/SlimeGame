@@ -13,7 +13,7 @@ Plane::Plane(float width, float depth, Vector3 normal,
 	const std::shared_ptr<Camera>& camera) 
 	:_cameraPtr(camera)
 {
-
+	InitTransform();
 
 	DeviceDx11& dev = DeviceDx11::Instance();
 	ResourceManager& resourceMgr = ResourceManager::Instance();
@@ -66,29 +66,14 @@ Plane::Plane(float width, float depth, Vector3 normal,
 		_lightviewInputLayout);
 	resourceMgr.LoadPS("Plane_lightPS", "lightview.hlsl", "PrimitiveLightViewPS", "ps_5_0", _lightviewPS);
 
-	/*ShaderGenerator::CreateVertexShader("water.hlsl", "WaterVS", "vs_5_0",
-		_vertexShader, inputElementDescs, sizeof(inputElementDescs) / sizeof(D3D11_INPUT_ELEMENT_DESC),_inputlayout);
-	ShaderGenerator::CreatePixelShader("water.hlsl", "WaterPS", "ps_5_0", _pixelShader);
-
-	ShaderGenerator::CreateVertexShader("lightview.hlsl", "PrimitiveLightViewVS", "vs_5_0",
-		_lightviewVS, inputElementDescs, sizeof(inputElementDescs) / sizeof(D3D11_INPUT_ELEMENT_DESC), _lightviewInputLayout);
-	ShaderGenerator::CreatePixelShader("lightview.hlsl", "PrimitiveLightViewPS", "ps_5_0", _lightviewPS);*/
-
+	
 	_mainTex = resourceMgr.LoadSRV("Plane_main", "watertest.png");
 	_subTex = resourceMgr.LoadSRV("Plane_sub", "noise.png");
 	_normalTex = resourceMgr.LoadSRV("Plane_normal", "normal0.png");
 	_flowTex = resourceMgr.LoadSRV("Plane_flow", "flow_.png");
 
 
-	/*D3DX11CreateShaderResourceViewFromFile(dev.Device(), 
-		"watertest.png", nullptr, nullptr, &_mainTex, &result);
-	D3DX11CreateShaderResourceViewFromFile(dev.Device(),
-		"noise_.png", nullptr, nullptr, &_subTex, &result);
-	D3DX11CreateShaderResourceViewFromFile(dev.Device(),
-		"normal0.png", nullptr, nullptr, &_normalTex, &result);
-	D3DX11CreateShaderResourceViewFromFile(dev.Device(),
-		"flow_.png", nullptr, nullptr, &_flowTex, &result);*/
-
+	
 	D3D11_SAMPLER_DESC samplerDesc = {};
 	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
 	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
@@ -128,7 +113,7 @@ Plane::Plane(float width, float depth, Vector3 normal,
 	dev.Context()->Map(_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &_mappedMatrixies);
 	//ここでこのメモリの塊に、マトリックスの値をコピーしてやる
 	memcpy(_mappedMatrixies.pData, (void*)(&_worldAndCamera), sizeof(_worldAndCamera));
-	//*(XMMATRIX*)mem.pData = matrix;//川野先生の書き方　memcpyで数値を間違えるとメモリがぐちゃぐちゃになる
+	
 	dev.Context()->Unmap(_matrixBuffer, 0);
 
 	dev.Context()->VSSetConstantBuffers(0, 1, &_matrixBuffer);
@@ -153,7 +138,7 @@ Plane::Draw()
 	dev.Context()->Map(_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &_mappedMatrixies);
 	//ここでこのメモリの塊に、マトリックスの値をコピーしてやる
 	memcpy(_mappedMatrixies.pData, (void*)(&_worldAndCamera), sizeof(_worldAndCamera));
-	//↑　*(XMMATRIX*)mem.pData = matrix;//川野先生の書き方　memcpyで数値を間違えるとメモリがぐちゃぐちゃになる
+	
 	dev.Context()->Unmap(_matrixBuffer, 0);
 
 
@@ -190,7 +175,7 @@ Plane::DrawLightView()
 	dev.Context()->Map(_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &_mappedMatrixies);
 	//ここでこのメモリの塊に、マトリックスの値をコピーしてやる
 	memcpy(_mappedMatrixies.pData, (void*)(&_worldAndCamera), sizeof(_worldAndCamera));
-	//↑　*(XMMATRIX*)mem.pData = matrix;//川野先生の書き方　memcpyで数値を間違えるとメモリがぐちゃぐちゃになる
+	
 	dev.Context()->Unmap(_matrixBuffer, 0);
 
 
@@ -218,7 +203,7 @@ Plane::DrawCameraDepth()
 	dev.Context()->Map(_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &_mappedMatrixies);
 	//ここでこのメモリの塊に、マトリックスの値をコピーしてやる
 	memcpy(_mappedMatrixies.pData, (void*)(&_worldAndCamera), sizeof(_worldAndCamera));
-	//↑　*(XMMATRIX*)mem.pData = matrix;//川野先生の書き方　memcpyで数値を間違えるとメモリがぐちゃぐちゃになる
+	
 	dev.Context()->Unmap(_matrixBuffer, 0);
 
 
@@ -236,9 +221,15 @@ Plane::DrawCameraDepth()
 void
 Plane::Update()
 {
-	rot += -1 * XM_PI / 180;
-	XMMATRIX transMat=XMMatrixTranslation(0.0f,-1.5f,0.0f);
-	_modelMatrix = transMat;
+	XMMATRIX modelMatrix = XMMatrixIdentity();
+	XMMATRIX transMatrix = XMMatrixTranslation(_pos.x, _pos.y, _pos.z);
+	XMMATRIX scaleMat = XMMatrixScaling(_scale.x, _scale.y, _scale.z);
+	XMMATRIX rotMat = XMMatrixRotationRollPitchYaw(_rot.x, _rot.y, _rot.z);
+
+	modelMatrix = XMMatrixMultiply(transMatrix, XMMatrixMultiply(rotMat, scaleMat));
+
+
+	_modelMatrix = modelMatrix;
 	//_modelMatrix = XMMatrixIdentity();
 	_worldAndCamera.world = _modelMatrix;
 	_worldAndCamera.cameraView = _cameraPtr.lock()->CameraView();

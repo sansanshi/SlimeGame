@@ -7,9 +7,9 @@
 
 Sphere::Sphere(unsigned int divNum,float radius,const std::shared_ptr<Camera>& camera) :_cameraPtr(camera)
 {
+	InitTransform();
 	DeviceDx11& dev = DeviceDx11::Instance();
 	ResourceManager& resourceMgr = ResourceManager::Instance();
-	pos = Vector3(-10, 0, 0);
 
 	float theta;
 	float phi;
@@ -234,14 +234,7 @@ Sphere::Sphere(unsigned int divNum,float radius,const std::shared_ptr<Camera>& c
 	resourceMgr.LoadPS("Slime_lightPS", "lightview.hlsl", "SlimeLightViewPS", "ps_5_0", _lightviewPS);
 
 
-	/*ShaderGenerator::CreateVertexShader("SlimeShader.hlsl", "SlimeVS", "vs_5_0",
-		_vertexShader, inputElementDescs, sizeof(inputElementDescs) / sizeof(D3D11_INPUT_ELEMENT_DESC), _inputlayout);
-	ShaderGenerator::CreatePixelShader("SlimeShader.hlsl", "SlimePS", "ps_5_0", _pixelShader);
-
-	ShaderGenerator::CreateVertexShader("lightview.hlsl", "SlimeLightViewVS", "vs_5_0",
-		_lightviewVS, inputElementDescs, sizeof(inputElementDescs) / sizeof(D3D11_INPUT_ELEMENT_DESC), _lightviewInputLayout);
-	ShaderGenerator::CreatePixelShader("lightview.hlsl", "SlimeLightViewPS", "ps_5_0", _lightviewPS);*/
-
+	
 	_modelMatrix = XMMatrixIdentity();
 	_worldAndCamera.world = _modelMatrix;
 	_worldAndCamera.cameraView = _cameraPtr.lock()->CameraView();
@@ -276,26 +269,18 @@ Sphere::Sphere(unsigned int divNum,float radius,const std::shared_ptr<Camera>& c
 
 	//マスク（？）テクスチャ
 	_dispMask = resourceMgr.LoadSRV("Slime_mask", "disp0.png");
-	/*result = D3DX11CreateShaderResourceViewFromFile(dev.Device(), "disp0.png", nullptr, nullptr, &_dispMask, &result);
-	dev.Context()->VSSetShaderResources(TEXTURE_MASK, 1, &_dispMask);*/
-
+	
 
 	//ディスプレースメントテクスチャ
 	_displacementTex = resourceMgr.LoadSRV("Slime_displacement", "wave__.png");
-	/*result = D3DX11CreateShaderResourceViewFromFile(dev.Device(), "wave__.png", nullptr, nullptr, &_displaysmentMap, &result);
-	dev.Context()->VSSetShaderResources(TEXTURE_DISPLACEMENT, 1, &_displaysmentMap);*/
-
+	
 
 	// ノーマルマップ用テクスチャ
 	_normalTex = resourceMgr.LoadSRV("Slime_normal", "normal3.png");
-	/*result = D3DX11CreateShaderResourceViewFromFile(dev.Device(), "normal3.png", nullptr, nullptr, &_normalTex, &result);
-	dev.Context()->PSSetShaderResources(TEXTURE_NORMAL, 1, &_normalTex);*/
 
 
 	//視差マッピング用テクスチャ
 	_heightMap = resourceMgr.LoadSRV("Slime_height", "height1_.png");
-	/*result = D3DX11CreateShaderResourceViewFromFile(dev.Device(), "height1_.png", nullptr, nullptr, &_heightMap, &result);
-	dev.Context()->PSSetShaderResources(TEXTURE_HEIGHT, 1, &_heightMap);*/
 
 
 	//サンプラの設定
@@ -351,16 +336,6 @@ std::vector<PrimitiveVertex>& vertsForBuff, const std::vector<unsigned short>& i
 	tangent = tangent.Normalize();
 	binormal = binormal.Normalize();
 
-	//↓Normalize関数作ったので要らない
-	/*float length;
-	length = sqrt((tangent.x*tangent.x) + (tangent.y * tangent.y) + (tangent.z*tangent.z));
-	tangent.x = tangent.x / length;
-	tangent.y = tangent.y / length;
-	tangent.z = tangent.z / length;
-	length = sqrt((binormal.x*binormal.x) + (binormal.y*binormal.y) + (binormal.z*binormal.z));
-	binormal.x = binormal.x / length;
-	binormal.y = binormal.y / length;
-	binormal.z = binormal.z / length;*/
 
 	vertsForBuff[indices[idx]].tangent = tangent;
 	vertsForBuff[indices[idx]].binormal = binormal;
@@ -382,52 +357,15 @@ Sphere::~Sphere()
 void 
 Sphere::Update()
 {
-	std::copy(_keystate, _keystate + sizeof(_keystate), _lastkeystate);
-	GetKeyboardState(_keystate);
-	moveForward = 0;
-	moveRight = 0;
-	if (_keystate['W'] & 0x80)
-	{
-		moveForward = 1;
-	}
+	XMMATRIX modelMatrix = XMMatrixIdentity();
+	XMMATRIX transMatrix = XMMatrixTranslation(_pos.x, _pos.y, _pos.z);
+	XMMATRIX scaleMat = XMMatrixScaling(_scale.x, _scale.y, _scale.z);
+	XMMATRIX rotMat = XMMatrixRotationRollPitchYaw(_rot.x, _rot.y, _rot.z);
 
-	if (_keystate['A'] & 0x80)
-	{
-		moveRight = -1;
-	}
-	if (_keystate['S'] & 0x80)
-	{
-		moveForward = -1;
-	}
-	if (_keystate['D'] & 0x80)
-	{
-		moveRight = 1;
-	}
-	
-	if (moveForward != 0 || moveRight != 0)
-	{
-		Vector3 forward = _cameraPtr.lock()->EyeVec();
-		Vector3 right = forward.Cross(Vector3(0, 1, 0));
-		right = -right;
+	modelMatrix = XMMatrixMultiply(transMatrix, XMMatrixMultiply(rotMat, scaleMat));
 
-		Vector3 fvec = forward*moveForward;
-		Vector3 rvec = right*moveRight;
 
-		Vector3 moveVec = (fvec + rvec).Normalize();
-
-		//pos =pos + moveVec*0.2f;
-		int i = 0;
-	}
-
-	XMFLOAT3 gaze = { pos.x, pos.y + 5, pos.z };//{ 0, 0, 0 };//
-	XMFLOAT3 eye = { gaze.x, gaze.y + 10, gaze.z - 15 };//{ 0, 0, -10 };//
-	//_cameraPtr.lock()->SetEyeGazeUp(eye, gaze, XMFLOAT3(0, 1, 0));
-
-	rot += -1 * XM_PI / 180;
-	XMMATRIX rotMatrix = XMMatrixRotationY(rot);
-	_modelMatrix = rotMatrix;
-	XMMATRIX transMatrix = XMMatrixTranslation(pos.x, pos.y+5.0f, pos.z);
-	_modelMatrix = transMatrix;
+	_modelMatrix = modelMatrix;
 	//_modelMatrix = XMMatrixIdentity();
 	_worldAndCamera.world = _modelMatrix;
 	_worldAndCamera.cameraView = _cameraPtr.lock()->CameraView();
@@ -467,7 +405,7 @@ Sphere::Draw()
 	dev.Context()->Map(_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &_mappedMatrixies);
 	//ここでこのメモリの塊に、マトリックスの値をコピーしてやる
 	memcpy(_mappedMatrixies.pData, (void*)(&_worldAndCamera), sizeof(_worldAndCamera));
-	//↑　*(XMMATRIX*)mem.pData = matrix;//川野先生の書き方　memcpyで数値を間違えるとメモリがぐちゃぐちゃになる
+	
 	dev.Context()->Unmap(_matrixBuffer, 0);
 	dev.Context()->IASetVertexBuffers(0, 1, &_vertexBuffer, &stride, &offset);
 	dev.Context()->IASetIndexBuffer(_indexBuffer, DXGI_FORMAT_R16_UINT, 0);
@@ -501,7 +439,7 @@ Sphere::DrawLightView()
 	dev.Context()->Map(_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &_mappedMatrixies);
 	//ここでこのメモリの塊に、マトリックスの値をコピーしてやる
 	memcpy(_mappedMatrixies.pData, (void*)(&_worldAndCamera), sizeof(_worldAndCamera));
-	//↑　*(XMMATRIX*)mem.pData = matrix;//川野先生の書き方　memcpyで数値を間違えるとメモリがぐちゃぐちゃになる
+	
 	dev.Context()->Unmap(_matrixBuffer, 0);
 
 	dev.Context()->IASetInputLayout(*_lightviewInputLayout.lock());
@@ -533,7 +471,7 @@ Sphere::DrawCameraDepth()
 	dev.Context()->Map(_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &_mappedMatrixies);
 	//ここでこのメモリの塊に、マトリックスの値をコピーしてやる
 	memcpy(_mappedMatrixies.pData, (void*)(&_worldAndCamera), sizeof(_worldAndCamera));
-	//↑　*(XMMATRIX*)mem.pData = matrix;//川野先生の書き方　memcpyで数値を間違えるとメモリがぐちゃぐちゃになる
+	
 	dev.Context()->Unmap(_matrixBuffer, 0);
 
 	dev.Context()->IASetInputLayout(*_lightviewInputLayout.lock());
@@ -571,7 +509,7 @@ Sphere::DrawLightView_color()
 	dev.Context()->Map(_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &_mappedMatrixies);
 	//ここでこのメモリの塊に、マトリックスの値をコピーしてやる
 	memcpy(_mappedMatrixies.pData, (void*)(&_worldAndCamera), sizeof(_worldAndCamera));
-	//↑　*(XMMATRIX*)mem.pData = matrix;//川野先生の書き方　memcpyで数値を間違えるとメモリがぐちゃぐちゃになる
+	
 	dev.Context()->Unmap(_matrixBuffer, 0);
 	dev.Context()->IASetVertexBuffers(0, 1, &_vertexBuffer, &stride, &offset);
 	dev.Context()->IASetIndexBuffer(_indexBuffer, DXGI_FORMAT_R16_UINT, 0);
