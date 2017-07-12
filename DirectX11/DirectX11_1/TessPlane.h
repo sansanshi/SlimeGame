@@ -32,8 +32,6 @@ public:
 	ID3D11Buffer* VertexBuffer(){ return _vertexBuffer; };
 
 
-	std::weak_ptr<ID3D11HullShader*> _hullShader;
-	std::weak_ptr<ID3D11DomainShader*> _domainShader;
 
 	std::weak_ptr<ID3D11PixelShader*> _cameraDepthPS;
 

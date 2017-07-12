@@ -15,25 +15,25 @@ public:
 	}
 	void LoadVS(
 		std::string registerName,
-		LPCSTR,LPCSTR,LPCSTR,
+		std::string,std::string,std::string,
 		std::weak_ptr<ID3D11VertexShader*>& shader_out,
 		D3D11_INPUT_ELEMENT_DESC* inputElementDescs, int descCnt,
 		std::weak_ptr<ID3D11InputLayout*>& layout_out
 	);
 	void LoadPS(
 		std::string registerName,
-		LPCSTR,LPCSTR,LPCSTR,
+		std::string,std::string,std::string,
 		std::weak_ptr<ID3D11PixelShader*>& shader_out
 	);
 
 	void LoadHS(
 		std::string registerName,
-		LPCSTR,LPCSTR,LPCSTR,
+		std::string,std::string,std::string,
 		std::weak_ptr<ID3D11HullShader*>& shader_out
 	);
 	void LoadDS(
 		std::string registerName,
-		LPCSTR,LPCSTR,LPCSTR,
+		std::string,std::string,std::string,
 		std::weak_ptr<ID3D11DomainShader*>& shader_out
 	);
 

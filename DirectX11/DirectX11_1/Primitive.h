@@ -41,6 +41,8 @@ protected:
 	std::weak_ptr<ID3D11InputLayout*> _lightviewInputLayout;
 
 
+	std::weak_ptr<ID3D11HullShader*> _hullShader;
+	std::weak_ptr<ID3D11DomainShader*> _domainShader;
 
 	std::weak_ptr<ID3D11ShaderResourceView*> _mainTex;
 	std::weak_ptr<ID3D11ShaderResourceView*> _subTex;

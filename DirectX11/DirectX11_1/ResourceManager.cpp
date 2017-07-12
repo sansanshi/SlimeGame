@@ -18,7 +18,7 @@ ResourceManager::ResourceManager(HWND hwnd):_hwnd(hwnd)
 void
 ResourceManager::LoadVS(
 	std::string registerName,
-	LPCSTR srcFileName,LPCSTR functionName,LPCSTR shaderModel,
+	std::string srcFileName,std::string functionName,std::string shaderModel,
 	std::weak_ptr<ID3D11VertexShader*>& shader_out,
 	D3D11_INPUT_ELEMENT_DESC* inputElementDescs, int descCnt,
 	std::weak_ptr<ID3D11InputLayout*>& layout_out)
@@ -36,14 +36,14 @@ ResourceManager::LoadVS(
 		ID3DBlob* compiledVS = nullptr;
 		ID3DBlob* shaderError = nullptr;
 
-		std::string path =  srcFileName;
+		std::string path =  "shaders/" + srcFileName;
 
 		D3DX11CompileFromFile(
 			path.c_str(),
 			nullptr,
 			nullptr,
-			functionName,
-			shaderModel,
+			functionName.c_str(),
+			shaderModel.c_str(),
 			0,
 			0,
 			nullptr,
@@ -61,19 +61,13 @@ ResourceManager::LoadVS(
 		ID3D11InputLayout* tempInput = nullptr;
 		if (FAILED(dev.Device()->CreateVertexShader(compiledVS->GetBufferPointer(), compiledVS->GetBufferSize(), nullptr, &tempVS)))
 		{
-			std::string path = srcFileName;
-			path += "/";
-			path += functionName;
-			std::string msg = path + " が生成できません";
+			std::string msg = path + "/" + functionName + " が生成できません";
 			MessageBox(_hwnd, msg.c_str(), nullptr, MB_OK);
 			exit(0);
 		}
 		if (FAILED(dev.Device()->CreateInputLayout(inputElementDescs, descCnt, compiledVS->GetBufferPointer(), compiledVS->GetBufferSize(), &tempInput)))
 		{
-			std::string path = srcFileName;
-			path += "/";
-			path += functionName;
-			std::string msg = path + " のインプットレイアウトが生成できません";
+			std::string msg = path + "/" + functionName + " のインプットレイアウトが生成できません";
 			MessageBox(_hwnd, msg.c_str(), nullptr, MB_OK);
 			exit(0);
 		}
@@ -91,7 +85,7 @@ ResourceManager::LoadVS(
 void
 ResourceManager::LoadPS(
 	std::string registerName,
-	LPCSTR srcFileName,LPCSTR functionName,LPCSTR shaderModel,
+	std::string srcFileName,std::string functionName,std::string shaderModel,
 	std::weak_ptr<ID3D11PixelShader*>& shader_out)
 {
 	if (_pixelShaderMap.find(registerName) != _pixelShaderMap.end())
@@ -110,8 +104,8 @@ ResourceManager::LoadPS(
 		path.c_str(),
 		nullptr,
 		nullptr,
-		functionName,
-		shaderModel,
+		functionName.c_str(),
+		shaderModel.c_str(),
 		0,
 		0,
 		nullptr,
@@ -129,10 +123,7 @@ ResourceManager::LoadPS(
 	ID3D11PixelShader* tempPS = nullptr;
 	if (FAILED(dev.Device()->CreatePixelShader(compiledPS->GetBufferPointer(), compiledPS->GetBufferSize(), nullptr, &tempPS)))
 	{
-		std::string path = srcFileName;
-		path += "/";
-		path += functionName;
-		std::string msg = path + " が生成できません";
+		std::string msg = path + "/" + functionName + " が生成できません";
 		MessageBox(_hwnd, msg.c_str(), nullptr, MB_OK);
 		exit(0);
 	}
@@ -147,7 +138,7 @@ ResourceManager::LoadPS(
 void
 ResourceManager::LoadHS(
 	std::string registerName,
-	LPCSTR srcFileName,LPCSTR functionName,LPCSTR shaderModel,
+	std::string srcFileName,std::string functionName,std::string shaderModel,
 	std::weak_ptr<ID3D11HullShader*>& shader_out)
 {
 	if (_hullShaderMap.find(registerName) != _hullShaderMap.end())
@@ -165,8 +156,8 @@ ResourceManager::LoadHS(
 		path.c_str(),
 		nullptr,
 		nullptr,
-		functionName,
-		shaderModel,
+		functionName.c_str(),
+		shaderModel.c_str(),
 		0,
 		0,
 		nullptr,
@@ -184,10 +175,7 @@ ResourceManager::LoadHS(
 	ID3D11HullShader* tempHS = nullptr;
 	if (FAILED(dev.Device()->CreateHullShader(compiledHS->GetBufferPointer(), compiledHS->GetBufferSize(), nullptr, &tempHS)))
 	{
-		std::string path = srcFileName;
-		path += "/";
-		path += functionName;
-		std::string msg = path + " が生成できません";
+		std::string msg = path + "/" + functionName + " が生成できません";
 		MessageBox(_hwnd, msg.c_str(), nullptr, MB_OK);
 		exit(0);
 	}
@@ -202,7 +190,7 @@ ResourceManager::LoadHS(
 void
 ResourceManager::LoadDS(
 	std::string registerName,
-	LPCSTR srcFileName,LPCSTR functionName,LPCSTR shaderModel,
+	std::string srcFileName,std::string functionName,std::string shaderModel,
 	std::weak_ptr<ID3D11DomainShader*>& shader_out
 )
 {
@@ -215,14 +203,14 @@ ResourceManager::LoadDS(
 	HRESULT result;
 	ID3DBlob* compiledDS = nullptr;
 	ID3DBlob* shaderError = nullptr;
-	std::string path =  srcFileName;
+	std::string path = "shaders/" + srcFileName;
 
 	D3DX11CompileFromFile(
 		path.c_str(),
 		nullptr,
 		nullptr,
-		functionName,
-		shaderModel,
+		functionName.c_str(),
+		shaderModel.c_str(),
 		0,
 		0,
 		nullptr,
@@ -240,10 +228,7 @@ ResourceManager::LoadDS(
 	ID3D11DomainShader* tempDS = nullptr;
 	if (FAILED(dev.Device()->CreateDomainShader(compiledDS->GetBufferPointer(), compiledDS->GetBufferSize(), nullptr, &tempDS)))
 	{
-		std::string path = srcFileName;
-		path += "/";
-		path += functionName;
-		std::string msg = path + " が生成できません";
+		std::string msg = path + "/" + functionName + " が生成できません";
 		MessageBox(_hwnd, msg.c_str(), nullptr, MB_OK);
 		exit(0);
 	}
@@ -268,7 +253,9 @@ ResourceManager::LoadSRV(std::string registerName, std::string filename)
 	DeviceDx11& dev = DeviceDx11::Instance();
 	HRESULT result = S_OK;
 
-	std::string path = "textures/" + filename;
+	//Effekseerが「texture」フォルダを使う
+	//分けるとややこしくなるので分けない
+	std::string path = "texture/" + filename;
 
 	ID3D11ShaderResourceView* temp;
 	if (FAILED(D3DX11CreateShaderResourceViewFromFile(dev.Device(), path.c_str(), nullptr, nullptr,
