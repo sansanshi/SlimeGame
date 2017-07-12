@@ -64,9 +64,13 @@ TessPlane::TessPlane(float width, float depth, Vector3 normal, const std::shared
 	ShaderGenerator::CreatePixelShader("Tessellation.hlsl", "TessPS", "ps_5_0", _pixelShader);*/
 
 	//ハルシェーダ
-	ShaderGenerator::CreateHullShader("Tessellation.hlsl", "TessHS", "hs_5_0", _hullShader);
+	resourceMgr.LoadHS("TessPlane_HS",
+		"Tessellation.hlsl", "TessHS", "hs_5_0", _hullShader);
+	//ShaderGenerator::CreateHullShader("Tessellation.hlsl", "TessHS", "hs_5_0", _hullShader);
 	//ドメインシェーダ
-	ShaderGenerator::CreateDomainShader("Tessellation.hlsl", "TessDS", "ds_5_0", _domainShader);
+	resourceMgr.LoadDS("TessPlane_DS",
+		"Tessellation.hlsl", "TessDS", "ds_5_0", _domainShader);
+	//ShaderGenerator::CreateDomainShader("Tessellation.hlsl", "TessDS", "ds_5_0", _domainShader);
 
 	resourceMgr.LoadVS("TessPlane_lightVS",
 		"lightview.hlsl", "PrimitiveLightViewVS", "vs_5_0",
@@ -80,7 +84,9 @@ TessPlane::TessPlane(float width, float depth, Vector3 normal, const std::shared
 
 
 	//カメラ深度用ピクセルシェーダ
-	ShaderGenerator::CreatePixelShader("Tessellation.hlsl", "DepthTessPS", "ps_5_0", _cameraDepthPS);
+	resourceMgr.LoadPS("TessPlane_depthPS",
+		"Tessellation.hlsl", "DepthTessPS", "ps_5_0", _cameraDepthPS);
+	//ShaderGenerator::CreatePixelShader("Tessellation.hlsl", "DepthTessPS", "ps_5_0", _cameraDepthPS);
 
 
 	_modelMatrix = XMMatrixIdentity();
@@ -172,8 +178,8 @@ TessPlane::Draw()
 
 	dev.Context()->VSSetShader(*_vertexShader.lock(), nullptr, 0);
 	dev.Context()->IASetInputLayout(*_inputlayout.lock());
-	dev.Context()->HSSetShader(_hullShader, nullptr, 0);
-	dev.Context()->DSSetShader(_domainShader, nullptr, 0);
+	dev.Context()->HSSetShader(*_hullShader.lock(), nullptr, 0);
+	dev.Context()->DSSetShader(*_domainShader.lock(), nullptr, 0);
 	dev.Context()->PSSetShader(*_pixelShader.lock(), nullptr, 0);
 	//プリミティブトポロジの切り替えを忘れない　切り替えを頻発させるのは良くない
 	//dev.Context()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
@@ -215,9 +221,9 @@ TessPlane::DrawLightView()
 
 	dev.Context()->VSSetShader(*_vertexShader.lock(), nullptr, 0);
 	dev.Context()->IASetInputLayout(*_inputlayout.lock());
-	dev.Context()->HSSetShader(_hullShader, nullptr, 0);
-	dev.Context()->DSSetShader(_domainShader, nullptr, 0);
-	dev.Context()->PSSetShader(_cameraDepthPS, nullptr, 0);
+	dev.Context()->HSSetShader(*_hullShader.lock(), nullptr, 0);
+	dev.Context()->DSSetShader(*_domainShader.lock(), nullptr, 0);
+	dev.Context()->PSSetShader(*_cameraDepthPS.lock(), nullptr, 0);
 	//プリミティブトポロジの切り替えを忘れない　切り替えを頻発させるのは良くない
 	//dev.Context()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 
@@ -272,9 +278,9 @@ TessPlane::DrawCameraDepth()
 
 	dev.Context()->VSSetShader(*_vertexShader.lock(), nullptr, 0);
 	dev.Context()->IASetInputLayout(*_inputlayout.lock());
-	dev.Context()->HSSetShader(_hullShader, nullptr, 0);
-	dev.Context()->DSSetShader(_domainShader, nullptr, 0);
-	dev.Context()->PSSetShader(_cameraDepthPS, nullptr, 0);
+	dev.Context()->HSSetShader(*_hullShader.lock(), nullptr, 0);
+	dev.Context()->DSSetShader(*_domainShader.lock(), nullptr, 0);
+	dev.Context()->PSSetShader(*_cameraDepthPS.lock(), nullptr, 0);
 	//プリミティブトポロジの切り替えを忘れない　切り替えを頻発させるのは良くない
 	//dev.Context()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 

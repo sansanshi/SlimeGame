@@ -18,7 +18,7 @@ ResourceManager::ResourceManager(HWND hwnd):_hwnd(hwnd)
 void
 ResourceManager::LoadVS(
 	std::string registerName,
-	LPCSTR srcFileName, LPCSTR functionName, LPCSTR shaderModel,
+	std::string srcFileName, std::string functionName, std::string shaderModel,
 	std::weak_ptr<ID3D11VertexShader*>& shader_out,
 	D3D11_INPUT_ELEMENT_DESC* inputElementDescs, int descCnt,
 	std::weak_ptr<ID3D11InputLayout*>& layout_out)
@@ -36,12 +36,14 @@ ResourceManager::LoadVS(
 		ID3DBlob* compiledVS = nullptr;
 		ID3DBlob* shaderError = nullptr;
 
+		std::string path =  srcFileName;
+
 		D3DX11CompileFromFile(
-			srcFileName,
+			path.c_str(),
 			nullptr,
 			nullptr,
-			functionName,
-			shaderModel,
+			functionName.c_str(),
+			shaderModel.c_str(),
 			0,
 			0,
 			nullptr,
@@ -89,7 +91,7 @@ ResourceManager::LoadVS(
 void
 ResourceManager::LoadPS(
 	std::string registerName,
-	LPCSTR srcFileName, LPCSTR functionName, LPCSTR shaderModel,
+	std::string srcFileName, std::string functionName, std::string shaderModel,
 	std::weak_ptr<ID3D11PixelShader*>& shader_out)
 {
 	if (_pixelShaderMap.find(registerName) != _pixelShaderMap.end())
@@ -99,16 +101,16 @@ ResourceManager::LoadPS(
 	}
 	DeviceDx11& dev = DeviceDx11::Instance();
 	HRESULT result;
-	ID3D11PixelShader* shader = nullptr;
 	ID3DBlob* compiledPS = nullptr;
 	ID3DBlob* shaderError = nullptr;
+	std::string path =  srcFileName;
 
 	D3DX11CompileFromFile(
-		srcFileName,
+		path.c_str(),
 		nullptr,
 		nullptr,
-		functionName,
-		shaderModel,
+		functionName.c_str(),
+		shaderModel.c_str(),
 		0,
 		0,
 		nullptr,
@@ -141,6 +143,118 @@ ResourceManager::LoadPS(
 
 	return;
 }
+void
+ResourceManager::LoadHS(
+	std::string registerName,
+	std::string srcFileName, std::string functionName, std::string shaderModel,
+	std::weak_ptr<ID3D11HullShader*>& shader_out)
+{
+	if (_hullShaderMap.find(registerName) != _hullShaderMap.end())
+	{
+		shader_out = _hullShaderMap[registerName];
+		return;
+	}
+	DeviceDx11& dev = DeviceDx11::Instance();
+	HRESULT result;
+	ID3DBlob* compiledHS = nullptr;
+	ID3DBlob* shaderError = nullptr;
+	std::string path =   srcFileName;
+
+	D3DX11CompileFromFile(
+		path.c_str(),
+		nullptr,
+		nullptr,
+		functionName.c_str(),
+		shaderModel.c_str(),
+		0,
+		0,
+		nullptr,
+		&compiledHS,
+		&shaderError,
+		&result);
+
+	char* msg;
+	if (shaderError != nullptr)
+	{
+		msg = (char*)shaderError->GetBufferPointer();
+		int j = 0;
+	}
+
+	ID3D11HullShader* tempHS = nullptr;
+	if (FAILED(dev.Device()->CreateHullShader(compiledHS->GetBufferPointer(), compiledHS->GetBufferSize(), nullptr, &tempHS)))
+	{
+		std::string path = srcFileName;
+		path += "/";
+		path += functionName;
+		std::string msg = path + " Ç™ê∂ê¨Ç≈Ç´Ç‹ÇπÇÒ";
+		MessageBox(_hwnd, msg.c_str(), nullptr, MB_OK);
+		exit(0);
+	}
+	_hullShaderMap[registerName] = std::make_shared<ID3D11HullShader*>(tempHS);
+
+	shader_out = _hullShaderMap[registerName];
+
+	compiledHS->Release();
+
+	return;
+}
+void
+ResourceManager::LoadDS(
+	std::string registerName,
+	std::string srcFileName, std::string functionName, std::string shaderModel,
+	std::weak_ptr<ID3D11DomainShader*>& shader_out
+)
+{
+	if (_domainShaderMap.find(registerName) != _domainShaderMap.end())
+	{
+		shader_out = _domainShaderMap[registerName];
+		return;
+	}
+	DeviceDx11& dev = DeviceDx11::Instance();
+	HRESULT result;
+	ID3DBlob* compiledDS = nullptr;
+	ID3DBlob* shaderError = nullptr;
+	std::string path =  srcFileName;
+
+	D3DX11CompileFromFile(
+		path.c_str(),
+		nullptr,
+		nullptr,
+		functionName.c_str(),
+		shaderModel.c_str(),
+		0,
+		0,
+		nullptr,
+		&compiledDS,
+		&shaderError,
+		&result);
+
+	char* msg;
+	if (shaderError != nullptr)
+	{
+		msg = (char*)shaderError->GetBufferPointer();
+		int j = 0;
+	}
+
+	ID3D11DomainShader* tempDS = nullptr;
+	if (FAILED(dev.Device()->CreateDomainShader(compiledDS->GetBufferPointer(), compiledDS->GetBufferSize(), nullptr, &tempDS)))
+	{
+		std::string path = srcFileName;
+		path += "/";
+		path += functionName;
+		std::string msg = path + " Ç™ê∂ê¨Ç≈Ç´Ç‹ÇπÇÒ";
+		MessageBox(_hwnd, msg.c_str(), nullptr, MB_OK);
+		exit(0);
+	}
+	_domainShaderMap[registerName] = std::make_shared<ID3D11DomainShader*>(tempDS);
+
+	shader_out = _domainShaderMap[registerName];
+
+	compiledDS->Release();
+
+	return;
+}
+
 
 
 std::shared_ptr<ID3D11ShaderResourceView*>
@@ -153,7 +267,7 @@ ResourceManager::LoadSRV(std::string registerName, std::string filename)
 	DeviceDx11& dev = DeviceDx11::Instance();
 	HRESULT result = S_OK;
 
-	std::string path = "texture/" + filename;
+	std::string path = "textures/" + filename;
 
 	ID3D11ShaderResourceView* temp;
 	if (FAILED(D3DX11CreateShaderResourceViewFromFile(dev.Device(), path.c_str(), nullptr, nullptr,

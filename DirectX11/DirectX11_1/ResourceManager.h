@@ -15,15 +15,26 @@ public:
 	}
 	void LoadVS(
 		std::string registerName,
-		LPCSTR srcFileName, LPCSTR functionName, LPCSTR shaderModel,
+		std::string srcFileName, std::string functionName, std::string shaderModel,
 		std::weak_ptr<ID3D11VertexShader*>& shader_out,
 		D3D11_INPUT_ELEMENT_DESC* inputElementDescs, int descCnt,
 		std::weak_ptr<ID3D11InputLayout*>& layout_out
 	);
 	void LoadPS(
 		std::string registerName,
-		LPCSTR srcFile, LPCSTR functionName, LPCSTR shaderModel,
+		std::string srcFile, std::string functionName, std::string shaderModel,
 		std::weak_ptr<ID3D11PixelShader*>& shader_out
+	);
+
+	void LoadHS(
+		std::string registerName,
+		std::string srcFile, std::string functionName, std::string shaderModel,
+		std::weak_ptr<ID3D11HullShader*>& shader_out
+	);
+	void LoadDS(
+		std::string registerName,
+		std::string srcFile, std::string functionName, std::string shaderModel,
+		std::weak_ptr<ID3D11DomainShader*>& shader_out
 	);
 
 	std::shared_ptr<ID3D11ShaderResourceView*> LoadSRV(std::string registerName, std::string path);
@@ -43,6 +54,8 @@ private:
 	std::map<std::string, std::shared_ptr<ID3D11ShaderResourceView*>> _srvMap;
 	std::map<std::string, std::shared_ptr<ID3D11VertexShader*>> _vertexShaderMap;
 	std::map<std::string, std::shared_ptr<ID3D11PixelShader*>> _pixelShaderMap;
+	std::map<std::string, std::shared_ptr<ID3D11HullShader*>> _hullShaderMap;
+	std::map<std::string, std::shared_ptr<ID3D11DomainShader*>> _domainShaderMap;
 	std::map<std::string, std::shared_ptr<ID3D11InputLayout*>> _inputLayoutMap;
 
 	HWND _hwnd;
