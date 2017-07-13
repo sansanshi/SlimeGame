@@ -7,9 +7,10 @@
 #include"ShaderDefine.h"
 #include"ResourceManager.h"
 
-Cylinder::Cylinder(float radius, float height, unsigned int div,const std::shared_ptr<Camera>& camera) :_cameraPtr(camera)
+Cylinder::Cylinder(float radius, float height, unsigned int div,const std::shared_ptr<Camera>& camera) 
 {
 	InitTransform();
+	_cameraPtr = camera;
 	ResourceManager& resourceMgr = ResourceManager::Instance();
 	angle = 0.0f;
 	_height = height;
@@ -127,15 +128,8 @@ Cylinder::Cylinder(float radius, float height, unsigned int div,const std::share
 		_lightviewPS);
 
 	
-	_modelMatrix = XMMatrixIdentity();
-	/*_mvp.worldMatrix = _modelMatrix;
-	_mvp.viewMatrix = _cameraPtr.lock()->GetMatrixies().view;
-	_mvp.projectionMatrix = _cameraPtr.lock()->GetMatrixies().projection;*/
-	_worldAndCamera.world = _modelMatrix;
-	_worldAndCamera.cameraView = _cameraPtr.lock()->CameraView();
-	_worldAndCamera.cameraProj = _cameraPtr.lock()->CameraProjection();
-	_worldAndCamera.lightView = _cameraPtr.lock()->LightView();
-	_worldAndCamera.lightProj = _cameraPtr.lock()->LightProjection();
+	
+	UpdateMatrixies();
 
 	//mvps—ñ—p‚Ìƒoƒbƒtƒ@ì‚é
 	D3D11_BUFFER_DESC matBuffDesc = {};
@@ -151,14 +145,10 @@ Cylinder::Cylinder(float radius, float height, unsigned int div,const std::share
 
 	result = dev.Device()->CreateBuffer(&matBuffDesc, &d, &_matrixBuffer);
 
-	dev.Context()->Map(_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &_mappedMatrixies);
-	//‚±‚±‚Å‚±‚Ìƒƒ‚ƒŠ‚Ì‰ò‚ÉAƒ}ƒgƒŠƒbƒNƒX‚Ì’l‚ðƒRƒs[‚µ‚Ä‚â‚é
-	memcpy(_mappedMatrixies.pData, (void*)(&_worldAndCamera), sizeof(_worldAndCamera));
-	
-	dev.Context()->Unmap(_matrixBuffer, 0);
+	ApplyConstantBuffer(_matrixBuffer, _mappedMatrixies, _worldAndCamera);
 
 }
-Cylinder::Cylinder(const std::shared_ptr<Camera>& camera) :_cameraPtr(camera)
+Cylinder::Cylinder(const std::shared_ptr<Camera>& camera)
 {
 }
 
@@ -181,11 +171,7 @@ Cylinder::Draw()
 	_worldAndCamera.lightProj = _cameraPtr.lock()->LightProjection();
 
 
-	dev.Context()->Map(_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &_mappedMatrixies);
-	//‚±‚±‚Å‚±‚Ìƒƒ‚ƒŠ‚Ì‰ò‚ÉAƒ}ƒgƒŠƒbƒNƒX‚Ì’l‚ðƒRƒs[‚µ‚Ä‚â‚é
-	memcpy(_mappedMatrixies.pData, (void*)(&_worldAndCamera), sizeof(_worldAndCamera));
-	
-	dev.Context()->Unmap(_matrixBuffer, 0);
+	ApplyConstantBuffer(_matrixBuffer, _mappedMatrixies, _worldAndCamera);
 
 	dev.Context()->PSSetShaderResources(TEXTURE_MAIN, 1, _mainTex._Get());
 	dev.Context()->PSSetShaderResources(TEXTURE_NORMAL, 1, _normalTex._Get());
@@ -217,12 +203,7 @@ Cylinder::DrawLightView()//ŒãXƒvƒŒƒCƒ„[‚©‚çƒJƒƒ‰‚ð˜M‚Á‚½ê‡‚Í‚±‚±‚Å‚àƒJƒƒ‰‚
 	_worldAndCamera.lightView = _cameraPtr.lock()->LightView();
 	_worldAndCamera.lightProj = _cameraPtr.lock()->LightProjection();
 
-	dev.Context()->Map(_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &_mappedMatrixies);
-	//‚±‚±‚Å‚±‚Ìƒƒ‚ƒŠ‚Ì‰ò‚ÉAƒ}ƒgƒŠƒbƒNƒX‚Ì’l‚ðƒRƒs[‚µ‚Ä‚â‚é
-	memcpy(_mappedMatrixies.pData, (void*)(&_worldAndCamera), sizeof(_worldAndCamera));
-	
-	//*(WorldAndCamera*)_mappedMatrixies.pData=_worldAndCamera;
-	dev.Context()->Unmap(_matrixBuffer, 0);
+	ApplyConstantBuffer(_matrixBuffer, _mappedMatrixies, _worldAndCamera);
 
 	//ƒvƒŠƒ~ƒeƒBƒuƒgƒ|ƒƒW‚ÌØ‚è‘Ö‚¦‚ð–Y‚ê‚È‚¢@Ø‚è‘Ö‚¦‚ð•p”­‚³‚¹‚é‚Ì‚Í—Ç‚­‚È‚¢
 	dev.Context()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
@@ -251,11 +232,7 @@ Cylinder::DrawCameraDepth()
 	_worldAndCamera.lightProj = proj;
 
 
-	dev.Context()->Map(_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &_mappedMatrixies);
-	//‚±‚±‚Å‚±‚Ìƒƒ‚ƒŠ‚Ì‰ò‚ÉAƒ}ƒgƒŠƒbƒNƒX‚Ì’l‚ðƒRƒs[‚µ‚Ä‚â‚é
-	memcpy(_mappedMatrixies.pData, (void*)(&_worldAndCamera), sizeof(_worldAndCamera));
-	
-	dev.Context()->Unmap(_matrixBuffer, 0);
+	ApplyConstantBuffer(_matrixBuffer, _mappedMatrixies, _worldAndCamera);
 
 	//ƒvƒŠƒ~ƒeƒBƒuƒgƒ|ƒƒW‚ÌØ‚è‘Ö‚¦‚ð–Y‚ê‚È‚¢@Ø‚è‘Ö‚¦‚ð•p”­‚³‚¹‚é‚Ì‚Í—Ç‚­‚È‚¢
 	dev.Context()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
@@ -271,20 +248,5 @@ Cylinder::DrawCameraDepth()
 void
 Cylinder::Update()
 {
-	XMMATRIX modelMatrix = XMMatrixIdentity();
-	XMMATRIX transMatrix = XMMatrixTranslation(_pos.x, _pos.y, _pos.z);
-	XMMATRIX scaleMat = XMMatrixScaling(_scale.x, _scale.y, _scale.z);
-	XMMATRIX rotMat = XMMatrixRotationRollPitchYaw(_rot.x, _rot.y, _rot.z);
-
-	modelMatrix = XMMatrixMultiply(transMatrix,XMMatrixMultiply(rotMat, scaleMat));
-	
-
-	_modelMatrix = modelMatrix;
-
-	_worldAndCamera.world = _modelMatrix;
-	_worldAndCamera.cameraView = _cameraPtr.lock()->CameraView();
-	_worldAndCamera.cameraProj = _cameraPtr.lock()->CameraProjection();
-	_worldAndCamera.lightView = _cameraPtr.lock()->LightView();
-	_worldAndCamera.lightProj = _cameraPtr.lock()->LightProjection();
-	
+	UpdateMatrixies();
 }

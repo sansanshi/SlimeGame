@@ -11,23 +11,18 @@ class Sphere
 	:public Primitive
 {
 private:
-	Vector3 pos;
 	BYTE _keystate[256];
 	BYTE _lastkeystate[256];
 	int moveForward;
 	int moveRight;
 
-	std::weak_ptr<Camera> _cameraPtr;
-	WorldAndCamera _worldAndCamera;
-	XMMATRIX _modelMatrix;
-	ID3D11Buffer* _matrixBuffer;
-	D3D11_MAPPED_SUBRESOURCE _mappedMatrixies;
+	
 	D3D11_MAPPED_SUBRESOURCE _mappedMaterial;
 
 	ID3D11Buffer* _vertexBuffer;
 	ID3D11Buffer* _indexBuffer;
 	ID3D11Buffer* _materialBuffer;
-	float rot;
+	
 
 	unsigned int _indicesCnt;
 	unsigned int _verticesCnt;
@@ -55,8 +50,6 @@ public:
 
 	ID3D11Buffer* VertexBuffer(){ return _vertexBuffer; };
 
-
-	Vector3& GetPos(){ return pos; };
 
 	void Update();
 

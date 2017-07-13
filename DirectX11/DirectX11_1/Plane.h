@@ -11,20 +11,15 @@ class Plane
 	:public Primitive
 {
 private:
-	std::weak_ptr<Camera> _cameraPtr;
-	WorldAndCamera _worldAndCamera;
-	XMMATRIX _modelMatrix;
-	ID3D11Buffer* _matrixBuffer;
-	D3D11_MAPPED_SUBRESOURCE _mappedMatrixies;
+	
 
 	ID3D11SamplerState* _samplerState;
 
-	float rot;
 public:
 	Plane(const std::shared_ptr<Camera> cam);
 	~Plane();
 	Plane(float width, float height, Vector3 normal,
-		const std::shared_ptr<Camera>& camera);
+		const std::shared_ptr<Camera> camera);
 	
 	ID3D11Buffer* _vertexBuffer;
 	ID3D11Buffer* VertexBuffer(){ return _vertexBuffer; };

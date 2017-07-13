@@ -38,7 +38,7 @@ ResourceManager::LoadVS(
 
 		std::string path =  "shaders/" + srcFileName;
 
-		D3DX11CompileFromFile(
+		if (FAILED(D3DX11CompileFromFile(
 			path.c_str(),
 			nullptr,
 			nullptr,
@@ -49,7 +49,12 @@ ResourceManager::LoadVS(
 			nullptr,
 			&compiledVS,
 			&shaderError,
-			&result);
+			&result)))
+		{
+			std::string msg = path + "/" + functionName + "のコンパイルに失敗しました";
+			MessageBox(_hwnd, msg.c_str(), nullptr, MB_OK);
+			exit(0);
+		}
 
 		char* msg;
 		if (shaderError != nullptr)
@@ -100,7 +105,7 @@ ResourceManager::LoadPS(
 
 	std::string path = "shaders/" + srcFileName;
 
-	D3DX11CompileFromFile(
+	if (FAILED(D3DX11CompileFromFile(
 		path.c_str(),
 		nullptr,
 		nullptr,
@@ -111,13 +116,17 @@ ResourceManager::LoadPS(
 		nullptr,
 		&compiledPS,
 		&shaderError,
-		&result);
+		&result)))
+	{
+		std::string msg = path + "/" + functionName + "のコンパイルに失敗しました";
+		MessageBox(_hwnd, msg.c_str(), nullptr, MB_OK);
+		exit(0);
+	}
 
 	char* msg;
 	if (shaderError != nullptr)
 	{
 		msg = (char*)shaderError->GetBufferPointer();
-		int j = 0;
 	}
 
 	ID3D11PixelShader* tempPS = nullptr;
@@ -152,7 +161,7 @@ ResourceManager::LoadHS(
 	ID3DBlob* shaderError = nullptr;
 	std::string path =  "shaders/" + srcFileName;
 
-	D3DX11CompileFromFile(
+	if (FAILED(D3DX11CompileFromFile(
 		path.c_str(),
 		nullptr,
 		nullptr,
@@ -163,7 +172,12 @@ ResourceManager::LoadHS(
 		nullptr,
 		&compiledHS,
 		&shaderError,
-		&result);
+		&result)))
+	{
+		std::string msg = path + "/" + functionName + "のコンパイルに失敗しました";
+		MessageBox(_hwnd, msg.c_str(), nullptr, MB_OK);
+		exit(0);
+	}
 
 	char* msg;
 	if (shaderError != nullptr)
@@ -205,7 +219,7 @@ ResourceManager::LoadDS(
 	ID3DBlob* shaderError = nullptr;
 	std::string path = "shaders/" + srcFileName;
 
-	D3DX11CompileFromFile(
+	if (FAILED(D3DX11CompileFromFile(
 		path.c_str(),
 		nullptr,
 		nullptr,
@@ -216,7 +230,12 @@ ResourceManager::LoadDS(
 		nullptr,
 		&compiledDS,
 		&shaderError,
-		&result);
+		&result)))
+	{
+		std::string msg = path + "/" + functionName + "のコンパイルに失敗しました";
+		MessageBox(_hwnd, msg.c_str(), nullptr, MB_OK);
+		exit(0);
+	}
 
 	char* msg;
 	if (shaderError != nullptr)

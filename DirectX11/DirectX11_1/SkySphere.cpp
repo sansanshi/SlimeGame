@@ -5,9 +5,10 @@
 #include"Camera.h"
 #include"ResourceManager.h"
 
-SkySphere::SkySphere(unsigned int divNum, float radius,const std::shared_ptr<Camera>& cam) :_cameraPtr(cam)
+SkySphere::SkySphere(unsigned int divNum, float radius,const std::shared_ptr<Camera>& cam) 
 {
 	InitTransform();
+	_cameraPtr = cam;
 	DeviceDx11& dev = DeviceDx11::Instance();
 	ResourceManager& resourceMgr = ResourceManager::Instance();
 
@@ -188,18 +189,8 @@ SkySphere::SkySphere(unsigned int divNum, float radius,const std::shared_ptr<Cam
 	resourceMgr.LoadPS("Skysphere_PS", "SkySphere.hlsl", "SkySpherePS", "ps_5_0", _pixelShader);
 	
 	
-	_modelMatrix = XMMatrixIdentity();
-	_worldAndCamera.world = _modelMatrix;
-	XMMATRIX camView = _cameraPtr.lock()->CameraView();
-	XMMATRIX camProj = _cameraPtr.lock()->CameraProjection();
-	_worldAndCamera.cameraView = camView;
-	_worldAndCamera.cameraProj = camProj;
-	XMMATRIX lightView = _cameraPtr.lock()->LightView();
-	XMMATRIX lightProj = _cameraPtr.lock()->LightProjection();
-	_worldAndCamera.lightView = lightView;
-	_worldAndCamera.lightProj = lightProj;
+	UpdateMatrixies();
 
-	rot = 0.0f;
 
 	//mvp行列用のバッファ作る
 	//
@@ -216,19 +207,13 @@ SkySphere::SkySphere(unsigned int divNum, float radius,const std::shared_ptr<Cam
 
 	result = dev.Device()->CreateBuffer(&matBuffDesc, &d, &_matrixBuffer);
 
-	dev.Context()->Map(_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &_mappedMatrixies);
-	//ここでこのメモリの塊に、マトリックスの値をコピーしてやる
-	memcpy(_mappedMatrixies.pData, (void*)(&_worldAndCamera), sizeof(_worldAndCamera));
-	
-	dev.Context()->Unmap(_matrixBuffer, 0);
+	ApplyMatrixBuffer();
 
 	dev.Context()->VSSetConstantBuffers(0, 1, &_matrixBuffer);
 
 	//テクスチャ
 	_mainTex = resourceMgr.LoadSRV("Skysphere_main", "height00.png");
 
-	/*result = D3DX11CreateShaderResourceViewFromFile(dev.Device(), "height00.png", nullptr, nullptr, &_texture, &result);
-	dev.Context()->VSSetShaderResources(TEXTURE_MAIN, 1, &_texture);*/
 
 
 	//サンプラの設定
@@ -246,7 +231,6 @@ SkySphere::SkySphere(unsigned int divNum, float radius,const std::shared_ptr<Cam
 	moveForward = 0;
 	moveRight = 0;
 
-	int kk = 0;
 }
 
 void
@@ -270,9 +254,6 @@ SkySphere::CalculateTangentBinormal(TempVertex* v0, TempVertex* v1, TempVertex* 
 	Vector3 tangent;
 	Vector3 binormal;
 
-	//tangent.x = (uvVec02.y*vec01.x - uvVec01.y*vec02.x)*den;
-	//tangent.y = (uvVec02.y*vec01.y - uvVec01.y*vec02.y)*den;
-	//tangent.z = (uvVec02.y*vec01.z - uvVec01.y*vec02.z)*den;
 	tangent = vec01*uvVec02.y - vec02*uvVec01.y;//↑3はこっちでもいい
 
 												//binormal.x = (uvVec01.x*vec02.x - uvVec02.x*vec01.x)*den;
@@ -284,16 +265,6 @@ SkySphere::CalculateTangentBinormal(TempVertex* v0, TempVertex* v1, TempVertex* 
 	tangent = tangent.Normalize();
 	binormal = binormal.Normalize();
 
-	//↓Normalize関数作ったので要らない
-	/*float length;
-	length = sqrt((tangent.x*tangent.x) + (tangent.y * tangent.y) + (tangent.z*tangent.z));
-	tangent.x = tangent.x / length;
-	tangent.y = tangent.y / length;
-	tangent.z = tangent.z / length;
-	length = sqrt((binormal.x*binormal.x) + (binormal.y*binormal.y) + (binormal.z*binormal.z));
-	binormal.x = binormal.x / length;
-	binormal.y = binormal.y / length;
-	binormal.z = binormal.z / length;*/
 
 	vertsForBuff[indices[idx]].tangent = tangent;
 	vertsForBuff[indices[idx]].binormal = binormal;
@@ -302,8 +273,6 @@ SkySphere::CalculateTangentBinormal(TempVertex* v0, TempVertex* v1, TempVertex* 
 	vertsForBuff[indices[idx + 2]].tangent = tangent;
 	vertsForBuff[indices[idx + 2]].binormal = binormal;
 
-
-	int a = 0;
 
 }
 
@@ -315,30 +284,11 @@ SkySphere::~SkySphere()
 void
 SkySphere::Update()
 {
-	
-
-	
-	XMMATRIX modelMatrix = XMMatrixIdentity();
-	XMMATRIX transMatrix = XMMatrixTranslation(_pos.x, _pos.y, _pos.z);
-	XMMATRIX scaleMat = XMMatrixScaling(_scale.x, _scale.y, _scale.z);
-	XMMATRIX rotMat = XMMatrixRotationRollPitchYaw(_rot.x, _rot.y, _rot.z);
-
-	modelMatrix = XMMatrixMultiply(transMatrix, XMMatrixMultiply(rotMat, scaleMat));
-
-
-	_modelMatrix = modelMatrix;
-	//_modelMatrix = XMMatrixIdentity();
-	_worldAndCamera.world = _modelMatrix;
-	_worldAndCamera.cameraView = _cameraPtr.lock()->CameraView();
-	_worldAndCamera.cameraProj = _cameraPtr.lock()->CameraProjection();
-	_worldAndCamera.lightView = _cameraPtr.lock()->LightView();
-	_worldAndCamera.lightProj = _cameraPtr.lock()->LightProjection();
+	UpdateMatrixies();
 }
 void
 SkySphere::Draw()
 {
-	//	_worldAndCamera.camera = _cameraPtr.lock()->GetMatrixies().cameraview;//ライトからの視点にするのでここ書き換える
-	//	_worldAndCamera.lightview = _cameraPtr.lock()->GetMatrixies().lightview;
 	DeviceDx11& dev = DeviceDx11::Instance();
 
 	dev.Context()->PSSetSamplers(0, 1, &_samplerState_Wrap);
@@ -351,22 +301,15 @@ SkySphere::Draw()
 	dev.Context()->PSSetShader(*_pixelShader.lock(), nullptr, 0);//PMDモデル表示用シェーダセット
 	dev.Context()->IASetInputLayout(*_inputlayout.lock());
 
-	
-
-
-
 	_worldAndCamera.cameraView = _cameraPtr.lock()->CameraView();
 	_worldAndCamera.cameraProj = _cameraPtr.lock()->CameraProjection();
 	_worldAndCamera.lightView = _cameraPtr.lock()->LightView();
 	_worldAndCamera.lightProj = _cameraPtr.lock()->LightProjection();
 
-
 	dev.Context()->VSSetConstantBuffers(0, 1, &_matrixBuffer);
-	dev.Context()->Map(_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &_mappedMatrixies);
-	//ここでこのメモリの塊に、マトリックスの値をコピーしてやる
-	memcpy(_mappedMatrixies.pData, (void*)(&_worldAndCamera), sizeof(_worldAndCamera));
-	
-	dev.Context()->Unmap(_matrixBuffer, 0);
+
+	ApplyConstantBuffer(_matrixBuffer, _mappedMatrixies, _worldAndCamera);
+
 	dev.Context()->IASetVertexBuffers(0, 1, &_vertexBuffer, &stride, &offset);
 	dev.Context()->IASetIndexBuffer(_indexBuffer, DXGI_FORMAT_R16_UINT, 0);
 
@@ -377,5 +320,4 @@ SkySphere::Draw()
 
 	dev.Context()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	dev.Context()->DrawIndexed(_indicesCnt, 0, 0);
-	//dev.Context()->Draw(_verticesCnt, 0);
 }

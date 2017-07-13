@@ -15,7 +15,6 @@ cbuffer global:register(b0){
 struct VS_CONTROL_POINT_OUTPUT
 {
 	float3 vPosition : WORLDPOS;
-	// TODO: 他のスタッフの変更/追加
 	float3 normal:NORMAL;
 	float2 uv:TEXCOORD0;
 };
@@ -101,6 +100,9 @@ struct DS_OUTPUT
 	float4 fogColor:COLOR0;
 	float fog : TEXCOORD1;
 	float2 windowSize:TEXCOORD2;
+
+	float3 eyePos:EYEPOS;
+	float3 worldPos:WORLDPOS;
 };
 
 [domain("quad")]
@@ -143,6 +145,9 @@ DS_OUTPUT TessDS(HS_CONSTANT_DATA_OUTPUT In, float2 UV:SV_DomainLocation, const 
 
 	o.windowSize = windowSize;
 
+	o.eyePos = eyePos.xyz;
+	o.worldPos = mul(_world, postemp);
+
 	return o;
 }
 
@@ -160,7 +165,12 @@ float4 TessPS(DS_OUTPUT o):SV_Target
 		//return float4(ld-lightviewDepth, 0, 0, 1);
 	
 	if (shadowUV.x == satUV.x&&shadowUV.y == satUV.y&&ld > lightviewDepth +0.001f){
-		shadowWeight = 0.3f;
+		shadowWeight = 0.8f;
+		float f = 1.0f - saturate((length(o.worldPos - o.eyePos) / 70.0f));
+		f = pow(f, 2);
+		shadowWeight *= f;
+
+		return float4(f, f, f, 1);
 	}
 
 	float disp = _dispMap.Sample(_samplerState, o.uv);

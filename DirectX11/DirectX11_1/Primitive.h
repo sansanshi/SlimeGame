@@ -4,6 +4,8 @@
 #include<memory>
 #include"Define.h"
 
+class Camera;
+
 struct PrimitiveVertex{
 	Vector3 pos;
 	Vector3 normal;
@@ -55,6 +57,14 @@ protected:
 
 	void InitTransform();
 
+	unsigned int _vertBuffStride;
+	unsigned int _vertBuffOffs;
+
+	ID3D11Buffer* _matrixBuffer;
+	D3D11_MAPPED_SUBRESOURCE _mappedMatrixies;
+	WorldAndCamera _worldAndCamera;
+
+	std::weak_ptr<Camera> _cameraPtr;
 
 public:
 	Primitive();
@@ -68,5 +78,23 @@ public:
 
 	void SetScale(XMFLOAT3 scale);
 	XMFLOAT3 GetScale();
+
+	void ApplyMatrixBuffer();
+
+	template <typename T>
+	void ApplyConstantBuffer(ID3D11Buffer* buffer, D3D11_MAPPED_SUBRESOURCE& mappedResource, const T& data)
+	{
+		DeviceDx11& dev = DeviceDx11::Instance();
+
+		dev.Context()->Map(buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+		//ここでこのメモリの塊に、マトリックスの値をコピーしてやる
+		memcpy(mappedResource.pData, (void*)(&data), sizeof(data));
+		//*(XMMATRIX*)mem.pData = matrix;//川野先生の書き方　memcpyで数値を間違えるとメモリがぐちゃぐちゃになる
+		dev.Context()->Unmap(buffer, 0);
+		return;
+	}
+
+	void UpdateMatrixies();
+	void Update();
 };
 

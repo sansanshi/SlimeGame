@@ -5,12 +5,13 @@
 #include"Camera.h"
 #include"ResourceManager.h"
 
-TessPlane::TessPlane(const std::shared_ptr<Camera>& camera) :_cameraPtr(camera)
+TessPlane::TessPlane(const std::shared_ptr<Camera>& camera) 
 {
 };
 
-TessPlane::TessPlane(float width, float depth, Vector3 normal, const std::shared_ptr<Camera>& camera) :_cameraPtr(camera)
+TessPlane::TessPlane(float width, float depth, Vector3 normal, const std::shared_ptr<Camera>& camera) 
 {
+	_cameraPtr = camera;
 	InitTransform();
 	DeviceDx11& dev = DeviceDx11::Instance();
 	ResourceManager& resourceMgr = ResourceManager::Instance();
@@ -81,17 +82,7 @@ TessPlane::TessPlane(float width, float depth, Vector3 normal, const std::shared
 		"Tessellation.hlsl", "DepthTessPS", "ps_5_0", _cameraDepthPS);
 	
 
-	_modelMatrix = XMMatrixIdentity();
-	_worldAndCamera.world = _modelMatrix;
-	_worldAndCamera.cameraView = _cameraPtr.lock()->CameraView();
-	_worldAndCamera.cameraProj = _cameraPtr.lock()->CameraProjection();
-	_worldAndCamera.lightView = _cameraPtr.lock()->LightView();
-	_worldAndCamera.lightProj = _cameraPtr.lock()->LightProjection();
-	//_mvp.worldMatrix = _modelMatrix;//cameraのUpdateでカメラのworldMatrixを変えるようになったら2つを乗算する
-	//_mvp.viewMatrix = _cameraPtr.lock()->GetMatrixies().view;
-	//_mvp.projectionMatrix = _cameraPtr.lock()->GetMatrixies().projection;
-
-	rot = 0.0f;
+	UpdateMatrixies();
 
 	//mvp行列用のバッファ作る
 	//
@@ -192,11 +183,7 @@ TessPlane::DrawLightView()
 	_worldAndCamera.lightView = _cameraPtr.lock()->LightView();
 	_worldAndCamera.lightProj = _cameraPtr.lock()->LightProjection();
 
-	dev.Context()->Map(_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &_mappedMatrixies);
-	//ここでこのメモリの塊に、マトリックスの値をコピーしてやる
-	memcpy(_mappedMatrixies.pData, (void*)(&_worldAndCamera), sizeof(_worldAndCamera));
-	
-	dev.Context()->Unmap(_matrixBuffer, 0);
+	ApplyConstantBuffer(_matrixBuffer, _mappedMatrixies, _worldAndCamera);
 
 
 	dev.Context()->VSSetShader(*_vertexShader.lock(), nullptr, 0);
@@ -224,20 +211,7 @@ TessPlane::DrawLightView()
 void
 TessPlane::Update()
 {
-	XMMATRIX modelMatrix = XMMatrixIdentity();
-	XMMATRIX transMatrix = XMMatrixTranslation(_pos.x, _pos.y, _pos.z);
-	XMMATRIX scaleMat = XMMatrixScaling(_scale.x, _scale.y, _scale.z);
-	XMMATRIX rotMat = XMMatrixRotationRollPitchYaw(_rot.x, _rot.y, _rot.z);
-
-	modelMatrix = XMMatrixMultiply(transMatrix, XMMatrixMultiply(rotMat, scaleMat));
-
-
-	_modelMatrix = modelMatrix;
-	_worldAndCamera.world = modelMatrix;
-	_worldAndCamera.cameraView = _cameraPtr.lock()->CameraView();
-	_worldAndCamera.cameraProj = _cameraPtr.lock()->CameraProjection();
-	_worldAndCamera.lightView = _cameraPtr.lock()->LightView();
-	_worldAndCamera.lightProj = _cameraPtr.lock()->LightProjection();
+	UpdateMatrixies();
 
 }
 
@@ -254,11 +228,7 @@ TessPlane::DrawCameraDepth()
 	_worldAndCamera.lightView = _cameraPtr.lock()->CameraView();
 	_worldAndCamera.lightProj = _cameraPtr.lock()->CameraProjection();
 
-	dev.Context()->Map(_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &_mappedMatrixies);
-	//ここでこのメモリの塊に、マトリックスの値をコピーしてやる
-	memcpy(_mappedMatrixies.pData, (void*)(&_worldAndCamera), sizeof(_worldAndCamera));
-	
-	dev.Context()->Unmap(_matrixBuffer, 0);
+	ApplyConstantBuffer(_matrixBuffer, _mappedMatrixies, _worldAndCamera);
 
 
 	dev.Context()->VSSetShader(*_vertexShader.lock(), nullptr, 0);

@@ -5,8 +5,9 @@
 #include"Camera.h"
 #include"ResourceManager.h"
 
-Sphere::Sphere(unsigned int divNum,float radius,const std::shared_ptr<Camera>& camera) :_cameraPtr(camera)
+Sphere::Sphere(unsigned int divNum,float radius,const std::shared_ptr<Camera>& camera) 
 {
+	_cameraPtr = camera;
 	InitTransform();
 	DeviceDx11& dev = DeviceDx11::Instance();
 	ResourceManager& resourceMgr = ResourceManager::Instance();
@@ -38,8 +39,6 @@ Sphere::Sphere(unsigned int divNum,float radius,const std::shared_ptr<Camera>& c
 				radius*sinf(theta)*sinf(phi));
 			Vector3 vec = vertices[nIndex].pos - Vector3(0, 0, 0);
 			vertices[nIndex].normal = vec.Normalize();
-			//vertices[nIndex].tangent = cosf(theta);
-			//vertices[nIndex].binormal = sinf()
 			vertices[nIndex].uv = Vector2(phi / (2.0f * XM_PI), theta / XM_PI);
 			if (i > divNum - 1){
 				float test = phi / (2.0f * XM_PI);
@@ -50,24 +49,7 @@ Sphere::Sphere(unsigned int divNum,float radius,const std::shared_ptr<Camera>& c
 		}
 		phi += angleDelta;
 	}
-	int check = 0;
 
-	/*for (int i = 0; i < divNum / 2 + 1; i++)
-	{
-		phi = 0.0f;
-		for (int j = 0; j < divNum + 1; j++)
-		{
-			vertices[nIndex].pos = Vector3(radius*sinf(theta)*cosf(phi),
-				radius*cosf(theta),
-				radius*sinf(theta)*sinf(phi));
-			Vector3 vec = vertices[nIndex].pos - Vector3(0, 0, 0);
-			vertices[nIndex].normal = vec.Normalize();
-			vertices[nIndex].uv = Vector2(phi / (2.0f / XM_PI), theta / XM_PI);
-			nIndex++;
-			phi += angleDelta;
-		}
-		theta += angleDelta;
-	}*/
 	int jj = nIndex;
 	_verticesCnt = vertices.size();
 	int k = 0;
@@ -93,15 +75,11 @@ Sphere::Sphere(unsigned int divNum,float radius,const std::shared_ptr<Camera>& c
 			nIndex += 3;
 		}
 	}
-	int jk = nIndex;
 	_indicesCnt = indices.size();
 
 	for (auto& v : vertices)
 	{
-		Vector3 up = Vector3(0, 1, 0);/*
-		Vector3 z = Vector3(0, 0, 1);
-		v.binormal = v.normal.Cross(z);
-		v.tangent = v.binormal.Cross(v.normal);*/
+		Vector3 up = Vector3(0, 1, 0);
 		v.tangent = v.normal.Cross(up);
 		v.binormal = v.tangent.Cross(v.normal);
 		int check = 0;
@@ -235,14 +213,8 @@ Sphere::Sphere(unsigned int divNum,float radius,const std::shared_ptr<Camera>& c
 
 
 	
-	_modelMatrix = XMMatrixIdentity();
-	_worldAndCamera.world = _modelMatrix;
-	_worldAndCamera.cameraView = _cameraPtr.lock()->CameraView();
-	_worldAndCamera.cameraProj = _cameraPtr.lock()->CameraProjection();
-	_worldAndCamera.lightView = _cameraPtr.lock()->LightView();
-	_worldAndCamera.lightProj = _cameraPtr.lock()->LightProjection();
+	UpdateMatrixies();
 
-	rot = 0.0f;
 
 	//mvp行列用のバッファ作る
 	//
@@ -251,19 +223,13 @@ Sphere::Sphere(unsigned int divNum,float radius,const std::shared_ptr<Camera>& c
 	matBuffDesc.ByteWidth = sizeof(WorldAndCamera);
 	matBuffDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;//バッファの中身はCPUで書き換える
 	matBuffDesc.Usage = D3D11_USAGE_DYNAMIC;//CPUによる書き込み、GPUによる読み込みが行われるという意味
-	//matBuffDesc.ByteWidth = sizeof(XMMATRIX);
-	//matBuffDesc.StructureByteStride = sizeof(XMMATRIX);
-
+	
 	D3D11_SUBRESOURCE_DATA d;
 	d.pSysMem = &_worldAndCamera;
 
 	result = dev.Device()->CreateBuffer(&matBuffDesc, &d, &_matrixBuffer);
 
-	dev.Context()->Map(_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &_mappedMatrixies);
-	//ここでこのメモリの塊に、マトリックスの値をコピーしてやる
-	memcpy(_mappedMatrixies.pData, (void*)(&_worldAndCamera), sizeof(_worldAndCamera));
-	//*(XMMATRIX*)mem.pData = matrix;//川野先生の書き方　memcpyで数値を間違えるとメモリがぐちゃぐちゃになる
-	dev.Context()->Unmap(_matrixBuffer, 0);
+	ApplyConstantBuffer(_matrixBuffer, _mappedMatrixies, _worldAndCamera);
 
 	dev.Context()->VSSetConstantBuffers(0, 1, &_matrixBuffer);
 
@@ -298,7 +264,6 @@ Sphere::Sphere(unsigned int divNum,float radius,const std::shared_ptr<Camera>& c
 	moveForward = 0;
 	moveRight = 0;
 
-	int kk = 0;
 }
 
 void
@@ -345,8 +310,6 @@ std::vector<PrimitiveVertex>& vertsForBuff, const std::vector<unsigned short>& i
 	vertsForBuff[indices[idx + 2]].binormal = binormal;
 
 
-	int a = 0;
-
 }
 
 
@@ -357,27 +320,11 @@ Sphere::~Sphere()
 void 
 Sphere::Update()
 {
-	XMMATRIX modelMatrix = XMMatrixIdentity();
-	XMMATRIX transMatrix = XMMatrixTranslation(_pos.x, _pos.y, _pos.z);
-	XMMATRIX scaleMat = XMMatrixScaling(_scale.x, _scale.y, _scale.z);
-	XMMATRIX rotMat = XMMatrixRotationRollPitchYaw(_rot.x, _rot.y, _rot.z);
-
-	modelMatrix = XMMatrixMultiply(transMatrix, XMMatrixMultiply(rotMat, scaleMat));
-
-
-	_modelMatrix = modelMatrix;
-	//_modelMatrix = XMMatrixIdentity();
-	_worldAndCamera.world = _modelMatrix;
-	_worldAndCamera.cameraView = _cameraPtr.lock()->CameraView();
-	_worldAndCamera.cameraProj = _cameraPtr.lock()->CameraProjection();
-	_worldAndCamera.lightView = _cameraPtr.lock()->LightView();
-	_worldAndCamera.lightProj = _cameraPtr.lock()->LightProjection();
+	UpdateMatrixies();
 }
 void 
 Sphere::Draw()
 {
-//	_worldAndCamera.camera = _cameraPtr.lock()->GetMatrixies().cameraview;//ライトからの視点にするのでここ書き換える
-//	_worldAndCamera.lightview = _cameraPtr.lock()->GetMatrixies().lightview;
 	DeviceDx11& dev = DeviceDx11::Instance();
 
 	dev.Context()->PSSetSamplers(0, 1, &_samplerState_Wrap);
@@ -393,8 +340,6 @@ Sphere::Draw()
 	dev.Context()->VSSetShaderResources(TEXTURE_DISPLACEMENT, 1, _displacementTex._Get());
 	dev.Context()->VSSetShaderResources(TEXTURE_MASK, 1, _dispMask._Get());
 
-
-	
 	_worldAndCamera.cameraView = _cameraPtr.lock()->CameraView();
 	_worldAndCamera.cameraProj = _cameraPtr.lock()->CameraProjection();
 	_worldAndCamera.lightView = _cameraPtr.lock()->LightView();
@@ -402,11 +347,10 @@ Sphere::Draw()
 
 
 	dev.Context()->VSSetConstantBuffers(0, 1, &_matrixBuffer);
-	dev.Context()->Map(_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &_mappedMatrixies);
-	//ここでこのメモリの塊に、マトリックスの値をコピーしてやる
-	memcpy(_mappedMatrixies.pData, (void*)(&_worldAndCamera), sizeof(_worldAndCamera));
-	
-	dev.Context()->Unmap(_matrixBuffer, 0);
+
+	//ApplyMatrixBuffer();
+	ApplyConstantBuffer(_matrixBuffer, _mappedMaterial, _worldAndCamera);
+
 	dev.Context()->IASetVertexBuffers(0, 1, &_vertexBuffer, &stride, &offset);
 	dev.Context()->IASetIndexBuffer(_indexBuffer, DXGI_FORMAT_R16_UINT, 0);
 
@@ -417,7 +361,6 @@ Sphere::Draw()
 
 	dev.Context()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	dev.Context()->DrawIndexed(_indicesCnt, 0, 0);
-	//dev.Context()->Draw(_verticesCnt, 0);
 }
 void
 Sphere::DrawLightView()
@@ -436,11 +379,9 @@ Sphere::DrawLightView()
 	_worldAndCamera.lightProj = _cameraPtr.lock()->LightProjection();
 
 	dev.Context()->VSSetConstantBuffers(0, 1, &_matrixBuffer);
-	dev.Context()->Map(_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &_mappedMatrixies);
-	//ここでこのメモリの塊に、マトリックスの値をコピーしてやる
-	memcpy(_mappedMatrixies.pData, (void*)(&_worldAndCamera), sizeof(_worldAndCamera));
-	
-	dev.Context()->Unmap(_matrixBuffer, 0);
+
+	ApplyMatrixBuffer();
+	//ApplyConstantBuffer(_matrixBuffer, _mappedMatrixies, _worldAndCamera);
 
 	dev.Context()->IASetInputLayout(*_lightviewInputLayout.lock());
 	dev.Context()->IASetVertexBuffers(0, 1, &_vertexBuffer, &stride, &offset);
@@ -448,7 +389,6 @@ Sphere::DrawLightView()
 
 	dev.Context()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	dev.Context()->DrawIndexed(_indicesCnt, 0, 0);
-	//dev.Context()->Draw(_verticesCnt, 0);
 }
 void
 Sphere::DrawCameraDepth()
@@ -461,18 +401,14 @@ Sphere::DrawCameraDepth()
 	dev.Context()->PSSetShader(*_lightviewPS.lock(), nullptr, 0);
 
 
-	_worldAndCamera.world = _modelMatrix;
 	_worldAndCamera.cameraView = _cameraPtr.lock()->CameraView();
 	_worldAndCamera.cameraProj = _cameraPtr.lock()->CameraProjection();
 	_worldAndCamera.lightView = _cameraPtr.lock()->CameraView();
 	_worldAndCamera.lightProj = _cameraPtr.lock()->CameraProjection();
 
 	dev.Context()->VSSetConstantBuffers(0, 1, &_matrixBuffer);
-	dev.Context()->Map(_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &_mappedMatrixies);
-	//ここでこのメモリの塊に、マトリックスの値をコピーしてやる
-	memcpy(_mappedMatrixies.pData, (void*)(&_worldAndCamera), sizeof(_worldAndCamera));
 	
-	dev.Context()->Unmap(_matrixBuffer, 0);
+	ApplyConstantBuffer(_matrixBuffer, _mappedMatrixies, _worldAndCamera);
 
 	dev.Context()->IASetInputLayout(*_lightviewInputLayout.lock());
 	dev.Context()->IASetVertexBuffers(0, 1, &_vertexBuffer, &stride, &offset);
@@ -482,44 +418,3 @@ Sphere::DrawCameraDepth()
 	dev.Context()->DrawIndexed(_indicesCnt, 0, 0);
 }
 
-void
-Sphere::DrawLightView_color()
-{
-	_worldAndCamera.cameraView = _cameraPtr.lock()->LightView();//ライトから見たいのでここ書き換える
-	_worldAndCamera.cameraProj = _cameraPtr.lock()->LightProjection();
-	_worldAndCamera.lightView = _cameraPtr.lock()->LightView();
-	_worldAndCamera.lightProj = _cameraPtr.lock()->LightProjection();
-
-	DeviceDx11& dev = DeviceDx11::Instance();
-
-	dev.Context()->PSSetSamplers(0, 1, &_samplerState_Wrap);
-	dev.Context()->PSSetShaderResources(TEXTURE_NORMAL, 1, _normalTex._Get());
-
-	unsigned int stride = sizeof(float) * 14;
-	unsigned int offset = 0;
-
-	dev.Context()->VSSetShader(*_vertexShader.lock(), nullptr, 0);//ＰＭＤモデル表示用シェーダセット
-	dev.Context()->PSSetShader(*_pixelShader.lock(), nullptr, 0);//PMDモデル表示用シェーダセット
-	dev.Context()->IASetInputLayout(*_inputlayout.lock());
-
-	dev.Context()->VSSetShaderResources(TEXTURE_DISPLACEMENT, 1, _displacementTex._Get());
-	dev.Context()->VSSetShaderResources(TEXTURE_MASK, 1, _dispMask._Get());
-
-	dev.Context()->VSSetConstantBuffers(0, 1, &_matrixBuffer);
-	dev.Context()->Map(_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &_mappedMatrixies);
-	//ここでこのメモリの塊に、マトリックスの値をコピーしてやる
-	memcpy(_mappedMatrixies.pData, (void*)(&_worldAndCamera), sizeof(_worldAndCamera));
-	
-	dev.Context()->Unmap(_matrixBuffer, 0);
-	dev.Context()->IASetVertexBuffers(0, 1, &_vertexBuffer, &stride, &offset);
-	dev.Context()->IASetIndexBuffer(_indexBuffer, DXGI_FORMAT_R16_UINT, 0);
-
-	dev.Context()->VSSetConstantBuffers(1, 1, &_materialBuffer);
-	dev.Context()->Map(_materialBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &_mappedMaterial);
-	memcpy(_mappedMaterial.pData, (void*)(&_material), sizeof(_material));
-	dev.Context()->Unmap(_materialBuffer, 0);
-
-	dev.Context()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	dev.Context()->DrawIndexed(_indicesCnt, 0, 0);
-	//dev.Context()->Draw(_verticesCnt, 0);
-}

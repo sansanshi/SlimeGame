@@ -12,17 +12,8 @@ private:
 	unsigned int _hatchVertCnt;
 
 
-	
-
 	unsigned int _vertexCnt;
-	std::weak_ptr<Camera> _cameraPtr;
-
-	//MATRIXIES _mvp;
-	WorldAndCamera _worldAndCamera;
-	XMMATRIX _modelMatrix;
-
-	ID3D11Buffer* _matrixBuffer;
-	D3D11_MAPPED_SUBRESOURCE _mappedMatrixies;
+	
 
 	float angle;//‚Æ‚è‚ ‚¦‚¸‰ñ“]‚³‚¹‚é—p
 	float _radius;

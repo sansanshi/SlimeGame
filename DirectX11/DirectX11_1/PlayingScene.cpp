@@ -351,11 +351,6 @@ PlayingScene::Update()
 	}
 
 
-	
-	/*POINT p;
-	GetCursorPos(&p);
-	ScreenToClient(_hwnd, &p);*/
-
 #pragma endregion
 
 	//シェーダに渡すタイマーの更新
@@ -388,13 +383,10 @@ PlayingScene::Update()
 	_makerHUD->Update();
 
 	float color[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
-	//float white[4] = { 1.0, 1.0, 1.0, 1.0 };
 
 
 	_renderer->ChangePTForPMD();
 	_renderer->CullBack();
-	_renderer->ChangeRT_LightColor();
-	_sphere->DrawLightView_color();
 
 
 #pragma region ライトビュー描画
@@ -442,9 +434,9 @@ PlayingScene::Update()
 
 	_renderer->ChangePTForPrimitive();
 	_cylinder->Draw();//柱
-	_cylinder2->Draw();
-	_cylinder3->Draw();
-	_cylinder4->Draw();
+	//_cylinder2->Draw();
+	//_cylinder3->Draw();
+	//_cylinder4->Draw();
 
 	
 	_renderer->ChangePTForPMD();
@@ -463,7 +455,7 @@ PlayingScene::Update()
 	resource = _renderer->CameraDepthShaderResource();
 	dev.Context()->PSSetShaderResources(TEXTURE_CAMERA_DEPTH, 1, &resource);
 	_renderer->ZWriteOff();
-	_plane->Draw();//床
+	//_plane->Draw();//床
 	_decalFac->Draw();//デカールボックス
 	_decalBox->DebugDraw();//デバッグ用デカールボックス
 	_renderer->ZWriteOn();
