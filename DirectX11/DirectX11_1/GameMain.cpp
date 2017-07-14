@@ -19,6 +19,10 @@ LRESULT CALLBACK WindowProcedure(
 		PostQuitMessage(0);
 		return 0;
 	}
+	if (msg == WM_MOUSEWHEEL)
+	{
+		//‚±‚±
+	}
 	return DefWindowProc(hwnd, msg, wpal, lpal);
 }
 
@@ -76,7 +80,7 @@ GameMain::GameLoop()
 	DeviceDx11& dev = DeviceDx11::Instance();
 
 	MSG msg;
-	float color[] = { 0.5, 0.5, 0.5, 1.0 };
+	float color[] = { 0.0f, 0.0f, 0.0f, 0.0f };
 
 	ShowWindow(_hwnd, SW_SHOW);
 

@@ -66,8 +66,8 @@ Plane::Plane(float width, float depth, Vector3 normal,
 
 	
 	_mainTex = resourceMgr.LoadSRV("Plane_main", "watertest.png");
-	_subTex = resourceMgr.LoadSRV("Plane_sub", "noise.png");
-	_normalTex = resourceMgr.LoadSRV("Plane_normal", "normal0.png");
+	_subTex = resourceMgr.LoadSRV("Plane_sub", "noise__.png");
+	_normalTex = resourceMgr.LoadSRV("Plane_normal", "normal4.png");
 	_flowTex = resourceMgr.LoadSRV("Plane_flow", "flow_.png");
 
 

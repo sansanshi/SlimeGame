@@ -132,7 +132,7 @@ PlayingScene::PlayingScene(HWND hwnd)
 	_oldCursorPoint = { 0 };
 
 	_billBoard = std::make_unique<Billboard>(_camera, 10, 10);//new Billboard(_camera,10,10);
-	_debugHUD = std::make_unique<HUD>(_camera, 0, 0, 320, 240);//new HUD(_camera,0,0,320,240);
+	_debugHUD = std::make_unique<HUD>(_camera, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);//new HUD(_camera,0,0,320,240);
 	_makerHUD = std::make_unique<HUD>(_camera, -8, -8, 16, 16);// new HUD(_camera, -8, -8, 16, 16);
 
 

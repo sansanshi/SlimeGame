@@ -102,7 +102,7 @@ float4 WaterPS(Output o) :SV_Target
 float halfPhase = 2.5f / 2.0f;
 
 //ノイズテクスチャ
-float noise = _subTex.Sample(_samplerState, o.uv*2).r;
+float noise = _subTex.Sample(_samplerState, o.uv*5).r;
 //フロートテクスチャ
 float2 flowVector = _flowTex.Sample(_samplerState, o.uv).rg;
 flowVector = flowVector*2.0f - 1.0f;
@@ -110,7 +110,7 @@ flowVector.x *= -1.0f;
 float Time = o.timer / 60.0f + noise;
 
 float flowOffs0 = fmod(Time, Phase);
-float flowOffs1 = fmod(Time - halfPhase, Phase);
+float flowOffs1 = fmod(Time + halfPhase, Phase);
 
 float phase0 =  flowOffs0;
 float phase1 =  flowOffs1;
