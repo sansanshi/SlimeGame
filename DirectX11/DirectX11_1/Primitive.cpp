@@ -1,6 +1,7 @@
 #include "Primitive.h"
 #include"DeviceDx11.h"
 #include"Camera.h"
+#include"ShaderDefine.h"
 
 Primitive::Primitive()
 {
@@ -79,4 +80,94 @@ Primitive::UpdateMatrixies()
 	_worldAndCamera.world = modelMatrix;
 	_worldAndCamera.cameraView = _cameraPtr.lock()->CameraView();
 	_worldAndCamera.cameraProj = _cameraPtr.lock()->CameraProjection();
+}
+
+void
+Primitive::ApplyCameraShaders()
+{
+	DeviceDx11& dev = DeviceDx11::Instance();
+	if (std::shared_ptr<ID3D11VertexShader*> r = _vertexShader.lock())
+	{
+		dev.Context()->VSSetShader(*_vertexShader.lock(), nullptr, 0);
+	}
+	if (std::shared_ptr<ID3D11InputLayout*> r = _inputlayout.lock())
+	{
+		dev.Context()->IASetInputLayout(*_inputlayout.lock());
+	}
+	if (std::shared_ptr<ID3D11PixelShader*> r = _pixelShader.lock())
+	{
+		dev.Context()->PSSetShader(*_pixelShader.lock(), nullptr, 0);
+	}
+	if (std::shared_ptr<ID3D11HullShader*> r = _hullShader.lock())
+	{
+		dev.Context()->HSSetShader(*_hullShader.lock(), nullptr, 0);
+	}
+	if (std::shared_ptr<ID3D11DomainShader*> r = _domainShader.lock())
+	{
+		dev.Context()->DSSetShader(*_domainShader.lock(), nullptr, 0);
+	}
+}
+
+void
+Primitive::ApplyDepthShaders()
+{
+	DeviceDx11& dev = DeviceDx11::Instance();
+	if (std::shared_ptr<ID3D11VertexShader*> r = _lightviewVS.lock())
+	{
+		dev.Context()->VSSetShader(*_lightviewVS.lock(), nullptr, 0);
+	}
+	if (std::shared_ptr<ID3D11InputLayout*> r = _lightviewInputLayout.lock())
+	{
+		dev.Context()->IASetInputLayout(*_lightviewInputLayout.lock());
+	}
+	if (std::shared_ptr<ID3D11PixelShader*> r = _lightviewPS.lock())
+	{
+		dev.Context()->PSSetShader(*_lightviewPS.lock(), nullptr, 0);
+	}
+	if (std::shared_ptr<ID3D11HullShader*> r = _hullShader.lock())
+	{
+		dev.Context()->HSSetShader(*_hullShader.lock(), nullptr, 0);
+	}
+	if (std::shared_ptr<ID3D11DomainShader*> r = _domainShader.lock())
+	{
+		dev.Context()->DSSetShader(*_domainShader.lock(), nullptr, 0);
+	}
+}
+
+void
+Primitive::ApplyTextures()
+{
+	DeviceDx11& dev = DeviceDx11::Instance();
+	if (std::shared_ptr<ID3D11ShaderResourceView*> t = _mainTex.lock())
+	{
+		dev.Context()->PSSetShaderResources(TEXTURE_MAIN, 1, t._Get());
+	}
+	if (std::shared_ptr<ID3D11ShaderResourceView*> t = _subTex.lock())
+	{
+		dev.Context()->PSSetShaderResources(TEXTURE_SUB, 1, t._Get());
+	}
+	if (std::shared_ptr<ID3D11ShaderResourceView*> t = _normalTex.lock())
+	{
+		dev.Context()->PSSetShaderResources(TEXTURE_NORMAL, 1, t._Get());
+	}
+	if (std::shared_ptr<ID3D11ShaderResourceView*> t = _flowTex.lock())
+	{
+		dev.Context()->PSSetShaderResources(TEXTURE_FLOW, 1, t._Get());
+	}
+	if (std::shared_ptr<ID3D11ShaderResourceView*> t = _dispMask.lock())
+	{
+		dev.Context()->PSSetShaderResources(TEXTURE_MASK, 1, t._Get());
+	}
+	if (std::shared_ptr<ID3D11ShaderResourceView*> t = _displacementTex.lock())
+	{
+		dev.Context()->PSSetShaderResources(TEXTURE_DISPLACEMENT, 1, t._Get());
+	}
+	if (std::shared_ptr<ID3D11ShaderResourceView*> t = _heightMap.lock())
+	{
+		dev.Context()->PSSetShaderResources(TEXTURE_HEIGHT, 1, t._Get());
+	}
+	if (std::shared_ptr<ID3D11ShaderResourceView*> t = _subTex2.lock())
+	{
+		dev.Context()->PSSetShaderResources(TEXTURE_SUB2, 1, t._Get());
+	}
 }

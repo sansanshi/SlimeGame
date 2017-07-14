@@ -77,7 +77,7 @@ Output woodVS(float4 pos:POSITION, float4 normal : NORMAL, float2 uv : TEXCOORD,
 	o.nearZ = nearZ;
 
 	float dist = length(mul(_world, pos).xyz - eyePos.xyz);
-	o.fog = fogCoord.x + dist*fogCoord.y;
+	o.fog = saturate(fogCoord.x + dist*fogCoord.y);
 	o.fogColor = fogColor;
 
 	o.windowSize = windowSize;

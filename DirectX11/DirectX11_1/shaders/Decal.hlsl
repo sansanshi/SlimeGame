@@ -76,7 +76,7 @@ Output DecalBoxVS_Debug(float4 pos:POSITION)
 
 	float dist = length(mul(mul(__view, __world), pos));
 	o.fogColor = fogColor;
-	o.fog = fogCoord.x + dist*fogCoord.y;
+	o.fog = saturate(fogCoord.x + dist*fogCoord.y);
 
 	o.windowSize = windowSize;
 	
@@ -108,7 +108,7 @@ Output DecalBoxVS(float4 pos:POSITION,uint instNum:SV_InstanceID)
 
 	float dist = length(mul(mul(_view, _world[instNum]), pos));
 	o.fogColor = fogColor;
-	o.fog = fogCoord.x + dist*fogCoord.y;
+	o.fog = saturate(fogCoord.x + dist*fogCoord.y);
 
 	o.windowSize = windowSize;
 

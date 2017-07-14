@@ -26,7 +26,7 @@ public:
 
 
 
-	std::weak_ptr<ID3D11PixelShader*> _cameraDepthPS;
+	//std::weak_ptr<ID3D11PixelShader*> _cameraDepthPS;
 
 	void Update();
 

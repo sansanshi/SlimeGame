@@ -328,17 +328,10 @@ Sphere::Draw()
 	DeviceDx11& dev = DeviceDx11::Instance();
 
 	dev.Context()->PSSetSamplers(0, 1, &_samplerState_Wrap);
-	dev.Context()->PSSetShaderResources(TEXTURE_NORMAL, 1, _normalTex._Get());
 
 	unsigned int stride = sizeof(float) * 14;
 	unsigned int offset = 0;
 
-	dev.Context()->VSSetShader(*_vertexShader.lock(), nullptr, 0);//ＰＭＤモデル表示用シェーダセット
-	dev.Context()->PSSetShader(*_pixelShader.lock(), nullptr, 0);//PMDモデル表示用シェーダセット
-	dev.Context()->IASetInputLayout(*_inputlayout.lock());
-
-	dev.Context()->VSSetShaderResources(TEXTURE_DISPLACEMENT, 1, _displacementTex._Get());
-	dev.Context()->VSSetShaderResources(TEXTURE_MASK, 1, _dispMask._Get());
 
 	_worldAndCamera.cameraView = _cameraPtr.lock()->CameraView();
 	_worldAndCamera.cameraProj = _cameraPtr.lock()->CameraProjection();
@@ -350,6 +343,8 @@ Sphere::Draw()
 
 	//ApplyMatrixBuffer();
 	ApplyConstantBuffer(_matrixBuffer, _mappedMaterial, _worldAndCamera);
+	ApplyCameraShaders();
+	ApplyTextures();
 
 	dev.Context()->IASetVertexBuffers(0, 1, &_vertexBuffer, &stride, &offset);
 	dev.Context()->IASetIndexBuffer(_indexBuffer, DXGI_FORMAT_R16_UINT, 0);
@@ -369,8 +364,6 @@ Sphere::DrawLightView()
 	unsigned int stride = sizeof(float) * 14;
 	unsigned int offset = 0;
 
-	dev.Context()->VSSetShader(*_lightviewVS.lock(), nullptr, 0);
-	dev.Context()->PSSetShader(*_lightviewPS.lock(), nullptr, 0);
 
 	
 	_worldAndCamera.cameraView = _cameraPtr.lock()->CameraView();
@@ -380,10 +373,10 @@ Sphere::DrawLightView()
 
 	dev.Context()->VSSetConstantBuffers(0, 1, &_matrixBuffer);
 
-	ApplyMatrixBuffer();
-	//ApplyConstantBuffer(_matrixBuffer, _mappedMatrixies, _worldAndCamera);
+	ApplyConstantBuffer(_matrixBuffer, _mappedMatrixies, _worldAndCamera);
+	ApplyDepthShaders();
+	ApplyTextures();
 
-	dev.Context()->IASetInputLayout(*_lightviewInputLayout.lock());
 	dev.Context()->IASetVertexBuffers(0, 1, &_vertexBuffer, &stride, &offset);
 	dev.Context()->IASetIndexBuffer(_indexBuffer, DXGI_FORMAT_R16_UINT, 0);
 
@@ -397,8 +390,6 @@ Sphere::DrawCameraDepth()
 	unsigned int stride = sizeof(float) * 14;
 	unsigned int offset = 0;
 
-	dev.Context()->VSSetShader(*_lightviewVS.lock(), nullptr, 0);
-	dev.Context()->PSSetShader(*_lightviewPS.lock(), nullptr, 0);
 
 
 	_worldAndCamera.cameraView = _cameraPtr.lock()->CameraView();
@@ -409,8 +400,9 @@ Sphere::DrawCameraDepth()
 	dev.Context()->VSSetConstantBuffers(0, 1, &_matrixBuffer);
 	
 	ApplyConstantBuffer(_matrixBuffer, _mappedMatrixies, _worldAndCamera);
+	ApplyDepthShaders();
+	ApplyTextures();
 
-	dev.Context()->IASetInputLayout(*_lightviewInputLayout.lock());
 	dev.Context()->IASetVertexBuffers(0, 1, &_vertexBuffer, &stride, &offset);
 	dev.Context()->IASetIndexBuffer(_indexBuffer, DXGI_FORMAT_R16_UINT, 0);
 

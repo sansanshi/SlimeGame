@@ -53,6 +53,7 @@ Plane::Plane(float width, float depth, Vector3 normal,
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 	};
 
+
 	resourceMgr.LoadVS("Plane_VS", "water.hlsl", "WaterVS", "vs_5_0",
 		_vertexShader, inputElementDescs, sizeof(inputElementDescs) / sizeof(D3D11_INPUT_ELEMENT_DESC),
 		_inputlayout);
@@ -120,17 +121,8 @@ Plane::Draw()
 	_worldAndCamera.lightProj = _cameraPtr.lock()->LightProjection();
 
 	ApplyConstantBuffer(_matrixBuffer, _mappedMatrixies, _worldAndCamera);
-
-
-	dev.Context()->VSSetShader(*_vertexShader.lock(),nullptr,0);
-	dev.Context()->IASetInputLayout(*_inputlayout.lock());
-	dev.Context()->PSSetShader(*_pixelShader.lock(), nullptr, 0);
-
-
-	dev.Context()->PSSetShaderResources(TEXTURE_MAIN, 1, _mainTex._Get());
-	dev.Context()->PSSetShaderResources(TEXTURE_SUB, 1, _subTex._Get());
-	dev.Context()->PSSetShaderResources(TEXTURE_NORMAL, 1, _normalTex._Get());
-	dev.Context()->PSSetShaderResources(TEXTURE_FLOW, 1, _flowTex._Get());
+	ApplyCameraShaders();
+	ApplyTextures();
 
 	dev.Context()->PSSetSamplers(0, 1, &_samplerState);
 
@@ -153,11 +145,8 @@ Plane::DrawLightView()
 	_worldAndCamera.lightProj = _cameraPtr.lock()->LightProjection();
 
 	ApplyConstantBuffer(_matrixBuffer, _mappedMatrixies, _worldAndCamera);
+	ApplyDepthShaders();
 
-
-	dev.Context()->VSSetShader(*_lightviewVS.lock(), nullptr, 0);
-	dev.Context()->IASetInputLayout(*_lightviewInputLayout.lock());
-	dev.Context()->PSSetShader(*_lightviewPS.lock(), nullptr, 0);
 	//プリミティブトポロジの切り替えを忘れない　切り替えを頻発させるのは良くない
 	dev.Context()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 	unsigned int stride = sizeof(float) * 14;
@@ -177,11 +166,7 @@ Plane::DrawCameraDepth()
 	_worldAndCamera.lightProj = _cameraPtr.lock()->CameraProjection();
 
 	ApplyConstantBuffer(_matrixBuffer, _mappedMatrixies, _worldAndCamera);
-
-
-	dev.Context()->VSSetShader(*_lightviewVS.lock(), nullptr, 0);
-	dev.Context()->IASetInputLayout(*_lightviewInputLayout.lock());
-	dev.Context()->PSSetShader(*_lightviewPS.lock(), nullptr, 0);
+	ApplyDepthShaders();
 	//プリミティブトポロジの切り替えを忘れない　切り替えを頻発させるのは良くない
 	dev.Context()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 	unsigned int stride = sizeof(float) * 14;

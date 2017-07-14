@@ -143,7 +143,7 @@ Output SlimeVS(float4 pos:POSITION, float4 normal : NORMAL, float2 uv : TEXCOORD
 
 	float dist = length(mul(_world, pos).xyz - eyePos.xyz);
 	o.fogColor = fogColor;
-	o.fog = fogCoord.x + dist*fogCoord.y;
+	o.fog = saturate(fogCoord.x + dist*fogCoord.y);
 
 	o.windowSize = windowSize;
 

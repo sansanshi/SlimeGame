@@ -101,7 +101,7 @@ struct DS_OUTPUT
 	float fog : TEXCOORD1;
 	float2 windowSize:TEXCOORD2;
 
-	float3 eyePos:EYEPOS;
+	float3 lightPos:LIGHTPOS;
 	float3 worldPos:WORLDPOS;
 };
 
@@ -140,12 +140,12 @@ DS_OUTPUT TessDS(HS_CONSTANT_DATA_OUTPUT In, float2 UV:SV_DomainLocation, const 
 	o.farZ = farZ;
 
 	//float dist=
-	o.fog= fogCoord.x + o.pos.w*fogCoord.y;
+	o.fog=saturate( fogCoord.x + o.pos.w*fogCoord.y);
 	o.fogColor = fogColor;
 
 	o.windowSize = windowSize;
 
-	o.eyePos = eyePos.xyz;
+	o.lightPos = lightPos.xyz;
 	o.worldPos = mul(_world, postemp);
 
 	return o;
@@ -165,13 +165,14 @@ float4 TessPS(DS_OUTPUT o):SV_Target
 		//return float4(ld-lightviewDepth, 0, 0, 1);
 	
 	if (shadowUV.x == satUV.x&&shadowUV.y == satUV.y&&ld > lightviewDepth +0.001f){
-		shadowWeight = 0.8f;
-		float f = 1.0f - saturate((length(o.worldPos - o.eyePos) / 70.0f));
-		f = pow(f, 2);
-		shadowWeight *= f;
+		shadowWeight = 0.3f;
+		//shadowWeight *= f;
 
-		return float4(f, f, f, 1);
 	}
+
+	float lightWeight = 1.0f - saturate((length(o.worldPos - o.lightPos) / 80.0f));
+	shadowWeight = shadowWeight * lightWeight+0.3f;
+	//return float4(shadowWeight, shadowWeight, shadowWeight, 1);
 
 	float disp = _dispMap.Sample(_samplerState, o.uv);
 	float4 texCol = _tex.Sample(_samplerState, o.uv);//地面部分
@@ -181,11 +182,11 @@ float4 TessPS(DS_OUTPUT o):SV_Target
 	disp = disp*2.0f - 1.0f;
 	float4 col = lerp(texCol,subTexCol, saturate(disp*3.0f));
 	
-	col = float4(col.rgb*shadowWeight, 1.0f);/*+addCol*sss*/
 	if (disp < 0.0f)
 	{
 		col = lerp(subTexCol2, col, saturate(1.0f-abs(disp)*3.0f));
 	}
+	col = float4(col.rgb*shadowWeight, 1.0f);/*+addCol*sss*/
 	//フォグをかける
 	col = lerp(o.fogColor, col, o.fog);
 	//col = float4(lightviewDepth, 0, 0, 1);

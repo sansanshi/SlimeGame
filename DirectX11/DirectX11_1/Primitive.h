@@ -79,6 +79,7 @@ public:
 	void SetScale(XMFLOAT3 scale);
 	XMFLOAT3 GetScale();
 
+	//GPUが使うバッファの中身（行列バッファ）を更新(GPUにセットはしない）
 	void ApplyMatrixBuffer();
 
 	template <typename T>
@@ -94,7 +95,16 @@ public:
 		return;
 	}
 
+	//WVP行列を更新
 	void UpdateMatrixies();
 	void Update();
+
+	//カメラ用シェーダ切り替え
+	void ApplyCameraShaders();
+	//深度値シェーダ切り替え
+	void ApplyDepthShaders();
+
+	//持っているテクスチャをGPUに渡す
+	void ApplyTextures();
 };
 

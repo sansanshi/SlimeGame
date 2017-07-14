@@ -145,7 +145,7 @@ Output BaseVS(float4 pos : POSITION, float2 uv : TEXCOORD,
 	o.farZ = farZ;
 
 	float dist = length(mul(_world, pos).xyz - eyePos.xyz);
-	o.fog = fogCoord.x + dist*fogCoord.y;
+	o.fog = saturate(fogCoord.x + dist*fogCoord.y);
 	o.fogColor = fogColor;
 
 	o.windowSize = windowSize;
@@ -275,7 +275,7 @@ float4 tangent:TANGENT,float4 binormal:BINORMAL)
 	o.nearZ = nearZ;
 
 	float dist = length(mul(_world, pos).xyz - eyePos.xyz);
-	o.fog = fogCoord.x + dist*fogCoord.y;
+	o.fog = saturate(fogCoord.x + dist*fogCoord.y);
 	o.fogColor = fogColor;
 
 	o.windowSize = windowSize;
@@ -355,10 +355,10 @@ HUDOut HUDVS(float4 pos:POSITION,float2 uv : TEXCOORD)
 float4 HUDPS(HUDOut o):SV_Target
 {
 	//return (0,0,0,0);
-	float r = _shadowTex.Sample(_samplerState_clamp, o.uv);
-	//return r;
+	float4 r = _shadowTex.Sample(_samplerState_clamp, o.uv);
+	return r;
 	//r = pow(r, 2);
-	return float4(r,0,0,1);
+	//return float4(r,0,0,1);
 }
 
 HUDOut BillBoardVS(float4 pos:POSITION, float2 uv:TEXCOORD)

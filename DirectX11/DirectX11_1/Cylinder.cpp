@@ -12,7 +12,6 @@ Cylinder::Cylinder(float radius, float height, unsigned int div,const std::share
 	InitTransform();
 	_cameraPtr = camera;
 	ResourceManager& resourceMgr = ResourceManager::Instance();
-	angle = 0.0f;
 	_height = height;
 	_radius = radius;
 	_div = div;
@@ -161,9 +160,7 @@ void
 Cylinder::Draw()
 {
 	DeviceDx11& dev = DeviceDx11::Instance();
-	dev.Context()->VSSetShader(*_vertexShader.lock(), nullptr, 0);
-	dev.Context()->IASetInputLayout(*_inputlayout.lock());
-	dev.Context()->PSSetShader(*_pixelShader.lock(), nullptr, 0);
+	
 
 	dev.Context()->VSSetConstantBuffers(0, 1, &_matrixBuffer);
 
@@ -172,9 +169,8 @@ Cylinder::Draw()
 
 
 	ApplyConstantBuffer(_matrixBuffer, _mappedMatrixies, _worldAndCamera);
-
-	dev.Context()->PSSetShaderResources(TEXTURE_MAIN, 1, _mainTex._Get());
-	dev.Context()->PSSetShaderResources(TEXTURE_NORMAL, 1, _normalTex._Get());
+	ApplyCameraShaders();
+	ApplyTextures();
 
 	//ƒvƒŠƒ~ƒeƒBƒuƒgƒ|ƒƒW‚ÌØ‚è‘Ö‚¦‚ð–Y‚ê‚È‚¢@Ø‚è‘Ö‚¦‚ð•p”­‚³‚¹‚é‚Ì‚Í—Ç‚­‚È‚¢
 	dev.Context()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
@@ -187,16 +183,11 @@ Cylinder::Draw()
 	dev.Context()->Draw(_hatchVertCnt, 0);
 
 
-
 }
 void
 Cylinder::DrawLightView()//ŒãXƒvƒŒƒCƒ„[‚©‚çƒJƒƒ‰‚ð˜M‚Á‚½ê‡‚Í‚±‚±‚Å‚àƒJƒƒ‰‚©‚ç•ÏXŒã‚Ìs—ñ‚ðŽæ‚Á‚Ä‚­‚é
 {
 	DeviceDx11& dev = DeviceDx11::Instance();
-
-	dev.Context()->VSSetShader(*_lightviewVS.lock(), nullptr, 0);
-	dev.Context()->IASetInputLayout(*_lightviewInputLayout.lock());
-	dev.Context()->PSSetShader(*_lightviewPS.lock(), nullptr, 0);
 
 	dev.Context()->VSSetConstantBuffers(0, 1, &_matrixBuffer);
 
@@ -204,6 +195,7 @@ Cylinder::DrawLightView()//ŒãXƒvƒŒƒCƒ„[‚©‚çƒJƒƒ‰‚ð˜M‚Á‚½ê‡‚Í‚±‚±‚Å‚àƒJƒƒ‰‚
 	_worldAndCamera.lightProj = _cameraPtr.lock()->LightProjection();
 
 	ApplyConstantBuffer(_matrixBuffer, _mappedMatrixies, _worldAndCamera);
+	ApplyDepthShaders();
 
 	//ƒvƒŠƒ~ƒeƒBƒuƒgƒ|ƒƒW‚ÌØ‚è‘Ö‚¦‚ð–Y‚ê‚È‚¢@Ø‚è‘Ö‚¦‚ð•p”­‚³‚¹‚é‚Ì‚Í—Ç‚­‚È‚¢
 	dev.Context()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
@@ -221,9 +213,6 @@ void
 Cylinder::DrawCameraDepth()
 {
 	DeviceDx11& dev = DeviceDx11::Instance();
-	dev.Context()->VSSetShader(*_lightviewVS.lock(), nullptr, 0);
-	dev.Context()->IASetInputLayout(*_lightviewInputLayout.lock());
-	dev.Context()->PSSetShader(*_lightviewPS.lock(), nullptr, 0);
 	dev.Context()->VSSetConstantBuffers(0, 1, &_matrixBuffer);
 
 	XMMATRIX view = _cameraPtr.lock()->CameraView();
@@ -233,6 +222,7 @@ Cylinder::DrawCameraDepth()
 
 
 	ApplyConstantBuffer(_matrixBuffer, _mappedMatrixies, _worldAndCamera);
+	ApplyDepthShaders();
 
 	//ƒvƒŠƒ~ƒeƒBƒuƒgƒ|ƒƒW‚ÌØ‚è‘Ö‚¦‚ð–Y‚ê‚È‚¢@Ø‚è‘Ö‚¦‚ð•p”­‚³‚¹‚é‚Ì‚Í—Ç‚­‚È‚¢
 	dev.Context()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);

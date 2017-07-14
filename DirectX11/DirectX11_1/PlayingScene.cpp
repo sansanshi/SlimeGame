@@ -420,7 +420,8 @@ PlayingScene::Update()
 	
 
 #pragma region カメラビュー描画
-	_renderer->ChangeRT_Camera();
+	//_renderer->ChangeRT_Camera();
+	_renderer->ChangeRT_PostEffect();
 	_renderer->ZWriteOn();
 	_skySphere->Draw();
 	//ライトビューからのレンダリング結果をテクスチャとしてGPUに渡す
@@ -455,7 +456,7 @@ PlayingScene::Update()
 	resource = _renderer->CameraDepthShaderResource();
 	dev.Context()->PSSetShaderResources(TEXTURE_CAMERA_DEPTH, 1, &resource);
 	_renderer->ZWriteOff();
-	//_plane->Draw();//床
+	_plane->Draw();//床
 	_decalFac->Draw();//デカールボックス
 	_decalBox->DebugDraw();//デバッグ用デカールボックス
 	_renderer->ZWriteOn();
@@ -470,9 +471,10 @@ PlayingScene::Update()
 	_effect.Update();
 
 #pragma region HUD描画
+	_renderer->ChangeRT_Camera();
 	if (debugToggle)
 	{
-		resource = _renderer->CameraDepthShaderResource();
+		resource = _renderer->TestShaderResource();//_renderer->CameraDepthShaderResource();
 		dev.Context()->PSSetShaderResources(TEXTURE_LIGHT_DEPTH, 1, &resource);
 		_debugHUD->Draw();
 

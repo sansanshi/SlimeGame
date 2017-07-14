@@ -18,8 +18,12 @@ Renderer::Init()
 	ID3D11Texture2D *pBack;
 	//バックバッファのサーフェイスをしぇーだリソース（テクスチャ）として抜き出す
 	dev.SwapChain()->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&pBack);
+	D3D11_TEXTURE2D_DESC temp__;
+	pBack->GetDesc(&temp__);
 	//そのテクスチャをレンダーターゲットとするようなレンダーターゲットビューを作成
 	dev.Device()->CreateRenderTargetView(pBack, nullptr, &_mainRTV);
+	D3D11_RENDER_TARGET_VIEW_DESC temp_;
+	_mainRTV->GetDesc(&temp_);
 	pBack->Release();
 
 
@@ -79,8 +83,8 @@ Renderer::Init()
 	blrtdesc.SrcBlend = D3D11_BLEND_SRC_ALPHA;
 	blrtdesc.DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
 	blrtdesc.BlendOp = D3D11_BLEND_OP_ADD;
-	blrtdesc.SrcBlendAlpha = D3D11_BLEND_ONE;
-	blrtdesc.DestBlendAlpha = D3D11_BLEND_ZERO;
+	blrtdesc.SrcBlendAlpha = D3D11_BLEND_SRC_ALPHA;
+	blrtdesc.DestBlendAlpha = D3D11_BLEND_INV_SRC_ALPHA;
 	blrtdesc.BlendOpAlpha = D3D11_BLEND_OP_ADD;
 	blrtdesc.RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
 	float blendFactor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
@@ -167,7 +171,7 @@ Renderer::Init()
 	rendertexDesc.Height = (unsigned int)WINDOW_HEIGHT;
 	rendertexDesc.MipLevels = 1;
 	rendertexDesc.ArraySize = 1;
-	rendertexDesc.Format = DXGI_FORMAT_R8G8B8A8_TYPELESS;//DXGI_FORMAT_R16G16B16A16_FLOAT;//
+	rendertexDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;//DXGI_FORMAT_R8G8B8A8_TYPELESS;//DXGI_FORMAT_R16G16B16A16_FLOAT;//
 	rendertexDesc.SampleDesc.Count = 1;
 	rendertexDesc.SampleDesc.Quality = 0;
 	rendertexDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -180,12 +184,12 @@ Renderer::Init()
 	rtvDesc = {};
 	rtvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;//DXGI_FORMAT_R16G16B16A16_FLOAT; //
 	rtvDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
-	result = dev.Device()->CreateRenderTargetView(rtex, &rtvDesc, &_lightRTV_color);
+	result = dev.Device()->CreateRenderTargetView(rtex, &rtvDesc, &_colorRTV);
 	lvSrcDesc = {};
 	lvSrcDesc.Format = rtvDesc.Format;
 	lvSrcDesc.Texture2D.MipLevels = 1;
 	lvSrcDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-	result = dev.Device()->CreateShaderResourceView(rtex, &lvSrcDesc, &_shaderResourceView_color);
+	result = dev.Device()->CreateShaderResourceView(rtex, &lvSrcDesc, &_shaderResourceView_PostEffect);
 
 
 
@@ -205,7 +209,7 @@ Renderer::Init()
 
 	
 	dev.Device()->CreateTexture2D(&descLightDepth, nullptr, &temp);
-	dev.Device()->CreateDepthStencilView(temp, nullptr, &_lightDSV_color);//dev.Device()->CreateDepthStencilView(rtex, nullptr, &_lightDSV);
+	dev.Device()->CreateDepthStencilView(temp, nullptr, &_colorDSV);//dev.Device()->CreateDepthStencilView(rtex, nullptr, &_lightDSV);
 #pragma endregion
 
 #pragma region カメラからのデプス
@@ -293,13 +297,13 @@ Renderer::ChangeRT_Light()
 	dev.Context()->OMSetRenderTargets(1, &_lightRTV, _lightDSV);
 }
 void
-Renderer::ChangeRT_LightColor()
+Renderer::ChangeRT_PostEffect()
 {
 	DeviceDx11& dev = DeviceDx11::Instance();
-	float color[4] = { 0.0f, 0.0f, 0.0f, 1 };
-	dev.Context()->ClearRenderTargetView(_lightRTV_color, color);
-	dev.Context()->ClearDepthStencilView(_lightDSV_color,D3D11_CLEAR_DEPTH, 1.0f, 0);
-	dev.Context()->OMSetRenderTargets(1, &_lightRTV_color, _lightDSV_color);
+	float color[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+	dev.Context()->ClearRenderTargetView(_colorRTV, color);
+	dev.Context()->ClearDepthStencilView(_colorDSV,D3D11_CLEAR_DEPTH, 1.0f, 0);
+	dev.Context()->OMSetRenderTargets(1, &_colorRTV, _colorDSV);
 }
 
 void 

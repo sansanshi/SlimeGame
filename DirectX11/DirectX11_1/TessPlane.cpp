@@ -69,17 +69,20 @@ TessPlane::TessPlane(float width, float depth, Vector3 normal, const std::shared
 	resourceMgr.LoadDS("TessPlane_DS",
 		"Tessellation.hlsl", "TessDS", "ds_5_0", _domainShader);
 	
-	resourceMgr.LoadVS("TessPlane_lightVS",
+	/*resourceMgr.LoadVS("TessPlane_lightVS",
 		"lightview.hlsl", "PrimitiveLightViewVS", "vs_5_0",
 		_lightviewVS, inputElementDescs, sizeof(inputElementDescs) / sizeof(D3D11_INPUT_ELEMENT_DESC),
-		_lightviewInputLayout);
-	resourceMgr.LoadPS("TessPlane_lightPS",
-		"lightview.hlsl", "PrimitiveLightViewPS", "ps_5_0", _lightviewPS);
+		_lightviewInputLayout);*/
+	/*resourceMgr.LoadPS("TessPlane_lightPS",
+		"lightview.hlsl", "PrimitiveLightViewPS", "ps_5_0", _lightviewPS);*/
 	
-
+	resourceMgr.LoadVS("TessPlane_VS",
+		"Tessellation.hlsl", "TessVS", "vs_5_0",
+		_lightviewVS, inputElementDescs, sizeof(inputElementDescs) / sizeof(D3D11_INPUT_ELEMENT_DESC),
+		_lightviewInputLayout);
 	//カメラ深度用ピクセルシェーダ
 	resourceMgr.LoadPS("TessPlane_depthPS",
-		"Tessellation.hlsl", "DepthTessPS", "ps_5_0", _cameraDepthPS);
+		"Tessellation.hlsl", "DepthTessPS", "ps_5_0", _lightviewPS);
 	
 
 	UpdateMatrixies();
@@ -186,11 +189,11 @@ TessPlane::DrawLightView()
 	ApplyConstantBuffer(_matrixBuffer, _mappedMatrixies, _worldAndCamera);
 
 
-	dev.Context()->VSSetShader(*_vertexShader.lock(), nullptr, 0);
-	dev.Context()->IASetInputLayout(*_inputlayout.lock());
+	dev.Context()->VSSetShader(*_lightviewVS.lock(), nullptr, 0);
+	dev.Context()->IASetInputLayout(*_lightviewInputLayout.lock());
 	dev.Context()->HSSetShader(*_hullShader.lock(), nullptr, 0);
 	dev.Context()->DSSetShader(*_domainShader.lock(), nullptr, 0);
-	dev.Context()->PSSetShader(*_cameraDepthPS.lock(), nullptr, 0);
+	dev.Context()->PSSetShader(*_lightviewPS.lock(), nullptr, 0);
 	//プリミティブトポロジの切り替えを忘れない　切り替えを頻発させるのは良くない
 	//dev.Context()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 
@@ -231,11 +234,11 @@ TessPlane::DrawCameraDepth()
 	ApplyConstantBuffer(_matrixBuffer, _mappedMatrixies, _worldAndCamera);
 
 
-	dev.Context()->VSSetShader(*_vertexShader.lock(), nullptr, 0);
-	dev.Context()->IASetInputLayout(*_inputlayout.lock());
+	dev.Context()->VSSetShader(*_lightviewVS.lock(), nullptr, 0);
+	dev.Context()->IASetInputLayout(*_lightviewInputLayout.lock());
 	dev.Context()->HSSetShader(*_hullShader.lock(), nullptr, 0);
 	dev.Context()->DSSetShader(*_domainShader.lock(), nullptr, 0);
-	dev.Context()->PSSetShader(*_cameraDepthPS.lock(), nullptr, 0);
+	dev.Context()->PSSetShader(*_lightviewPS.lock(), nullptr, 0);
 	//プリミティブトポロジの切り替えを忘れない　切り替えを頻発させるのは良くない
 	//dev.Context()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 

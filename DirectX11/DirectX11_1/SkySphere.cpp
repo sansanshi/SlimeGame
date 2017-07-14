@@ -292,14 +292,13 @@ SkySphere::Draw()
 	DeviceDx11& dev = DeviceDx11::Instance();
 
 	dev.Context()->PSSetSamplers(0, 1, &_samplerState_Wrap);
-	dev.Context()->PSSetShaderResources(TEXTURE_MAIN, 1, _mainTex._Get());
+
+	ApplyCameraShaders();
+	ApplyTextures();
+	ApplyConstantBuffer(_matrixBuffer, _mappedMatrixies, _worldAndCamera);
 
 	unsigned int stride = sizeof(float) * 14;
 	unsigned int offset = 0;
-
-	dev.Context()->VSSetShader(*_vertexShader.lock(), nullptr, 0);//ＰＭＤモデル表示用シェーダセット
-	dev.Context()->PSSetShader(*_pixelShader.lock(), nullptr, 0);//PMDモデル表示用シェーダセット
-	dev.Context()->IASetInputLayout(*_inputlayout.lock());
 
 	_worldAndCamera.cameraView = _cameraPtr.lock()->CameraView();
 	_worldAndCamera.cameraProj = _cameraPtr.lock()->CameraProjection();
@@ -308,7 +307,6 @@ SkySphere::Draw()
 
 	dev.Context()->VSSetConstantBuffers(0, 1, &_matrixBuffer);
 
-	ApplyConstantBuffer(_matrixBuffer, _mappedMatrixies, _worldAndCamera);
 
 	dev.Context()->IASetVertexBuffers(0, 1, &_vertexBuffer, &stride, &offset);
 	dev.Context()->IASetIndexBuffer(_indexBuffer, DXGI_FORMAT_R16_UINT, 0);
