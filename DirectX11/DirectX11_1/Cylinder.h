@@ -34,7 +34,6 @@ public:
 
 	ID3D11Buffer* VertexBuffer(){ return _vertexBuffer; };
 
-	void SetPos(const XMFLOAT3 pos);
 
 	void Draw();
 	void DrawLightView();

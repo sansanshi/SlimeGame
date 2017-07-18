@@ -7,6 +7,6 @@ public:
 	GameOverScene();
 	~GameOverScene();
 
-	void Update();
+	void Update(int);
 };
 

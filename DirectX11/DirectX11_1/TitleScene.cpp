@@ -12,7 +12,7 @@ TitleScene::~TitleScene()
 
 
 void
-TitleScene::Update()
+TitleScene::Update(int mouseWheelCnt)
 {
 
 }

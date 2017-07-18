@@ -303,3 +303,12 @@ DecalBox::Update()
 	
 }
 
+
+void
+DecalBox::ChangeScale(float value)
+{
+
+	_scale.x += value;
+	_scale.y += value;
+	_scale.z += value;
+}

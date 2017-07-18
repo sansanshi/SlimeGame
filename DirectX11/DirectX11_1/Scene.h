@@ -5,6 +5,6 @@ public:
 	Scene();
 	~Scene();
 
-	virtual void Update() = 0;
+	virtual void Update(int mouseWheelCnt) = 0;
 };
 

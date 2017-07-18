@@ -49,5 +49,7 @@ public:
 	const XMFLOAT3 GetPos() { return _pos; };
 
 	const XMMATRIX& GetWorldMatrix() { return _modelMatrix; };
+
+	void ChangeScale(float value);
 };
 

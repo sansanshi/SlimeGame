@@ -796,9 +796,9 @@ Player::Update()
 	ID3D11Buffer* pmdVertBuff = _mesh->GetVertexBuffer();
 	ID3D11Buffer* boneVertBuff = _mesh->GetBoneVertBuffer();
 
-	if (_key[VK_SPACE] & 0x80)
+	if (_key[VK_RETURN] & 0x80)
 	{
-		if (!(_oldkey[VK_SPACE] & 0x80))
+		if (!(_oldkey[VK_RETURN] & 0x80))
 		{
 			_isBoneView = !_isBoneView;
 		}

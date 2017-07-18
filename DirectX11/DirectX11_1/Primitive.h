@@ -70,13 +70,13 @@ public:
 	Primitive();
 	~Primitive();
 
-	void SetPos(XMFLOAT3 pos);
+	void SetPos(const XMFLOAT3 pos);
 	XMFLOAT3 GetPos();
 	
-	void SetRotate(XMFLOAT3 yawPitchRoll);
+	void SetRotate(const XMFLOAT3 yawPitchRoll);
 	XMFLOAT3 GetRotate();
 
-	void SetScale(XMFLOAT3 scale);
+	void SetScale(const XMFLOAT3 scale);
 	XMFLOAT3 GetScale();
 
 	//GPUが使うバッファの中身（行列バッファ）を更新(GPUにセットはしない）

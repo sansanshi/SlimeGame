@@ -74,7 +74,7 @@ Primitive::UpdateMatrixies()
 	XMMATRIX scaleMat = XMMatrixScaling(_scale.x, _scale.y, _scale.z);
 	XMMATRIX rotMat = XMMatrixRotationRollPitchYaw(_rot.x, _rot.y, _rot.z);
 
-	modelMatrix = XMMatrixMultiply(transMatrix, XMMatrixMultiply(rotMat, scaleMat));
+	modelMatrix = XMMatrixMultiply(XMMatrixMultiply(rotMat, scaleMat),transMatrix);
 
 
 	_worldAndCamera.world = modelMatrix;

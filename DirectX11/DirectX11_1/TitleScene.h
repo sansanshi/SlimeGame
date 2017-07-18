@@ -7,6 +7,6 @@ public:
 	TitleScene();
 	~TitleScene();
 
-	void Update();
+	void Update(int);
 };
 

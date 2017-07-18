@@ -7,6 +7,6 @@ public:
 	ClearScene();
 	~ClearScene();
 
-	void Update();
+	void Update(int);
 };
 

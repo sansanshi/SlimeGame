@@ -48,6 +48,7 @@ private:
 	std::unique_ptr<DecalBox> _decalBox;
 	std::unique_ptr<DecalFactory> _decalFac;
 	float _decalBoxPitch;
+	float _oldPitch;
 
 	std::unique_ptr<InputManager> _inputManager;
 
@@ -97,7 +98,7 @@ public:
 	PlayingScene(HWND);
 	~PlayingScene();
 
-	void Update();
+	void Update(int);
 
 	//float* clearColor;
 

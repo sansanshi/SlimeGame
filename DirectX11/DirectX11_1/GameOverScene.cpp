@@ -12,7 +12,7 @@ GameOverScene::~GameOverScene()
 
 
 void
-GameOverScene::Update()
+GameOverScene::Update(int mouseWheelCnt)
 {
 
 }

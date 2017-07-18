@@ -11,7 +11,7 @@ ClearScene::~ClearScene()
 }
 
 void
-ClearScene::Update()
+ClearScene::Update(int mouseWheelCnt)
 {
 
 }

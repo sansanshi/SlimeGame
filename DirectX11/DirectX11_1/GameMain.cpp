@@ -7,6 +7,8 @@
 #include<vector>
 #include"PlayingScene.h"
 
+static int g_mouseWheel = 0;
+static int g_zDelta = 0;
 
 //ウィンドウプロシージャ
 LRESULT CALLBACK WindowProcedure(
@@ -15,21 +17,34 @@ LRESULT CALLBACK WindowProcedure(
 	WPARAM wpal,
 	LPARAM lpal)
 {
+	g_mouseWheel = 0;
+	g_zDelta = 0;
 	if (msg == WM_DESTROY){
 		PostQuitMessage(0);
 		return 0;
 	}
+	if (msg == WM_ACTIVATE)
+	{
+		return 0;
+	}
+
 	if (msg == WM_MOUSEWHEEL)
 	{
-		//ここ
+		unsigned short fwKeys = GET_KEYSTATE_WPARAM(wpal);
+		int zDelta = GET_WHEEL_DELTA_WPARAM(wpal);
+		g_zDelta = zDelta;
+
+		g_mouseWheel = zDelta / WHEEL_DELTA;
+		
+		if (g_mouseWheel != 0)
+		{
+			g_mouseWheel = g_mouseWheel > 0 ? 1 : -1;
+		}
+
 	}
+	
 	return DefWindowProc(hwnd, msg, wpal, lpal);
 }
-
-
-
-//void MatrixTransmission(int idx, XMMATRIX& parent, std::vector<XMMATRIX>& boneMatrixies, std::vector<BoneNode>& boneTree);
-
 
 
 
@@ -90,11 +105,13 @@ GameMain::GameLoop()
 			if (msg.message == WM_QUIT){
 				break;
 			}
+
+			
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		}
 
-		_scene->Update();
+		_scene->Update(g_zDelta);
 
 	}
 
