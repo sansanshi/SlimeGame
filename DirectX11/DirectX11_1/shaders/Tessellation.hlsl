@@ -162,17 +162,22 @@ float4 TessPS(DS_OUTPUT o):SV_Target
 	float2 satUV = saturate(shadowUV);
 		float shadowWeight = 1.0f;
 	
-		//return float4(ld-lightviewDepth, 0, 0, 1);
-	
+	/*float4 dep = _shadowTex.Sample(_samplerState_clamp, shadowUV);
+	float depth_sq = dep.x*dep.x;
+	float variance = dep.y - depth_sq;
+	float md = ld - dep.x;
+	float p = variance / (variance + (md*md));
+	shadowWeight = saturate(max(p, dep.x <= ld));*/
+
 	if (shadowUV.x == satUV.x&&shadowUV.y == satUV.y&&ld > lightviewDepth +0.001f){
 		shadowWeight = 0.3f;
 		//shadowWeight *= f;
 
 	}
 
-	float lightWeight = 1.0f - saturate((length(o.worldPos - o.lightPos) / 80.0f));
-	shadowWeight = shadowWeight * lightWeight+0.3f;
-	//return float4(shadowWeight, shadowWeight, shadowWeight, 1);
+	//ŒõŒ¹‚©‚ç‚Ì‹——£‚É‚æ‚Á‚Ä–¾‚é‚³‚ðŒˆ‚ß‚é
+	/*float lightWeight = 1.0f - saturate((length(o.worldPos - o.lightPos) / 80.0f));
+	shadowWeight = shadowWeight * lightWeight+0.3f;*/
 
 	float disp = _dispMap.Sample(_samplerState, o.uv);
 	float4 texCol = _tex.Sample(_samplerState, o.uv);//’n–Ê•”•ª
@@ -198,5 +203,5 @@ float4 DepthTessPS(DS_OUTPUT o) :SV_Target
 
 	float d = o.shadowposVS.z / o.farZ;
 	
-	return float4(d, d, d, 1);
+	return float4(d, d*d, 0, 1);
 }

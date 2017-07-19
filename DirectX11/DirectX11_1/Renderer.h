@@ -21,6 +21,11 @@ private:
 	ID3D11RenderTargetView* _lightRTV;
 	ID3D11DepthStencilView* _lightDSV;
 
+	ID3D11RenderTargetView* _rtvBlurX;
+	ID3D11DepthStencilView* _dsvBlurX;
+	ID3D11RenderTargetView* _rtvBlurY;
+	ID3D11DepthStencilView* _dsvBlurY;
+
 	//ポストエフェクト用のRTV
 	ID3D11RenderTargetView* _colorRTV;
 	ID3D11DepthStencilView* _colorDSV;
@@ -39,6 +44,8 @@ private:
 	ID3D11ShaderResourceView* _shaderResourceViewForShadow;//ライトからのデプス
 	ID3D11ShaderResourceView* _shaderResourceView_PostEffect;//スライムの影（半透明）用
 	ID3D11ShaderResourceView* _shaderResourceView_CameraDepth;
+	ID3D11ShaderResourceView* _srvBlurX;//ｘ方向ブラー
+	ID3D11ShaderResourceView* _srvBlurY;//ｙ方向ブラー
 
 public:
 	Renderer();
@@ -51,6 +58,9 @@ public:
 	void ChangeRT_Light();
 	void ChangeRT_PostEffect();//カメラからの視点（カラー
 	void ChangeRT_CameraDepth();
+
+	void ChangeRT_BlurX();
+	void ChangeRT_BlurY();
 
 	//プリミティブトポロジの切り替え
 	//PMD用

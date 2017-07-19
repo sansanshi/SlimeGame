@@ -79,7 +79,7 @@ ResourceManager::LoadVS(
 
 		_vertexShaderMap[registerName] = std::make_shared<ID3D11VertexShader*>(tempVS);
 		_inputLayoutMap[registerName] = std::make_shared<ID3D11InputLayout*>(tempInput);
-
+		
 
 		compiledVS->Release();
 	}

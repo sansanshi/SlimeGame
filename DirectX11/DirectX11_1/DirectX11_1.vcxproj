@@ -90,6 +90,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Billboard.cpp" />
+    <ClCompile Include="BlurFilter.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="ClearScene.cpp" />
     <ClCompile Include="Cylinder.cpp" />
@@ -125,6 +126,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Billboard.h" />
+    <ClInclude Include="BlurFilter.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="ClearScene.h" />
     <ClInclude Include="Cylinder.h" />

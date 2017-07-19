@@ -106,9 +106,9 @@ float4 LightViewPS(Output o):SV_Target
 {
 	//return float4(saturate(o.pos.z), saturate(o.shadowpos.z / 100), 0, 1);
 	//return float4(o.pos.z/2,saturate(o.shadowpos.z/100),0,1);
-	float brightness = o.shadowpos.z / o.farZ;
+	float d = o.shadowpos.z / o.farZ;
 	//brightness=pow(brightness, 100);
-	return float4(brightness, brightness, brightness, 1.0f);
+	return float4(d, d*d, 0, 1.0f);
 }
 
 Output PrimitiveLightViewVS(float4 pos:POSITION)
@@ -133,9 +133,9 @@ float4 PrimitiveLightViewPS(Output o):SV_Target
 	//return float4(saturate(o.pos.z), saturate(o.shadowpos.z / 100), 0, 1);
 	//return float4(o.pos.z / 2, saturate(o.shadowpos.z / 100), 0, 1);
 	//float2 uv = (float2(1, 1) + (o.shadowpos.xy / o.shadowpos.w)*float2(1, -1))*0.5f;
-	float brightness = o.shadowpos.z / o.farZ;//o.shadowpos.z / o.shadowpos.w;//
+	float d = o.shadowpos.z / o.farZ;//o.shadowpos.z / o.shadowpos.w;//
 	//brightness=pow(brightness, 100);
-	return float4(brightness, brightness, brightness, 1.0f);
+	return float4(d, d*d, d, 1.0f);
 }
 
 Output SlimeLightViewVS(float4 pos:POSITION, float4 normal : NORMAL, float2 uv : TEXCOORD)
@@ -176,7 +176,7 @@ Output SlimeLightViewVS(float4 pos:POSITION, float4 normal : NORMAL, float2 uv :
 
 float4 SlimeLightViewPS(Output o):SV_Target
 {
-	float brightness = o.shadowpos.z / o.farZ;
+	float d = o.shadowpos.z / o.farZ;
 	//brightness=pow(brightness, 100);
-	return float4(brightness, brightness, brightness, 1.0f);
+	return float4(d, d*d, d, 1.0f);
 }

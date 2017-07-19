@@ -57,7 +57,7 @@ Output woodVS(float4 pos:POSITION, float4 normal : NORMAL, float2 uv : TEXCOORD,
 	o.tangentMatrix = TangentMatrix(tang, binorm, norm);
 
 	float3 posWorld = mul(_world, pos);
-	o.lightVec = -normalize(directionalLightVec);
+	o.lightVec = float4(normalize(lightPos.xyz - posWorld), 1);
 	o.eyeVec = float4(normalize(eyePos.xyz - posWorld), 1);
 
 	o.postest = mul(pos, m);

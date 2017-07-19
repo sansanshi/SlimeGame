@@ -120,7 +120,7 @@ Renderer::Init()
 	rendertexDesc.Height = (unsigned int)WINDOW_HEIGHT;
 	rendertexDesc.MipLevels = 1;
 	rendertexDesc.ArraySize = 1;
-	rendertexDesc.Format = DXGI_FORMAT_R32_FLOAT;//DXGI_FORMAT_R8G8B8A8_TYPELESS;//
+	rendertexDesc.Format = DXGI_FORMAT_R16G16_FLOAT;//DXGI_FORMAT_R8G8B8A8_TYPELESS;//
 	rendertexDesc.SampleDesc.Count = 1;
 	rendertexDesc.SampleDesc.Quality = 0;
 	rendertexDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -131,7 +131,7 @@ Renderer::Init()
 	dev.Device()->CreateTexture2D(&rendertexDesc, nullptr, &rtex);
 
 	D3D11_RENDER_TARGET_VIEW_DESC rtvDesc = {};
-	rtvDesc.Format = DXGI_FORMAT_R32_FLOAT; //DXGI_FORMAT_R8G8B8A8_UNORM;//
+	rtvDesc.Format = DXGI_FORMAT_R16G16_FLOAT; //DXGI_FORMAT_R8G8B8A8_UNORM;//
 	rtvDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
 	result = dev.Device()->CreateRenderTargetView(rtex, &rtvDesc, &_lightRTV);
 	D3D11_SHADER_RESOURCE_VIEW_DESC lvSrcDesc = {};
@@ -161,7 +161,101 @@ Renderer::Init()
 	dev.Device()->CreateDepthStencilView(temp, nullptr, &_lightDSV);//dev.Device()->CreateDepthStencilView(rtex, nullptr, &_lightDSV);
 #pragma endregion
 
+#pragma region ライトデプス（Xブラー
+																	//ライトビュー
+	D3D11_TEXTURE2D_DESC rendertexDesc = {};
+	rendertexDesc.Width = (unsigned int)WINDOW_WIDTH;
+	rendertexDesc.Height = (unsigned int)WINDOW_HEIGHT;
+	rendertexDesc.MipLevels = 1;
+	rendertexDesc.ArraySize = 1;
+	rendertexDesc.Format = DXGI_FORMAT_R16G16_FLOAT;//DXGI_FORMAT_R8G8B8A8_TYPELESS;//
+	rendertexDesc.SampleDesc.Count = 1;
+	rendertexDesc.SampleDesc.Quality = 0;
+	rendertexDesc.Usage = D3D11_USAGE_DEFAULT;
+	rendertexDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+	rendertexDesc.CPUAccessFlags = 0;
+	rendertexDesc.MiscFlags = 0;
+	ID3D11Texture2D* rtex = nullptr;
+	dev.Device()->CreateTexture2D(&rendertexDesc, nullptr, &rtex);
 
+	D3D11_RENDER_TARGET_VIEW_DESC rtvDesc = {};
+	rtvDesc.Format = DXGI_FORMAT_R16G16_FLOAT; //DXGI_FORMAT_R8G8B8A8_UNORM;//
+	rtvDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
+	result = dev.Device()->CreateRenderTargetView(rtex, &rtvDesc, &_rtvBlurX);
+	D3D11_SHADER_RESOURCE_VIEW_DESC lvSrcDesc = {};
+	lvSrcDesc.Format = rtvDesc.Format;
+	lvSrcDesc.Texture2D.MipLevels = 1;
+	lvSrcDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	result = dev.Device()->CreateShaderResourceView(rtex, &lvSrcDesc, &_srvBlurX);
+
+
+
+	//このデプスステンシルビューをどうにかする
+	D3D11_TEXTURE2D_DESC descLightDepth;
+	descLightDepth.Width = (unsigned int)WINDOW_WIDTH;
+	descLightDepth.Height = (unsigned int)WINDOW_HEIGHT;
+	descLightDepth.MipLevels = 1;
+	descLightDepth.ArraySize = 1;
+	descLightDepth.Format = DXGI_FORMAT_D32_FLOAT;
+	descLightDepth.SampleDesc.Count = 1;
+	descLightDepth.SampleDesc.Quality = 0;
+	descLightDepth.Usage = D3D11_USAGE_DEFAULT;
+	descLightDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+	descLightDepth.CPUAccessFlags = 0;
+	descLightDepth.MiscFlags = 0;
+
+	ID3D11Texture2D* temp;
+	dev.Device()->CreateTexture2D(&descLightDepth, nullptr, &temp);
+	dev.Device()->CreateDepthStencilView(temp, nullptr, &_dsvBlurX);//dev.Device()->CreateDepthStencilView(rtex, nullptr, &_lightDSV);
+#pragma endregion
+
+#pragma region ライトデプス（Yブラー
+																	//ライトビュー
+	D3D11_TEXTURE2D_DESC rendertexDesc = {};
+	rendertexDesc.Width = (unsigned int)WINDOW_WIDTH;
+	rendertexDesc.Height = (unsigned int)WINDOW_HEIGHT;
+	rendertexDesc.MipLevels = 1;
+	rendertexDesc.ArraySize = 1;
+	rendertexDesc.Format = DXGI_FORMAT_R16G16_FLOAT;//DXGI_FORMAT_R8G8B8A8_TYPELESS;//
+	rendertexDesc.SampleDesc.Count = 1;
+	rendertexDesc.SampleDesc.Quality = 0;
+	rendertexDesc.Usage = D3D11_USAGE_DEFAULT;
+	rendertexDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+	rendertexDesc.CPUAccessFlags = 0;
+	rendertexDesc.MiscFlags = 0;
+	ID3D11Texture2D* rtex = nullptr;
+	dev.Device()->CreateTexture2D(&rendertexDesc, nullptr, &rtex);
+
+	D3D11_RENDER_TARGET_VIEW_DESC rtvDesc = {};
+	rtvDesc.Format = DXGI_FORMAT_R16G16_FLOAT; //DXGI_FORMAT_R8G8B8A8_UNORM;//
+	rtvDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
+	result = dev.Device()->CreateRenderTargetView(rtex, &rtvDesc, &_rtvBlurY);
+	D3D11_SHADER_RESOURCE_VIEW_DESC lvSrcDesc = {};
+	lvSrcDesc.Format = rtvDesc.Format;
+	lvSrcDesc.Texture2D.MipLevels = 1;
+	lvSrcDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	result = dev.Device()->CreateShaderResourceView(rtex, &lvSrcDesc, &_srvBlurY);
+
+
+
+	//このデプスステンシルビューをどうにかする
+	D3D11_TEXTURE2D_DESC descLightDepth;
+	descLightDepth.Width = (unsigned int)WINDOW_WIDTH;
+	descLightDepth.Height = (unsigned int)WINDOW_HEIGHT;
+	descLightDepth.MipLevels = 1;
+	descLightDepth.ArraySize = 1;
+	descLightDepth.Format = DXGI_FORMAT_D32_FLOAT;
+	descLightDepth.SampleDesc.Count = 1;
+	descLightDepth.SampleDesc.Quality = 0;
+	descLightDepth.Usage = D3D11_USAGE_DEFAULT;
+	descLightDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+	descLightDepth.CPUAccessFlags = 0;
+	descLightDepth.MiscFlags = 0;
+
+	ID3D11Texture2D* temp;
+	dev.Device()->CreateTexture2D(&descLightDepth, nullptr, &temp);
+	dev.Device()->CreateDepthStencilView(temp, nullptr, &_dsvBlurY);//dev.Device()->CreateDepthStencilView(rtex, nullptr, &_lightDSV);
+#pragma endregion
 
 
 #pragma region ライトビュー（カラー
@@ -219,7 +313,7 @@ Renderer::Init()
 	rendertexDesc.Height = (unsigned int)WINDOW_HEIGHT;
 	rendertexDesc.MipLevels = 1;
 	rendertexDesc.ArraySize = 1;
-	rendertexDesc.Format = DXGI_FORMAT_R32_FLOAT; //DXGI_FORMAT_R8G8B8A8_TYPELESS;//DXGI_FORMAT_R16G16B16A16_FLOAT;//
+	rendertexDesc.Format = DXGI_FORMAT_R16G16_FLOAT; //DXGI_FORMAT_R8G8B8A8_TYPELESS;//DXGI_FORMAT_R16G16B16A16_FLOAT;//
 	rendertexDesc.SampleDesc.Count = 1;
 	rendertexDesc.SampleDesc.Quality = 0;
 	rendertexDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -230,7 +324,7 @@ Renderer::Init()
 	result = dev.Device()->CreateTexture2D(&rendertexDesc, nullptr, &rtex);
 
 	rtvDesc = {};
-	rtvDesc.Format = DXGI_FORMAT_R32_FLOAT;// DXGI_FORMAT_R8G8B8A8_UNORM;//DXGI_FORMAT_R16G16B16A16_FLOAT; //
+	rtvDesc.Format = DXGI_FORMAT_R16G16_FLOAT;// DXGI_FORMAT_R8G8B8A8_UNORM;//DXGI_FORMAT_R16G16B16A16_FLOAT; //
 	rtvDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
 	result = dev.Device()->CreateRenderTargetView(rtex, &rtvDesc, &_cameraZ_RTV);
 	lvSrcDesc = {};
@@ -296,6 +390,26 @@ Renderer::ChangeRT_Light()
 	dev.Context()->ClearDepthStencilView(_lightDSV, D3D11_CLEAR_DEPTH, 1.0f, 0);
 	dev.Context()->OMSetRenderTargets(1, &_lightRTV, _lightDSV);
 }
+
+void
+Renderer::ChangeRT_BlurX()
+{
+	DeviceDx11& dev = DeviceDx11::Instance();
+	float color[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+	dev.Context()->ClearRenderTargetView(_rtvBlurX, color);
+	dev.Context()->ClearDepthStencilView(_dsvBlurX, D3D11_CLEAR_DEPTH, 1.0f, 0);
+	dev.Context()->OMSetRenderTargets(1, &_rtvBlurX, _dsvBlurX);
+}
+void
+Renderer::ChangeRT_BlurY()
+{
+	DeviceDx11& dev = DeviceDx11::Instance();
+	float color[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+	dev.Context()->ClearRenderTargetView(_rtvBlurY, color);
+	dev.Context()->ClearDepthStencilView(_dsvBlurY, D3D11_CLEAR_DEPTH, 1.0f, 0);
+	dev.Context()->OMSetRenderTargets(1, &_rtvBlurY, _dsvBlurY);
+}
+
 void
 Renderer::ChangeRT_PostEffect()
 {

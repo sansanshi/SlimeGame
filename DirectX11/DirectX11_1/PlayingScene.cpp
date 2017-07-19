@@ -395,12 +395,13 @@ PlayingScene::Update(int mouseWheelDelta)
 	_camera->Update();
 
 	_player->Update();
+	_plane->SetPos(XMFLOAT3(0.0f, -5.0f, 0.0f));
 	_plane->Update();
 
-	_cylinder2->SetPos(XMFLOAT3(10,0,0));
+	_cylinder2->SetPos(XMFLOAT3(-20,0,0));
 	_cylinder3->SetPos(XMFLOAT3(10, 0, 10));
 	_cylinder4->SetPos(XMFLOAT3(-10, 0, 10));
-	_cylinder2->SetScale(XMFLOAT3(10, 1, 3));
+	_cylinder2->SetScale(XMFLOAT3(1, 2, 1));
 
 	_cylinder->Update();
 	_cylinder2->Update();
