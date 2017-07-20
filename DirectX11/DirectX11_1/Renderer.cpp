@@ -163,7 +163,7 @@ Renderer::Init()
 
 #pragma region ライトデプス（Xブラー
 																	//ライトビュー
-	D3D11_TEXTURE2D_DESC rendertexDesc = {};
+	rendertexDesc = {};
 	rendertexDesc.Width = (unsigned int)WINDOW_WIDTH;
 	rendertexDesc.Height = (unsigned int)WINDOW_HEIGHT;
 	rendertexDesc.MipLevels = 1;
@@ -175,14 +175,14 @@ Renderer::Init()
 	rendertexDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
 	rendertexDesc.CPUAccessFlags = 0;
 	rendertexDesc.MiscFlags = 0;
-	ID3D11Texture2D* rtex = nullptr;
+	rtex = nullptr;
 	dev.Device()->CreateTexture2D(&rendertexDesc, nullptr, &rtex);
 
-	D3D11_RENDER_TARGET_VIEW_DESC rtvDesc = {};
+	rtvDesc = {};
 	rtvDesc.Format = DXGI_FORMAT_R16G16_FLOAT; //DXGI_FORMAT_R8G8B8A8_UNORM;//
 	rtvDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
 	result = dev.Device()->CreateRenderTargetView(rtex, &rtvDesc, &_rtvBlurX);
-	D3D11_SHADER_RESOURCE_VIEW_DESC lvSrcDesc = {};
+	lvSrcDesc = {};
 	lvSrcDesc.Format = rtvDesc.Format;
 	lvSrcDesc.Texture2D.MipLevels = 1;
 	lvSrcDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
@@ -191,7 +191,7 @@ Renderer::Init()
 
 
 	//このデプスステンシルビューをどうにかする
-	D3D11_TEXTURE2D_DESC descLightDepth;
+	descLightDepth = {};
 	descLightDepth.Width = (unsigned int)WINDOW_WIDTH;
 	descLightDepth.Height = (unsigned int)WINDOW_HEIGHT;
 	descLightDepth.MipLevels = 1;
@@ -204,14 +204,14 @@ Renderer::Init()
 	descLightDepth.CPUAccessFlags = 0;
 	descLightDepth.MiscFlags = 0;
 
-	ID3D11Texture2D* temp;
+	temp=nullptr;
 	dev.Device()->CreateTexture2D(&descLightDepth, nullptr, &temp);
 	dev.Device()->CreateDepthStencilView(temp, nullptr, &_dsvBlurX);//dev.Device()->CreateDepthStencilView(rtex, nullptr, &_lightDSV);
 #pragma endregion
 
 #pragma region ライトデプス（Yブラー
 																	//ライトビュー
-	D3D11_TEXTURE2D_DESC rendertexDesc = {};
+	rendertexDesc = {};
 	rendertexDesc.Width = (unsigned int)WINDOW_WIDTH;
 	rendertexDesc.Height = (unsigned int)WINDOW_HEIGHT;
 	rendertexDesc.MipLevels = 1;
@@ -223,14 +223,14 @@ Renderer::Init()
 	rendertexDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
 	rendertexDesc.CPUAccessFlags = 0;
 	rendertexDesc.MiscFlags = 0;
-	ID3D11Texture2D* rtex = nullptr;
+	rtex = nullptr;
 	dev.Device()->CreateTexture2D(&rendertexDesc, nullptr, &rtex);
 
-	D3D11_RENDER_TARGET_VIEW_DESC rtvDesc = {};
+	rtvDesc = {};
 	rtvDesc.Format = DXGI_FORMAT_R16G16_FLOAT; //DXGI_FORMAT_R8G8B8A8_UNORM;//
 	rtvDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
 	result = dev.Device()->CreateRenderTargetView(rtex, &rtvDesc, &_rtvBlurY);
-	D3D11_SHADER_RESOURCE_VIEW_DESC lvSrcDesc = {};
+	lvSrcDesc = {};
 	lvSrcDesc.Format = rtvDesc.Format;
 	lvSrcDesc.Texture2D.MipLevels = 1;
 	lvSrcDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
@@ -239,7 +239,7 @@ Renderer::Init()
 
 
 	//このデプスステンシルビューをどうにかする
-	D3D11_TEXTURE2D_DESC descLightDepth;
+	descLightDepth = {};
 	descLightDepth.Width = (unsigned int)WINDOW_WIDTH;
 	descLightDepth.Height = (unsigned int)WINDOW_HEIGHT;
 	descLightDepth.MipLevels = 1;
@@ -252,7 +252,7 @@ Renderer::Init()
 	descLightDepth.CPUAccessFlags = 0;
 	descLightDepth.MiscFlags = 0;
 
-	ID3D11Texture2D* temp;
+	temp=nullptr;
 	dev.Device()->CreateTexture2D(&descLightDepth, nullptr, &temp);
 	dev.Device()->CreateDepthStencilView(temp, nullptr, &_dsvBlurY);//dev.Device()->CreateDepthStencilView(rtex, nullptr, &_lightDSV);
 #pragma endregion

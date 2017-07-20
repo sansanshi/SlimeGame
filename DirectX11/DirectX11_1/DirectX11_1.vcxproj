@@ -164,6 +164,7 @@
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="shaders\BaseShader.hlsl" />
+    <FxCompile Include="shaders\blur.hlsl" />
     <FxCompile Include="shaders\Decal.hlsl" />
     <FxCompile Include="shaders\Decal_old.hlsl" />
     <FxCompile Include="shaders\lightview.hlsl" />

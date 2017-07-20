@@ -10,6 +10,7 @@ class Billboard
 {
 private:
 	std::weak_ptr<ID3D11ShaderResourceView*> _texture;
+	ID3D11SamplerState* _samplerState;
 	ID3D11Buffer* _vertexBuffer;
 	XMFLOAT3 _pos;
 	std::weak_ptr<Camera> _cameraPtr;

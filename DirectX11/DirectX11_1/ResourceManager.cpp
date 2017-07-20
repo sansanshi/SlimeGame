@@ -118,16 +118,12 @@ ResourceManager::LoadPS(
 		&shaderError,
 		&result)))
 	{
+		char* errorMsg= (char*)shaderError->GetBufferPointer();
 		std::string msg = path + "/" + functionName + "‚ÌƒRƒ“ƒpƒCƒ‹‚ÉŽ¸”s‚µ‚Ü‚µ‚½";
 		MessageBox(_hwnd, msg.c_str(), nullptr, MB_OK);
 		exit(0);
 	}
 
-	char* msg;
-	if (shaderError != nullptr)
-	{
-		msg = (char*)shaderError->GetBufferPointer();
-	}
 
 	ID3D11PixelShader* tempPS = nullptr;
 	if (FAILED(dev.Device()->CreatePixelShader(compiledPS->GetBufferPointer(), compiledPS->GetBufferSize(), nullptr, &tempPS)))

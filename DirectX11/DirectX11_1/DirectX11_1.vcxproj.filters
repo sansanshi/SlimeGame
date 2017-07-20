@@ -279,5 +279,8 @@
     <FxCompile Include="shaders\wood.hlsl">
       <Filter>ソース ファイル\HLSL</Filter>
     </FxCompile>
+    <FxCompile Include="shaders\blur.hlsl">
+      <Filter>ソース ファイル\HLSL</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

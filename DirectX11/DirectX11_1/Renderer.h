@@ -72,10 +72,13 @@ public:
 	ID3D11ShaderResourceView* LightDepthShaderResource(){ return _shaderResourceViewForShadow; };
 
 
-	ID3D11ShaderResourceView* TestShaderResource(){ return _shaderResourceView_PostEffect; };
+	ID3D11ShaderResourceView* PostEffectShaderResource(){ return _shaderResourceView_PostEffect; };
 
 	//カメラからの深度を書き込んだテクスチャを返す
 	ID3D11ShaderResourceView* CameraDepthShaderResource(){ return _shaderResourceView_CameraDepth; };
+
+	ID3D11ShaderResourceView* BlurXShaderResource() { return _srvBlurX; };
+	ID3D11ShaderResourceView* BlurYShaderResource() { return _srvBlurY; };
 
 	void CullNone();
 

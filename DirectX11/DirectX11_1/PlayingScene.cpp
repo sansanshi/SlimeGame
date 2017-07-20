@@ -14,6 +14,7 @@
 #include"HUD.h"
 #include"InputManager.h"
 #include"ResourceManager.h"
+#include"BlurFilter.h"
 
 
 //DirectX11初期化関数
@@ -136,6 +137,8 @@ PlayingScene::PlayingScene(HWND hwnd)
 	_debugHUD = std::make_unique<HUD>(_camera, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);//new HUD(_camera,0,0,320,240);
 	_makerHUD = std::make_unique<HUD>(_camera, -8, -8, 16, 16);// new HUD(_camera, -8, -8, 16, 16);
 
+
+	_blurFilter = std::make_unique<BlurFilter>();
 
 	_effect.Emit();
 	_effectMov = { 0, 0, 0 };
@@ -424,6 +427,8 @@ PlayingScene::Update(int mouseWheelDelta)
 	_renderer->CullBack();
 
 
+	ID3D11ShaderResourceView* resource = nullptr;
+
 #pragma region ライトビュー描画
 	_renderer->ChangeRT_Light();
 
@@ -440,6 +445,17 @@ PlayingScene::Update(int mouseWheelDelta)
 	_player->DrawLightView();
 	_sphere->DrawLightView();
 	//_renderer->ZWriteOn();
+
+
+	_renderer->ChangeRT_BlurX();
+	resource = _renderer->LightDepthShaderResource();
+	dev.Context()->PSSetShaderResources(TEXTURE_MAIN, 1, &resource);
+	_blurFilter->DrawBlurX();
+	_renderer->ChangeRT_BlurY();
+	resource = _renderer->BlurXShaderResource();
+	dev.Context()->PSSetShaderResources(TEXTURE_MAIN, 1, &resource);
+	_blurFilter->DrawBlurY();
+
 
 #pragma endregion
 
@@ -464,7 +480,7 @@ PlayingScene::Update(int mouseWheelDelta)
 	_skySphere->Draw();
 	//ライトビューからのレンダリング結果をテクスチャとしてGPUに渡す
 	//SetRenderTargetした後でSetShaderResourcesしないと渡らない
-	ID3D11ShaderResourceView* resource = _renderer->LightDepthShaderResource();
+	resource = _renderer->BlurXShaderResource();
 	dev.Context()->PSSetShaderResources(TEXTURE_LIGHT_DEPTH, 1, &resource);
 
 
@@ -501,6 +517,8 @@ PlayingScene::Update(int mouseWheelDelta)
 	_plane->Draw();//床
 	_billBoard->Draw();
 
+
+
 #pragma endregion
 
 
@@ -512,7 +530,8 @@ PlayingScene::Update(int mouseWheelDelta)
 	_renderer->ChangeRT_Camera();
 	if (debugToggle)
 	{
-		resource = _renderer->TestShaderResource();//_renderer->CameraDepthShaderResource();
+		resource = _renderer->PostEffectShaderResource();//_renderer->CameraDepthShaderResource();
+		//resource = _renderer->BlurYShaderResource();
 		dev.Context()->PSSetShaderResources(TEXTURE_LIGHT_DEPTH, 1, &resource);
 		_debugHUD->Draw();
 

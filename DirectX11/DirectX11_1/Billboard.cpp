@@ -35,6 +35,14 @@ Billboard::Billboard(const std::shared_ptr<Camera>& cam, float width, float heig
 		"ps_5_0",
 		_ps);
 
+	D3D11_SAMPLER_DESC samplerDesc = {};
+	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
+	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+
+	dev.Device()->CreateSamplerState(&samplerDesc, &_samplerState);
+
 
 
 	_worldAndCamera.world = XMMatrixIdentity();
@@ -77,6 +85,7 @@ Billboard::Draw()
 {
 	DeviceDx11& dev = DeviceDx11::Instance();
 
+	dev.Context()->PSSetSamplers(0, 1, &_samplerState);
 
 	//XMMATRIX view = _cameraPtr.lock()->CameraView();
 	//XMFLOAT3 trans = { view._41, view._42, view._43 };

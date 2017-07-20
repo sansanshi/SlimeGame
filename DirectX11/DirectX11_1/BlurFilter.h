@@ -18,6 +18,10 @@ private:
 	std::weak_ptr<ID3D11VertexShader*> _blurYvs;
 	std::weak_ptr<ID3D11PixelShader*> _blurYps;
 
+	ID3D11Buffer* _blurWeightBuffer;
+	BlurWeight _blurWeight;
+	D3D11_MAPPED_SUBRESOURCE _mappedWeight;
+
 	ID3D11Buffer* _matrixBuffer;
 	WorldAndCamera _worldAndCamera;
 	D3D11_MAPPED_SUBRESOURCE _mem;

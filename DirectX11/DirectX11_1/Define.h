@@ -191,3 +191,19 @@ struct WorldAndCamera{
 	XMMATRIX lightView;
 	XMMATRIX lightProj;
 };
+
+struct BlurWeight
+{
+	//配列で渡すとシェーダ側で変な値が入る
+	//パッキング規則？
+	float weight0;
+	float weight1;
+	float weight2;
+	float weight3;
+	float weight4;
+	float weight5;
+	float weight6;
+	float weight7;
+	//float weight[8];
+	
+};

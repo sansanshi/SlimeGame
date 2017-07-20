@@ -4,7 +4,7 @@
 #include"Camera.h"
 #include"ShaderDefine.h"
 #include"ResourceManager.h"
-
+#include<math.h>
 
 BlurFilter::BlurFilter() 
 {
@@ -21,9 +21,9 @@ BlurFilter::BlurFilter()
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 	};
-	resourceMgr.LoadVS("BlurXFilter_VS",
+	resourceMgr.LoadVS("BlurFilter_VS",
 		"blur.hlsl",
-		"BlurXFilterVS",
+		"BlurFilterVS",
 		"vs_5_0",
 		_blurXvs,
 		inputElementDescs,
@@ -31,46 +31,71 @@ BlurFilter::BlurFilter()
 		_inputLayout);
 	resourceMgr.LoadPS("BlurXFilter_PS",
 		"blur.hlsl",
-		"BlurXFilterPS",
+		"XBlurFilterPS",
 		"ps_5_0",
 		_blurXps);
 
-	resourceMgr.LoadVS("BlurYFilter_VS",
+	resourceMgr.LoadVS("BlurFilter_VS",
 		"blur.hlsl",
-		"BlurYFilterVS",
+		"BlurFilterVS",
 		"vs_5_0",
 		_blurYvs,
 		inputElementDescs,
 		sizeof(inputElementDescs) / sizeof(D3D11_INPUT_ELEMENT_DESC),
 		_inputLayout);
-	resourceMgr.LoadPS("BlurXFilter_PS",
+	resourceMgr.LoadPS("BlurYFilter_PS",
 		"blur.hlsl",
-		"BlurYFilterPS",
+		"YBlurFilterPS",
 		"ps_5_0",
 		_blurYps);
 
 
-	D3D11_BUFFER_DESC matBuffDesc = {};
-	matBuffDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	matBuffDesc.ByteWidth = sizeof(WorldAndCamera);
-	matBuffDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;//バッファの中身はCPUで書き換える
-	matBuffDesc.Usage = D3D11_USAGE_DYNAMIC;//CPUによる書き込み、GPUによる読み込みが行われるという意味
+	
+
+
+	D3D11_BUFFER_DESC blurWeightBuffDesc = {};
+	blurWeightBuffDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	blurWeightBuffDesc.ByteWidth = sizeof(BlurWeight) + (16 - sizeof(BlurWeight) % 16) % 16;
+	//sizeof(Material) + (16 - sizeof(Material) % 16) % 16;
+	blurWeightBuffDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;//バッファの中身はCPUで書き換える
+	blurWeightBuffDesc.Usage = D3D11_USAGE_DYNAMIC;//CPUによる書き込み、GPUによる読み込みが行われるという意味
 											//matBuffDesc.ByteWidth = sizeof(XMMATRIX);
 											//matBuffDesc.StructureByteStride = sizeof(XMMATRIX);
 
-	D3D11_SUBRESOURCE_DATA d;
-	d.pSysMem = &_worldAndCamera;
+	float weight_[8] = {};
+	float t = 0.0f;
+	float d = 90.0f*90.0f / 100.0f;
+	for (int i = 0; i < 8; ++i)
+	{
+		float r = 1.0f + 2.0f*i;
+		float w = exp(-0.5f*(r*r) / d);
+		weight_[i] = w;
+		if (i > 0) { w *= 2.0f; }
+		t += w;
+	}
+	for (int i = 0; i < 8; ++i)
+	{
+		weight_[i] /= t;
+	}
+	_blurWeight.weight0 = weight_[0];
+	_blurWeight.weight1 = weight_[1];
+	_blurWeight.weight2 = weight_[2];
+	_blurWeight.weight3 = weight_[3];
+	_blurWeight.weight4 = weight_[4];
+	_blurWeight.weight5 = weight_[5];
+	_blurWeight.weight6 = weight_[6];
+	_blurWeight.weight7 = weight_[7];
 
-	result = dev.Device()->CreateBuffer(&matBuffDesc, &d, &_matrixBuffer);
+	D3D11_SUBRESOURCE_DATA dat;
+	dat.pSysMem = &_blurWeight;
 
-	dev.Context()->Map(_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &_mem);
+	result = dev.Device()->CreateBuffer(&blurWeightBuffDesc, &dat, &_blurWeightBuffer);
+
+	dev.Context()->Map(_blurWeightBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &_mappedWeight);
 	//ここでこのメモリの塊に、マトリックスの値をコピーしてやる
-	memcpy(_mem.pData, (void*)(&_worldAndCamera), sizeof(_worldAndCamera));
+	memcpy(_mappedWeight.pData, (void*)(&_blurWeight), sizeof(BlurWeight));
 
-	dev.Context()->Unmap(_matrixBuffer, 0);
-
-	dev.Context()->VSSetConstantBuffers(0, 1, &_matrixBuffer);
-
+	dev.Context()->Unmap(_blurWeightBuffer, 0);
 
 }
 
@@ -91,9 +116,8 @@ BlurFilter::DrawBlurX()
 	dev.Context()->PSSetShader(*_blurXps.lock(), nullptr, 0);
 	dev.Context()->IASetInputLayout(*_inputLayout.lock());
 
-	dev.Context()->VSSetConstantBuffers(0, 1, &_matrixBuffer);
+	dev.Context()->PSSetConstantBuffers(0, 1, &_blurWeightBuffer);
 
-	dev.Context()->PSSetShaderResources(TEXTURE_MAIN, 1, _texture._Get());
 	unsigned int hudstride = sizeof(HUDVertex);
 	unsigned int hudoffset = 0;
 	dev.Context()->IASetVertexBuffers(0, 1, &_vertexBuffer, &hudstride, &hudoffset);
@@ -111,9 +135,8 @@ BlurFilter::DrawBlurY()
 	dev.Context()->PSSetShader(*_blurYps.lock(), nullptr, 0);
 	dev.Context()->IASetInputLayout(*_inputLayout.lock());
 
-	dev.Context()->VSSetConstantBuffers(0, 1, &_matrixBuffer);
+	dev.Context()->PSSetConstantBuffers(0, 1, &_blurWeightBuffer);
 
-	dev.Context()->PSSetShaderResources(TEXTURE_MAIN, 1, _texture._Get());
 	unsigned int hudstride = sizeof(HUDVertex);
 	unsigned int hudoffset = 0;
 	dev.Context()->IASetVertexBuffers(0, 1, &_vertexBuffer, &hudstride, &hudoffset);
@@ -126,11 +149,6 @@ BlurFilter::DrawBlurY()
 void
 BlurFilter::Update()
 {
-	DeviceDx11& dev = DeviceDx11::Instance();
-	//ビルボード表示
-
-	dev.Context()->VSSetConstantBuffers(0, 1, &_matrixBuffer);
-	
 
 }
 

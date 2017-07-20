@@ -20,6 +20,7 @@ class Billboard;
 class HUD;
 class PMDMesh;
 class InputManager;
+class BlurFilter;
 
 class PlayingScene :
 	public Scene
@@ -44,6 +45,8 @@ private:
 	std::unique_ptr<Sphere> _sphere;
 	std::unique_ptr<TessPlane> _tessPlane;
 	std::unique_ptr<SkySphere> _skySphere;
+
+	std::unique_ptr<BlurFilter> _blurFilter;
 
 	std::unique_ptr<DecalBox> _decalBox;
 	std::unique_ptr<DecalFactory> _decalFac;
