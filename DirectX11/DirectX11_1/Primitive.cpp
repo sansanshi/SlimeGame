@@ -72,7 +72,8 @@ Primitive::UpdateMatrixies()
 	XMMATRIX modelMatrix = XMMatrixIdentity();
 	XMMATRIX transMatrix = XMMatrixTranslation(_pos.x, _pos.y , _pos.z);
 	XMMATRIX scaleMat = XMMatrixScaling(_scale.x, _scale.y, _scale.z);
-	XMMATRIX rotMat = XMMatrixRotationRollPitchYaw(_rot.x, _rot.y, _rot.z);
+	float calcRad = XM_PI / 180.0f;
+	XMMATRIX rotMat = XMMatrixRotationRollPitchYaw(_rot.x*calcRad, _rot.y*calcRad, _rot.z*calcRad);
 
 	modelMatrix = XMMatrixMultiply(XMMatrixMultiply(rotMat, scaleMat),transMatrix);
 
@@ -157,10 +158,12 @@ Primitive::ApplyTextures()
 	if (std::shared_ptr<ID3D11ShaderResourceView*> t = _dispMask.lock())
 	{
 		dev.Context()->PSSetShaderResources(TEXTURE_MASK, 1, t._Get());
+		dev.Context()->VSSetShaderResources(TEXTURE_MASK, 1, t._Get());
 	}
 	if (std::shared_ptr<ID3D11ShaderResourceView*> t = _displacementTex.lock())
 	{
 		dev.Context()->PSSetShaderResources(TEXTURE_DISPLACEMENT, 1, t._Get());
+		dev.Context()->VSSetShaderResources(TEXTURE_DISPLACEMENT, 1, t._Get());
 	}
 	if (std::shared_ptr<ID3D11ShaderResourceView*> t = _heightMap.lock())
 	{
@@ -170,4 +173,12 @@ Primitive::ApplyTextures()
 	{
 		dev.Context()->PSSetShaderResources(TEXTURE_SUB2, 1, t._Get());
 	}
+}
+
+void
+Primitive::Rotate(const XMFLOAT3 pyr)
+{
+	_rot.x += pyr.x;
+	_rot.y += pyr.y;
+	_rot.z += pyr.z;
 }

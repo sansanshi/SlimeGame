@@ -106,5 +106,8 @@ public:
 
 	//持っているテクスチャをGPUに渡す
 	void ApplyTextures();
+
+	//x軸Pitch Y軸Yaw Z軸Roll
+	void Rotate(const XMFLOAT3 pyr);
 };
 

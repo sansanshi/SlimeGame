@@ -67,14 +67,14 @@ Cylinder::Cylinder(float radius, float height, unsigned int div,const std::share
 		hatchVerts[i].uv.x = (hatchVerts[i].pos.x / radius + 1.0f) / 2.0f;
 		hatchVerts[i].uv.y = -(hatchVerts[i].pos.z / radius + 1.0f) / 2.0f;
 		hatchVerts[i].tangent = XMFLOAT3(1, 0, 0);
-		hatchVerts[i].binormal = XMFLOAT3(0, 0, 1);
+		hatchVerts[i].binormal = XMFLOAT3(0, 0, -1);
 		rad += (360 / div)*XM_PI / 180;
 		hatchVerts[i+1].pos = {XMFLOAT3(cos(-rad)*radius,height,sin(-rad)*radius)};
 		hatchVerts[i+1].normal = XMFLOAT3(0, 1, 0);
 		hatchVerts[i+1].uv.x = (hatchVerts[i+1].pos.x / radius + 1.0f) / 2.0f;
 		hatchVerts[i+1].uv.y = -(hatchVerts[i+1].pos.z / radius + 1.0f) / 2.0f;
 		hatchVerts[i + 1].tangent = XMFLOAT3(1, 0, 0);
-		hatchVerts[i + 1].binormal = XMFLOAT3(0, 0,1);
+		hatchVerts[i + 1].binormal = XMFLOAT3(0, 0,-1);
 	}
 	D3D11_SUBRESOURCE_DATA hatchData;
 	hatchData.pSysMem = &hatchVerts[0];
@@ -113,7 +113,7 @@ Cylinder::Cylinder(float radius, float height, unsigned int div,const std::share
 	
 	_mainTex = resourceMgr.LoadSRV("Cylinder_main", "wood.png");
 	_subTex = resourceMgr.LoadSRV("Cylinder_sub", "noise.png");
-	_normalTex = resourceMgr.LoadSRV("Cylinder_normal", "normal1_.png");
+	_normalTex = resourceMgr.LoadSRV("Cylinder_normal", "normal.png");
 
 	
 	//ƒJƒƒ‰‚©‚ç‚Ì•`‰æ‚ÉŽg‚Á‚½inputElementDescs‚ðŽg‚Á‚Ä‚à•`‰æ‚Å‚«‚½
@@ -182,6 +182,17 @@ Cylinder::Draw()
 	dev.Context()->IASetVertexBuffers(0, 1, &_hatchBuffer, &stride, &offset);
 	dev.Context()->Draw(_hatchVertCnt, 0);
 
+	XMMATRIX trans = XMMatrixTranslation(_pos.x, _pos.y , _pos.z);
+	float calcRad = XM_PI / 180.0f;
+	XMMATRIX temp = XMMatrixTranslation(0, -_height, 0);
+	XMMATRIX rot = XMMatrixRotationRollPitchYaw(_rot.x*calcRad, _rot.y*calcRad , (_rot.z+180.0f)*calcRad );
+	XMMATRIX scal = XMMatrixScaling(_scale.x, _scale.y, _scale.z);
+
+	XMMATRIX t = XMMatrixMultiply(temp, XMMatrixMultiply(rot,scal));
+
+	_worldAndCamera.world = XMMatrixMultiply(t, trans);
+	ApplyConstantBuffer(_matrixBuffer, _mappedMatrixies, _worldAndCamera);
+	dev.Context()->Draw(_hatchVertCnt, 0);
 
 }
 void

@@ -114,6 +114,8 @@ PlayingScene::PlayingScene(HWND hwnd)
 	_cylinder3 = std::make_unique<Cylinder>(4, 20, 20, _camera);
 	_cylinder4 = std::make_unique<Cylinder>(4, 20, 20, _camera);
 
+	_cylinder2->SetRotate(XMFLOAT3(90, 0, 0));
+
 	_sphere = std::make_unique<Sphere>(100, 5, _camera);//new Sphere(100, 5, _camera);
 	_tessPlane = std::make_unique<TessPlane>(600, 600, Vector3(0, 1, 0), _camera);//new TessPlane(400, 400, Vector3(0, 1, 0), _camera);
 	_decalBox = std::make_unique<DecalBox>(1, 1, 1, _camera);//new DecalBox(1, 1, 1, _camera);
@@ -397,14 +399,17 @@ PlayingScene::Update(int mouseWheelDelta)
 
 	_camera->Update();
 
+	_player->SetPos(XMFLOAT3( 0, 0, -5.0f));
 	_player->Update();
 	_plane->SetPos(XMFLOAT3(0.0f, -5.0f, 0.0f));
 	_plane->Update();
 
-	_cylinder2->SetPos(XMFLOAT3(-20,0,0));
+	_cylinder2->SetPos(XMFLOAT3(-20,0,15));
+	_cylinder2->Rotate(XMFLOAT3(0,1,0));
 	_cylinder3->SetPos(XMFLOAT3(10, 0, 10));
+	_cylinder3->Rotate(XMFLOAT3(0,1,0));
 	_cylinder4->SetPos(XMFLOAT3(-10, 0, 10));
-	_cylinder2->SetScale(XMFLOAT3(1, 2, 1));
+	_cylinder2->SetScale(XMFLOAT3(1, 1.5, 1));
 
 	_cylinder->Update();
 	_cylinder2->Update();
@@ -480,9 +485,10 @@ PlayingScene::Update(int mouseWheelDelta)
 	_skySphere->Draw();
 	//ライトビューからのレンダリング結果をテクスチャとしてGPUに渡す
 	//SetRenderTargetした後でSetShaderResourcesしないと渡らない
-	resource = _renderer->BlurXShaderResource();
+	resource = _renderer->BlurYShaderResource();
+	dev.Context()->PSSetShaderResources(TEXTURE_BLUR_LIGHT_DEPTH, 1, &resource);
+	resource = _renderer->LightDepthShaderResource();
 	dev.Context()->PSSetShaderResources(TEXTURE_LIGHT_DEPTH, 1, &resource);
-
 
 	_renderer->ChangePTForPMD();
 	_player->Draw();//プレイヤーのメイン描画

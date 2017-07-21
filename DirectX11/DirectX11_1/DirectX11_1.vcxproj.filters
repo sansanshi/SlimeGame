@@ -244,11 +244,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="ShaderInclude.hlsli">
-      <Filter>ソース ファイル\HLSL</Filter>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <FxCompile Include="shaders\BaseShader.hlsl">
       <Filter>ソース ファイル\HLSL</Filter>
     </FxCompile>
@@ -282,5 +277,10 @@
     <FxCompile Include="shaders\blur.hlsl">
       <Filter>ソース ファイル\HLSL</Filter>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="shaders\ShaderInclude.hlsli">
+      <Filter>ソース ファイル\HLSL</Filter>
+    </None>
   </ItemGroup>
 </Project>

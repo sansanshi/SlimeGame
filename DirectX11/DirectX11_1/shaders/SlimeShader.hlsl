@@ -122,10 +122,10 @@ Output SlimeVS(float4 pos:POSITION, float4 normal : NORMAL, float2 uv : TEXCOORD
 	o.ambient = _ambient;
 
 	float4 posWorld = mul(_world, posTemp);
-		o.lightVec = float4(normalize(posWorld.xyz - lightPos.xyz), 0);//float4(normalize(lightVec), 1.0);
+		o.lightVec = float4(normalize(lightPos.xyz-posWorld.xyz), 1);//float4(normalize(lightVec), 1.0);
 	matrix invTang = InvTangentMatrix(o.tangent, o.binormal, o.normal);
 	o.lightVec = normalize(mul(invTang, o.lightVec));//ライトベクトルを接空間に変換する
-
+	o.lightVec = float4(lightPos.xyz - posWorld.xyz, 1);
 	//eyeVec=頂点座標-視点
 	o.eyeVec = float4(normalize(posWorld-eyePos));
 	o.eyeVec = normalize(o.eyeVec);
@@ -155,7 +155,6 @@ float4 SlimePS(Output o) :SV_Target
 	float2 uvOffset = float2((float)o.timer*0.00002f, 0);
 	float h = _heightMap.Sample(_samplerState, o.uv+uvOffset).r;//視差マッピング用テクスチャから読み取った
 	float2 heightUV = (o.uv + uvOffset) - 0.03*h*-o.eyeVec.xy;
-
 		//法線テクスチャから色を取得
 		uvOffset.y = -(float)o.timer*0.002f;
 	float3 normalColor = _normalTex.Sample(_samplerState, o.uv+uvOffset).rgb;
@@ -168,19 +167,22 @@ float4 SlimePS(Output o) :SV_Target
 
 	//float3 ref = reflect(-o.eyeVec, n_local);
 
+	normalVec = mul(o.tangentMatrix, normalVec);
 	//saturate→0～1にクランプする関数
 	//　※　光線ベクトルの「逆」ベクトルとの内積を取る
-	float bright = saturate(dot(-o.lightVec, normalVec/*n_local*/));
+	float bright = saturate(dot(o.lightVec, normalVec/*n_local*/));
+
 	//return float4(bright, bright, bright, 1);
 
 	float2 shadowUV = (float2(1, 1) + (o.shadowposCS.xy / o.shadowposCS.w)*float2(1, -1))*0.5f;
-		float lightviewDepth = _shadowTex.Sample(_samplerState_clamp, shadowUV).r;
+	float lightviewDepth = _shadowTex.Sample(_samplerState_clamp, shadowUV).r;
 
-		float ld = o.shadowposVS.z / o.farZ;
+	float ld = o.shadowposVS.z / o.farZ;
 	float shadowWeight = 1.0f;
-	if (ld > lightviewDepth + 0.01f){
+	shadowWeight = CalcVSWeight(shadowUV, ld);
+	/*if (ld > lightviewDepth + 0.01f){
 		shadowWeight = 0.1f;
-	}
+	}*/
 	
 	//SSSのテスト　後で球体モデルにして試す
 	float ed = o.postest.z / o.postest.w;

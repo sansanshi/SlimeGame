@@ -9,6 +9,7 @@ Texture2D _dispMap:register(t7);
 Texture2D _dispMask:register(t8);
 Texture2D _decalTex:register(t9);//デカール
 Texture2D _shadowTex:register(t10);//ライトからの深度値をテクスチャとして受け取る
+Texture2D _blurShadowTex:register(t11);
 Texture2D _cameraDepthTex:register(t12);
 Texture2D _subTex:register(t13);//サブテクスチャ
 Texture2D _flowTex:register(t14);
@@ -25,12 +26,16 @@ matrix TangentMatrix(float4 tangent, float4 binormal, float4 normal)
 		float4(normalize(binormal.xyz),0),
 		float4(normalize(normal.xyz),0),
 		float4(0, 0, 0, 1) };
-	matrix test = {
-		float4(1, 0, 0, 0),
-		float4(0, 1, 0, 0),
-		float4(0, 0, 1, 0),
-		float4(0, 0, 0, 1)
-	};
+	return mat;
+
+}
+matrix TangentMatrix(float3 tangent, float3 binormal, float3 normal)
+{
+	matrix mat = {
+		float4(normalize(tangent),0),
+		float4(normalize(binormal),0),
+		float4(normalize(normal),0),
+		float4(0, 0, 0, 1) };
 	return mat;
 
 }
@@ -40,12 +45,16 @@ matrix InvTangentMatrix(float4 tangent, float4 binormal, float4 normal)
 	matrix r = TangentMatrix(tangent, binormal, normal);
 	return transpose(r);
 }
-
+matrix InvTangentMatrix(float3 tangent, float3 binormal, float3 normal)
+{
+	matrix r = TangentMatrix(tangent, binormal, normal);
+	return transpose(r);
+}
 
 matrix DisableTranslation(matrix mat)
 {
 	matrix m = mat;
-	m._m03 = m._m13 = m._m23 = 0;
+	m._m03 = m._m13 = m._m23 = 0.0f;
 	return m;
 }
 
@@ -78,3 +87,26 @@ matrix InitMat()
 	mat._m00 = mat._m11 = mat._m22 = mat._m33 = 1;
 	return mat;
 }
+
+//CalculateVarianceShadowWeight
+//shadowUV:ライト空間のスクリーン座標　lightDepth:ライトビュー空間深度
+float CalcVSWeight(float2 shadowUV, float ld)
+{
+	float2 satUV = saturate(shadowUV);
+	float4 d = _blurShadowTex.Sample(_samplerState, shadowUV);
+	if (shadowUV.x == satUV.x&&shadowUV.y == satUV.y&&d.r < ld - 0.005f
+		&&satUV.x<0.95f&&satUV.y>0.05f)
+	{
+		//↑ライトからのビューの切れ目に影ができるので応急処置
+		//線形補間、サンプリング（WRAP）のせいではなかったっぽい　後で直す	
+		float variance = d.g - d.r*d.r;
+		float md = ld - d.r;
+		float p = variance / (variance + (md*md));
+
+		float ret = saturate(max(p, 0.3f));
+		//ret = lerp(0.2f,1.0f, ret);
+		return ret;
+	}
+	return 1.0f;
+
+};

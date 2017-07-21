@@ -11,11 +11,13 @@ cbuffer global:register(b0) {
 
 struct Output {
 	float4 pos:SV_POSITION;
-	float4 normal:NORMAL;
+	float3 normal:NORMAL;
 	float2 uv:TEXCOORD0;
 	float4 diffuse:COLOR0;
 	float3 specular:COLOR1;
 	float3 ambient:COLOR2;
+	float3 binormal:BINORMAL;
+	float3 tangent:TANGENT;
 
 	float4 lightVec:TEXCOORD1;
 	float4 eyeVec:TEXCOORD2;
@@ -37,7 +39,6 @@ struct Output {
 	float2 windowSize:TEXCOORD7;
 };
 
-
 Output woodVS(float4 pos:POSITION, float4 normal : NORMAL, float2 uv : TEXCOORD,
 	float4 tangent : TANGENT, float4 binormal : BINORMAL)
 {
@@ -47,14 +48,12 @@ Output woodVS(float4 pos:POSITION, float4 normal : NORMAL, float2 uv : TEXCOORD,
 	o.pos = mul(m, pos);
 	//法線も回転する（平行移動成分は消す
 	matrix model_noTrans = DisableTranslation(_world);
-	o.normal = normalize(mul(model_noTrans, normal));
+	o.normal = normalize(mul(model_noTrans , normal.xyz));
+	o.binormal = normalize(mul(model_noTrans ,binormal.xyz));
+	o.tangent = normalize(mul(model_noTrans, tangent.xyz));
 	o.uv = uv;
+	o.tangentMatrix = TangentMatrix(o.tangent, o.binormal, o.normal);
 
-	float4 tang, binorm, norm;
-	norm = normalize(mul(model_noTrans, normal));
-	binorm = normalize(mul(model_noTrans, binormal));
-	tang = normalize(mul(model_noTrans, tangent));
-	o.tangentMatrix = TangentMatrix(tang, binorm, norm);
 
 	float3 posWorld = mul(_world, pos);
 	o.lightVec = float4(normalize(lightPos.xyz - posWorld), 1);
@@ -93,11 +92,14 @@ float4 woodPS(Output o) :SV_Target
 	float3 normalColor = _normalTex.Sample(_samplerState, o.uv);
 	//ベクトルへ変換　↑で取得した時点では範囲が0~1なので-1~1になるように
 	float3 normalVec = 2 * normalColor - 1.0f;
-
+	//return float4(o.binormal, 1);
 	normalVec = mul(o.tangentMatrix, normalVec);
 	normalVec = normalize(normalVec);
+	return float4(normalVec, 1);
 
-	float bright = saturate(dot(o.lightVec, normalVec));//saturate(dot(-o.lightVec, normalVec));
+	float bright = saturate(dot(o.lightVec, normalVec)+0.3f);//saturate(dot(-o.lightVec, normalVec));
+	
+
 	o.shadowposCS = float4(o.shadowposCS.xyz / o.shadowposCS.w, 1.0f);
 	float2 shadowUV = (float2(1, 1) + (o.shadowposCS.xy)*float2(1, -1))*0.5f;
 	shadowUV += float2(0.5f / o.windowSize.x, 0.5f / o.windowSize.y);
@@ -106,10 +108,11 @@ float4 woodPS(Output o) :SV_Target
 	float ld = o.shadowposVS.z / o.farZ;
 	float2 satUV = saturate(shadowUV);
 	float shadowWeight = 1.0f;
-	if (shadowUV.x == satUV.x&&shadowUV.y == satUV.y&&ld > lightviewDepth + 0.01f) {
-		shadowWeight = 0.1f;
-		//return float4(lightviewDepth, 0, 0, 1);
-	}
+	shadowWeight = CalcVSWeight(shadowUV, ld);
+	//if (shadowUV.x == satUV.x&&shadowUV.y == satUV.y&&ld > lightviewDepth + 0.01f) {
+	//	shadowWeight = 0.1f;
+	//	//return float4(lightviewDepth, 0, 0, 1);
+	//}
 
 
 	bright = min(bright, shadowWeight);

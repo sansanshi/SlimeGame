@@ -160,9 +160,6 @@
     <ClInclude Include="VMDLoader.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="ShaderInclude.hlsli" />
-  </ItemGroup>
-  <ItemGroup>
     <FxCompile Include="shaders\BaseShader.hlsl" />
     <FxCompile Include="shaders\blur.hlsl" />
     <FxCompile Include="shaders\Decal.hlsl" />
@@ -174,6 +171,9 @@
     <FxCompile Include="shaders\Tessellation.hlsl" />
     <FxCompile Include="shaders\water.hlsl" />
     <FxCompile Include="shaders\wood.hlsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="shaders\ShaderInclude.hlsli" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

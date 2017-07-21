@@ -13,5 +13,6 @@ extern const int TEXTURE_MASK;
 extern const int TEXTURE_DECAL;
 extern const int TEXTURE_CAMERA_DEPTH;
 extern const int TEXTURE_LIGHT_DEPTH;
+extern const int TEXTURE_BLUR_LIGHT_DEPTH;
 extern const int TEXTURE_FLOW;
 

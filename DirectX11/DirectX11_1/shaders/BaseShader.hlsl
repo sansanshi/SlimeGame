@@ -156,21 +156,11 @@ Output BaseVS(float4 pos : POSITION, float2 uv : TEXCOORD,
 float4 BasePS(Output o) :SV_Target
 {
 
-	/*float h = _heightMap.Sample(_samplerState, o.uv);
-
-	float2 heightUV = o.uv + 0.03*h*o.eyeVec.xy;*/
-
 	//法線テクスチャから色を取得
 	float3 normalColor = _normalTex.Sample(_samplerState, o.uv).rgb;
 	//ベクトルへ変換　↑で取得した時点では範囲が0~1なので-1~1になるように
 	float3 normalVec = 2 * normalColor - 1.0f;
 	normalVec = normalize(normalVec);
-	//↓は頂点シェーダの方で処理させる（tangentMatrixを作ってこっちに渡す
-	/*float3 ul = float3(normalVec.x*o.tangent.x, normalVec.x*o.tangent.y, normalVec.x*o.tangent.z);
-	float3 vl = float3(normalVec.y*o.binormal.x, normalVec.y*o.binormal.y, normalVec.y*o.binormal.z);
-	float3 zl = float3(normalVec.z*o.normal.x, normalVec.z*o.normal.y, normalVec.z*o.normal.z);
-	float3 n_local = ul + vl + zl;*/
-	//normalVec = n_local;
 	float3 n_local = mul(normalVec, o.tangentMatrix);//これにモデルの回転とか適用されてないかも？
 		//n_local = mul(o.noTransMatrix, n_local);
 	//↑頂点シェーダの方で回転後のnormal、binormal、tangent使ってtangentMatrix作ったから要らない？
@@ -179,15 +169,7 @@ float4 BasePS(Output o) :SV_Target
 	//saturate→0～1にクランプする関数
 	//　※　光線ベクトルの「逆」ベクトルとの内積を取る
 	float bright = saturate(dot(-o.lightVec, o.normal/*n_local*/));
-	//return float4(bright, bright, bright, 1);
-	//float4 col = v.diffuse*bright;//float4(v.diffuse*bright, v.diffuse*bright, v.diffuse*bright, 0);//_tex.Sample(_samplerState, v.uv);
-
-	//v.diffuseにはRGBAが入っていて、brightには0~1の値が入っている
-	//2つを乗算するとAlpha値にもbrightの0~1がかかってしまうので、本来暗くなる場所が透明になってしまう
-	//float4 col = bright*(v.diffuse + ambient)*_tex.Sample(_samplerState, v.uv);//*sphcol;//brightは0~1の値を取っている
-	//float3 sphcol = _sph.Sample(sample, v.normal.xy*float2(0.5f,-0.5f)+ / 2 + 0.5f);//sph適用
-	//spa→nulltextureb sph→nulltexture
-	//return float4(o.normal.x, o.normal.y, o.normal.z, 1.0f);
+	
 	o.shadowposCS = float4(o.shadowposCS.xyz / o.shadowposCS.w, 1.0f);
 	float2 shadowUV = (float2(1, 1) + (o.shadowposCS.xy )*float2(1, -1))*0.5f;
 	float lightviewDepth = _shadowTex.Sample(_samplerState_clamp, shadowUV).r;
@@ -196,31 +178,16 @@ float4 BasePS(Output o) :SV_Target
 	float shadowWeight = 1.0f;
 	if (ld > lightviewDepth+0.005f){
 		shadowWeight = 0.1f;
-		//return float4(1, 0, 0, 1);
 	}
-	//SSSのテスト　後で球体モデルにして試す
-	float ed = o.postest.z / o.postest.w;
-	float thickness = abs(ld - lightviewDepth)*100.0f;
-	float4 transparent = float4(_tex.Sample(_samplerState, o.uv).rgb*(1.0f - saturate(thickness / 0.2f)), 1);
-		transparent = _tex.Sample(_samplerState, o.uv)*(1.0f - saturate(thickness / 3.5f));
-	float sss = 1.0f - saturate(thickness / 3.4f);
-	//return transparent;
-	//SSS
+	shadowWeight = CalcVSWeight(shadowUV, ld);
 
 	//ジラジラ表現テスト
 	float rand = GetRandomNumber(o.uv,(int)(o.timer));
 	float _dot = saturate(dot(o.eyeVec.xyz, o.normal));
 	rand = rand * _dot;
 
-	float4 test = _tex.Sample(_samplerState, o.uv);
-		//return float4(test.r*rand, 0.2f, 0.2f, rand+0.4f);
-
-	//
-	
-
-
 	bright = min(bright, shadowWeight);
-	//return float4(bright, bright, bright, 1);
+	return float4(bright, bright, bright, 1);
 	float4 texcol = _tex.Sample(_samplerState, o.uv);
 		float3 sphCol = _sph.Sample(_samplerState, o.normal.xy / 2 * float2(1, -1) + float2(0.5f, 0.5f));
 		float4 col= float4((bright*o.diffuse.rgb + o.ambient.rgb)*texcol.rgb*sphCol
@@ -308,22 +275,16 @@ float4 PrimitivePS(Output o):SV_Target
 	float2 satUV = saturate(shadowUV);
 	float shadowWeight = 1.0f;
 	if (shadowUV.x==satUV.x&&shadowUV.y==satUV.y&&ld > lightviewDepth + 0.01f){
-		shadowWeight = 0.1f;
+		shadowWeight = 0.3f;
 		//return float4(lightviewDepth, 0, 0, 1);
 	}
 
-	//SSSのテスト　後で球体モデルにして試す
-	float ed = o.postest.z / o.postest.w;//視点からの深度
-	float thickness = abs(ld - lightviewDepth)*200.0f;
-	float4 transparent = float4(diffuse.rgb*(1.0f - saturate(thickness / 0.2f)), 1);
-		float sss = 1.0f - saturate(thickness / 2.4f);
-	//return transparent;
-	//SSS
-
+	shadowWeight = CalcVSWeight(shadowUV, ld);
+	
 	bright = min(bright, shadowWeight);
 	//return float4(bright, bright, bright, 1);
 	//return _shadowTex.Sample(_samplerState_clamp, o.uv);
-	float4 col = float4((ambient.rgb+bright)/**texColor.rgb*/,1);//ambient+bright;
+	float4 col = float4((ambient.rgb*bright)/**texColor.rgb*/,1);//ambient+bright;
 	//フォグをかける
 	col = lerp(o.fogColor, col, o.fog);
 	return col;

@@ -10,7 +10,6 @@ cbuffer global:register(b0){
 };
 
 
-
 // 入力制御点
 struct VS_CONTROL_POINT_OUTPUT
 {
@@ -155,41 +154,18 @@ float4 TessPS(DS_OUTPUT o):SV_Target
 {
 	float2 shadowUV = (float2(1, 1) + (o.shadowposCS.xy / o.shadowposCS.w)*float2(1, -1))*0.5f;
 	shadowUV += float2(0.5f / o.windowSize.x, 0.5f / o.windowSize.y);
-	float lightviewDepth = _shadowTex.Sample(_samplerState_clamp, shadowUV).r;
 
 
 	float ld = o.shadowposVS.z / o.farZ;
-	float2 satUV = saturate(shadowUV);
-		float shadowWeight = 1.0f;
+	float shadowWeight = 1.0f;
 	
-	float4 dep = _shadowTex.Sample(_samplerState, shadowUV);
-	/*float depth_sq = dep.x*dep.x;
-	float variance = dep.y - depth_sq;
-	float md = ld - dep.x;
-	float p = variance / (variance + (md*md));
-	shadowWeight = saturate(max(p, dep.x <= ld));*/
-	//return dep;
-	if (shadowUV.x==satUV.x&&shadowUV.y==satUV.y&&dep.r < ld - 0.01f
-		&&satUV.x<0.95f&&satUV.y>0.05f)
-	{
-		//↑ライトからのビューの切れ目に影ができるので応急処置
-		//線形補間、サンプリング（WRAP）のせいではなかったっぽい　後で直す	
-		float variance = dep.g - dep.r*dep.r;
-
-		float p = variance / (variance + (ld - dep.r)*(ld - dep.r));
-
-		shadowWeight = max(p, 0.3f);
-	}
+	
+	shadowWeight = CalcVSWeight(shadowUV, ld);
 
 	//return dep;
-	return float4(shadowWeight, shadowWeight, shadowWeight, 1);
+	//return float4(shadowWeight, shadowWeight, shadowWeight, 1);
 
-	//if (shadowUV.x == satUV.x&&shadowUV.y == satUV.y&&ld > lightviewDepth +0.001f){
-	//	shadowWeight = 0.3f;
-	//	//shadowWeight *= f;
-
-	//}
-
+	
 	//光源からの距離によって明るさを決める
 	/*float lightWeight = 1.0f - saturate((length(o.worldPos - o.lightPos) / 80.0f));
 	shadowWeight = shadowWeight * lightWeight+0.3f;*/

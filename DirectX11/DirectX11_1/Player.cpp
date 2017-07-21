@@ -386,16 +386,7 @@ void DeformBones(PMDMesh* mesh, VMDData* vmddata, unsigned int frameNo)
 
 	for (auto& frames : vmddata->GetKeyframes())
 	{
-		/*auto it1=std::find_if(frames.second.begin(), frames.second.end(), [frameNo](const VMDData::MotionData& md){
-			return frameNo <= md.frameNo;
-		});
-		if (it1 == frames.second.end()) continue;*/
-		if (frameNo == 50)
-		{
-			if (frames.first == "右ひじ"){
-				int aaa = 0;
-			}
-		}
+		
 		//逆イテレータ
 		std::vector<VMDData::MotionData>::reverse_iterator revit = std::find_if(frames.second.rbegin(), frames.second.rend(), 
 			[frameNo](const VMDData::MotionData& md){
@@ -456,22 +447,14 @@ void DeformBones(PMDMesh* mesh, VMDData* vmddata, unsigned int frameNo)
 			XMMatrixTranslation(head.x, head.y, head.z);
 	}
 
-
-	/*int idx = mesh->GetBoneMap()["左ひじ"];
-	XMFLOAT3 head = mesh->GetBoneVertices()[idx].head.pos;
-	boneMatrixies[idx] =
-	XMMatrixTranslation(-head.x, -head.y, -head.z)*
-	XMMatrixRotationZ(90 * PI / 180.0f)*
-	XMMatrixTranslation(head.x, head.y, head.z);*/
-
-
-	
 }
 
 
 Player::Player(const std::shared_ptr<Camera>& camera) :dev(DeviceDx11::Instance()), _cameraPtr(camera)
 {
-
+	_pos = XMFLOAT3(0, 0, 0);
+	_scale = XMFLOAT3(1, 1, 1);
+	_rot = XMFLOAT3(0, 0, 0);
 }
 
 void
@@ -480,6 +463,7 @@ Player::Init()
 	HRESULT result;
 	ResourceManager& resourceMgr = ResourceManager::Instance();
 	
+
 	//pmxはデフォルトでutf16（Unicode）を使うのでL付けてワイド文字列にする
 	//PMXLoader pmxloader;
 	//pmxloader.LoadPMX(L"models/shame/shame.pmx");
@@ -751,26 +735,14 @@ Player::Update()
 	
 
 
-	XMMATRIX world = XMMatrixIdentity();
-	//_matrixMVP.worldMatrix = XMMatrixIdentity();
-
-	//transMatrix=XMMatrixTranslation(-modelpos.x,-modelpos.y,-modelpos.z);
-	//mvpMatrix.worldMatrix = XMMatrixMultiply(mvpMatrix.worldMatrix, transMatrix);
-
-	XMMATRIX scaleMatrix = XMMatrixScaling(0.8f, 0.8f, 0.8f);
-	//world = XMMatrixMultiply( world,scaleMatrix);
-
-	//_rotMatrix = XMMatrixRotationY(rotAngle);
-	//world = XMMatrixMultiply(world, _rotMatrix);
-	rotAngle += 1*XM_PI/180;//とりあえず回転させておく
-	//rotAngle = 180 * XM_PI / 180;
-
 	//LookAtのテスト
 	XMMATRIX transMatrix = XMMatrixTranslation(_pos.x, _pos.y, _pos.z);//LookAt(0, 1, 1);//
-	world = XMMatrixMultiply( world,transMatrix);
+	XMMATRIX rotMat = LookAt(1, 0, 0);
+	XMMATRIX scaleMat = XMMatrixScaling(_scale.x, _scale.y, _scale.z);
+	XMMATRIX world = XMMatrixMultiply( XMMatrixMultiply(rotMat,scaleMat),transMatrix);
 
 
-	_worldAndCamera.world = XMMatrixIdentity();
+	_worldAndCamera.world = world;
 	_worldAndCamera.cameraView = _cameraPtr.lock()->CameraView();
 	_worldAndCamera.cameraProj = _cameraPtr.lock()->CameraProjection();
 	_worldAndCamera.lightView = _cameraPtr.lock()->LightView();
@@ -1076,4 +1048,10 @@ void
 Player::BlendAnimation(const char* animName,float t)
 {
 	assert(t > 0.0f&&t < 1.0f);
+}
+
+void
+Player::SetPos(const XMFLOAT3 pos)
+{
+	_pos = pos;
 }

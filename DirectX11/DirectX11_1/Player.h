@@ -58,6 +58,8 @@ private:
 	//MATRIXIES _matrixMVP;
 	WorldAndCamera _worldAndCamera;
 	XMFLOAT3 _pos;
+	XMFLOAT3 _scale;
+	XMFLOAT3 _rot;
 	XMMATRIX _transMatrix;
 	XMMATRIX _rotMatrix;
 	XMMATRIX _scaleMatrix;
@@ -136,5 +138,6 @@ public:
 	void BlendAnimation(const char* animName,float t);
 
 	const XMFLOAT3& GetPos() { return _pos; };
+	void SetPos(const XMFLOAT3 pos);
 };
 

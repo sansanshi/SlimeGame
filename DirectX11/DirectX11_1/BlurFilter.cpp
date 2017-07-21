@@ -62,9 +62,10 @@ BlurFilter::BlurFilter()
 											//matBuffDesc.ByteWidth = sizeof(XMMATRIX);
 											//matBuffDesc.StructureByteStride = sizeof(XMMATRIX);
 
+	//Ç∆ÇËÇ†Ç¶Ç∏åàÇﬂë≈ÇøÅ@å„Ç≈íºÇ∑
 	float weight_[8] = {};
 	float t = 0.0f;
-	float d = 90.0f*90.0f / 100.0f;
+	float d = 40.0f*40.0f / 100.0f;
 	for (int i = 0; i < 8; ++i)
 	{
 		float r = 1.0f + 2.0f*i;
