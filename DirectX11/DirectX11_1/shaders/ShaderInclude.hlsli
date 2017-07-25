@@ -21,22 +21,24 @@ SamplerState _samplerState_clamp:register(s2);
 
 matrix TangentMatrix(float4 tangent, float4 binormal, float4 normal)
 {
-	matrix mat = {
-		float4(normalize(tangent.xyz),0),
-		float4(normalize(binormal.xyz),0),
-		float4(normalize(normal.xyz),0),
-		float4(0, 0, 0, 1) };
-	return mat;
+	matrix m = {
+		float4(tangent.x,binormal.x,normal.x,0),
+		float4(tangent.y,binormal.y,normal.y,0),
+		float4(tangent.z,binormal.z,normal.z,0),
+		float4(0,0,0,1)
+	};
+	return m;
 
 }
 matrix TangentMatrix(float3 tangent, float3 binormal, float3 normal)
 {
-	matrix mat = {
-		float4(normalize(tangent),0),
-		float4(normalize(binormal),0),
-		float4(normalize(normal),0),
-		float4(0, 0, 0, 1) };
-	return mat;
+	matrix m = {
+		float4(tangent.x,binormal.x,normal.x,0),
+		float4(tangent.y,binormal.y,normal.y,0),
+		float4(tangent.z,binormal.z,normal.z,0),
+		float4(0,0,0,1)
+	};
+	return m;
 
 }
 

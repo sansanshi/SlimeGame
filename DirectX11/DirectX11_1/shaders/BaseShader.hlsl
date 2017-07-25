@@ -187,7 +187,7 @@ float4 BasePS(Output o) :SV_Target
 	rand = rand * _dot;
 
 	bright = min(bright, shadowWeight);
-	return float4(bright, bright, bright, 1);
+	//return float4(bright, bright, bright, 1);
 	float4 texcol = _tex.Sample(_samplerState, o.uv);
 		float3 sphCol = _sph.Sample(_samplerState, o.normal.xy / 2 * float2(1, -1) + float2(0.5f, 0.5f));
 		float4 col= float4((bright*o.diffuse.rgb + o.ambient.rgb)*texcol.rgb*sphCol

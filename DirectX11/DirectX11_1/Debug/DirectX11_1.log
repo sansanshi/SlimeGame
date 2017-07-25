@@ -1,16 +1,8 @@
 ﻿FXC : warning X4717: Effects deprecated for D3DCompiler_47
-C:\Users\1401349\Documents\WorkingGames\SlimeGame\DirectX11\DirectX11_1\shaders\wood.hlsl(51,23-53): warning X3206: 'mul': implicit truncation of vector type
-C:\Users\1401349\Documents\WorkingGames\SlimeGame\DirectX11\DirectX11_1\shaders\wood.hlsl(51,2-54): warning X3206: implicit truncation of vector type
-C:\Users\1401349\Documents\WorkingGames\SlimeGame\DirectX11\DirectX11_1\shaders\wood.hlsl(52,25-56): warning X3206: 'mul': implicit truncation of vector type
-C:\Users\1401349\Documents\WorkingGames\SlimeGame\DirectX11\DirectX11_1\shaders\wood.hlsl(52,2-57): warning X3206: implicit truncation of vector type
-C:\Users\1401349\Documents\WorkingGames\SlimeGame\DirectX11\DirectX11_1\shaders\wood.hlsl(53,24-54): warning X3206: 'mul': implicit truncation of vector type
-C:\Users\1401349\Documents\WorkingGames\SlimeGame\DirectX11\DirectX11_1\shaders\wood.hlsl(53,2-55): warning X3206: implicit truncation of vector type
-C:\Users\1401349\Documents\WorkingGames\SlimeGame\DirectX11\DirectX11_1\shaders\wood.hlsl(58,9-35): warning X3206: implicit truncation of vector type
-C:\Users\1401349\Documents\WorkingGames\SlimeGame\DirectX11\DirectX11_1\shaders\wood.hlsl(92,9-60): warning X3206: implicit truncation of vector type
-C:\Users\1401349\Documents\WorkingGames\SlimeGame\DirectX11\DirectX11_1\shaders\wood.hlsl(96,14-44): warning X3206: 'mul': implicit truncation of vector type
-C:\Users\1401349\Documents\WorkingGames\SlimeGame\DirectX11\DirectX11_1\shaders\wood.hlsl(96,2-44): warning X3206: implicit truncation of vector type
-C:\Users\1401349\Documents\WorkingGames\SlimeGame\DirectX11\DirectX11_1\shaders\wood.hlsl(100,26-51): warning X3206: 'dot': implicit truncation of vector type
+C:\Users\1401349\Documents\WorkingGames\SlimeGame\DirectX11\DirectX11_1\shaders\water.hlsl(65,9-35): warning X3206: implicit truncation of vector type
+C:\Users\1401349\Documents\WorkingGames\SlimeGame\DirectX11\DirectX11_1\shaders\water.hlsl(120,8-79): warning X3206: implicit truncation of vector type
+C:\Users\1401349\Documents\WorkingGames\SlimeGame\DirectX11\DirectX11_1\shaders\water.hlsl(121,8-79): warning X3206: implicit truncation of vector type
   
-  compilation object save succeeded; see C:\Users\1401349\Documents\WorkingGames\SlimeGame\DirectX11\Debug\wood.cso
+  compilation object save succeeded; see C:\Users\1401349\Documents\WorkingGames\SlimeGame\DirectX11\Debug\water.cso
   DirectX11_1.vcxproj -> C:\Users\1401349\Documents\WorkingGames\SlimeGame\DirectX11\Debug\DirectX11_1.exe
   DirectX11_1.vcxproj -> C:\Users\1401349\Documents\WorkingGames\SlimeGame\DirectX11\Debug\DirectX11_1.pdb (Full PDB)

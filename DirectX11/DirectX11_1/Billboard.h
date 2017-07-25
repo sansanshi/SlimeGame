@@ -34,6 +34,7 @@ public:
 #pragma pack()
 
 	Billboard(const std::shared_ptr<Camera>& cameraPtr,float width,float height);
+	Billboard(const std::string textureName, const std::shared_ptr<Camera>& cameraPtr, float width, float height);
 	~Billboard();
 
 	void SetPos(XMFLOAT3&);
@@ -46,8 +47,5 @@ public:
 	ID3D11Buffer* CreateBillBoardVertexBuffer(float width, float height);
 
 	
-	//ワールドビュープロジェクションバッファ生成
-	//後で消す　　「3d空間内に頂点を持つオブジェクトで共有する」ため
-	void CreateWVPConstBuffer();
 };
 

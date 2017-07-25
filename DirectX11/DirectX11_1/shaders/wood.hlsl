@@ -58,6 +58,8 @@ Output woodVS(float4 pos:POSITION, float4 normal : NORMAL, float2 uv : TEXCOORD,
 	float3 posWorld = mul(_world, pos);
 	o.lightVec = float4(normalize(lightPos.xyz - posWorld), 1);
 	o.eyeVec = float4(normalize(eyePos.xyz - posWorld), 1);
+	matrix invTang = InvTangentMatrix(o.tangent, o.binormal, o.normal);
+	o.lightVec = mul(invTang, o.lightVec);
 
 	o.postest = mul(pos, m);
 	matrix _lightVP = mul(_lightProj, _lightView);
@@ -93,12 +95,12 @@ float4 woodPS(Output o) :SV_Target
 	//ベクトルへ変換　↑で取得した時点では範囲が0~1なので-1~1になるように
 	float3 normalVec = 2 * normalColor - 1.0f;
 	//return float4(o.binormal, 1);
-	normalVec = mul(o.tangentMatrix, normalVec);
+	//normalVec = mul(o.tangentMatrix, normalVec);
 	normalVec = normalize(normalVec);
-	return float4(normalVec, 1);
+	//return float4(normalVec, 1);
 
 	float bright = saturate(dot(o.lightVec, normalVec)+0.3f);//saturate(dot(-o.lightVec, normalVec));
-	
+	//return float4(bright, bright, bright, 1);
 
 	o.shadowposCS = float4(o.shadowposCS.xyz / o.shadowposCS.w, 1.0f);
 	float2 shadowUV = (float2(1, 1) + (o.shadowposCS.xy)*float2(1, -1))*0.5f;

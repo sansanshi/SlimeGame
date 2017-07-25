@@ -73,6 +73,74 @@ Billboard::Billboard(const std::shared_ptr<Camera>& cam, float width, float heig
 
 }
 
+Billboard::Billboard(const std::string textureName ,const std::shared_ptr<Camera>& cam, float width, float height) :_cameraPtr(cam)
+{
+	DeviceDx11& dev = DeviceDx11::Instance();
+	HRESULT result = S_OK;
+	ResourceManager& resourceMgr = ResourceManager::Instance();
+
+	//ビルボードテスト
+	_vertexBuffer = nullptr;
+	_vertexBuffer = CreateBillBoardVertexBuffer(width, height);
+	std::string registerName = "Billboard_" + textureName;
+	_texture = resourceMgr.LoadSRV(registerName, textureName);
+
+	D3D11_INPUT_ELEMENT_DESC inputElementDescs[] = {
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+	};
+	resourceMgr.LoadVS("Billboard_VS",
+		"BaseShader.hlsl",
+		"BillBoardVS",
+		"vs_5_0",
+		_vs,
+		inputElementDescs,
+		sizeof(inputElementDescs) / sizeof(D3D11_INPUT_ELEMENT_DESC),
+		_inputLayout);
+	resourceMgr.LoadPS("Billboard_PS",
+		"BaseShader.hlsl",
+		"BillBoardPS",
+		"ps_5_0",
+		_ps);
+
+	D3D11_SAMPLER_DESC samplerDesc = {};
+	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
+	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+
+	dev.Device()->CreateSamplerState(&samplerDesc, &_samplerState);
+
+
+
+	_worldAndCamera.world = XMMatrixIdentity();
+	_worldAndCamera.cameraView = _cameraPtr.lock()->CameraView();
+	_worldAndCamera.cameraProj = _cameraPtr.lock()->CameraProjection();
+
+	D3D11_BUFFER_DESC matBuffDesc = {};
+	matBuffDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	matBuffDesc.ByteWidth = sizeof(WorldAndCamera);
+	matBuffDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;//バッファの中身はCPUで書き換える
+	matBuffDesc.Usage = D3D11_USAGE_DYNAMIC;//CPUによる書き込み、GPUによる読み込みが行われるという意味
+											//matBuffDesc.ByteWidth = sizeof(XMMATRIX);
+											//matBuffDesc.StructureByteStride = sizeof(XMMATRIX);
+
+	D3D11_SUBRESOURCE_DATA d;
+	d.pSysMem = &_worldAndCamera;
+
+	result = dev.Device()->CreateBuffer(&matBuffDesc, &d, &_matrixBuffer);
+
+	dev.Context()->Map(_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &_mem);
+	//ここでこのメモリの塊に、マトリックスの値をコピーしてやる
+	memcpy(_mem.pData, (void*)(&_worldAndCamera), sizeof(_worldAndCamera));
+
+	dev.Context()->Unmap(_matrixBuffer, 0);
+
+	dev.Context()->VSSetConstantBuffers(0, 1, &_matrixBuffer);
+
+
+}
+
 
 Billboard::~Billboard()
 {

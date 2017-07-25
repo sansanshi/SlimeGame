@@ -113,7 +113,7 @@ Cylinder::Cylinder(float radius, float height, unsigned int div,const std::share
 	
 	_mainTex = resourceMgr.LoadSRV("Cylinder_main", "wood.png");
 	_subTex = resourceMgr.LoadSRV("Cylinder_sub", "noise.png");
-	_normalTex = resourceMgr.LoadSRV("Cylinder_normal", "normal.png");
+	_normalTex = resourceMgr.LoadSRV("Cylinder_normal", "normal3.png");
 
 	
 	//ƒJƒƒ‰‚©‚ç‚Ì•`‰æ‚Ég‚Á‚½inputElementDescs‚ğg‚Á‚Ä‚à•`‰æ‚Å‚«‚½

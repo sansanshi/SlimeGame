@@ -74,7 +74,8 @@ Output WaterVS(float4 pos:POSITION, float4 normal : NORMAL, float2 uv : TEXCOORD
 	norm =  normalize(mul(model_noTrans, normal));
 	binorm = normalize(mul(model_noTrans, binormal));
 	tang = normalize(mul(model_noTrans, tangent));
-	o.tangentMatrix = TangentMatrix(tang, binorm, norm);
+	matrix invTang = InvTangentMatrix(tang, binorm, norm);
+	o.lightVec = mul(invTang, o.lightVec);
 	o.posWorld = posWorld;
 
 	o.postest = mul(pos, m);
@@ -115,10 +116,6 @@ float flowOffs1 = fmod(Time + halfPhase, Phase);
 float phase0 =  flowOffs0;
 float phase1 =  flowOffs1;
 
-float2 shiftUV;
-shiftUV.x = floor(Time / Phase)*2.0f;
-shiftUV.y = phase0 > halfPhase ? shiftUV.x + 1.0f : shiftUV.x - 1.0f;
-shiftUV *= 1.25f;
 
 float3 norm0 = _normalTex.Sample(_samplerState, (o.uv * 5) + flowVector*phase0);
 float3 norm1 = _normalTex.Sample(_samplerState, (o.uv * 5) + flowVector*phase1);
@@ -133,43 +130,8 @@ float3 normT = lerp(norm0, norm1, f);
 //normT = normT*2.0f - 1.0f;
 normT = normalize(normT);
 float3 lightVec = normalize(o.lightVec.xyz);
-normT = mul(o.tangentMatrix, normT);
+//normT = mul(o.tangentMatrix, normT);
 
-
-//float t = (float)o.timer / 60.0f + noise;
-//float phase0 = fmod(t, Phase);
-//float phase1 = fmod(t - halfPhase, Phase);
-//
-//float2 shiftUV;
-//shiftUV.x = floor(t / Phase)*2.0f;
-//shiftUV.y = phase0 > halfPhase ? shiftUV.x + 1.0f : shiftUV.x - 1.0f;
-//shiftUV *= 0.125f;
-//
-//float alpha = abs(halfPhase - phase0) / halfPhase;
-//
-//
-//float4 normal0 = _normalTex.Sample(_samplerState, flowVector*phase0 + shiftUV.x);
-//float4 normal1 = _normalTex.Sample(_samplerState, flowVector*phase1 + shiftUV.y);
-//float4 mix = lerp(normal0, normal1, alpha);
-//mix = mix*2.0f - 1.0f;
-//
-//return float4(mix.rgb, 1);
-
-	float time = (float)o.timer / 60.0f;
-	float time2 = (float)o.timer / 60.0f + 30.0f;
-	//float2 uvOffset = float2(sin(o.timer*0.002f),cos(o.timer*0.005f));
-
-
-
-	float2 uvOffset = float2(time*0.05f, 0);
-	float2 uvOffset2 = float2(time2*0.05f, 0);
-	//法線テクスチャから色を取得
-	float3 normalColor = _normalTex.Sample(_samplerState, o.uv+uvOffset);
-	float3 normal2 = _normalTex.Sample(_samplerState, o.uv + uvOffset2);
-	normalColor = lerp(normalColor, normal2, cos(time*2.0f));
-	//ベクトルへ変換　↑で取得した時点では範囲が0~1なので-1~1になるように
-	float3 normalVec = 2 * normalColor - 1.0f;
-	normalVec = normalize(normalVec);
 
 	float bright = saturate(dot(-lightVec, normT));//saturate(dot(-o.lightVec, normalVec));
 	o.shadowposCS = float4(o.shadowposCS.xyz / o.shadowposCS.w, 1.0f);
@@ -184,6 +146,7 @@ normT = mul(o.tangentMatrix, normT);
 		shadowWeight = 0.1f;
 		//return float4(lightviewDepth, 0, 0, 1);
 	}
+	shadowWeight = CalcVSWeight(shadowUV, ld);
 	//return float4(normalVec, 1);
 	//return float4(bright, bright, bright, 1);
 
@@ -191,9 +154,8 @@ normT = mul(o.tangentMatrix, normT);
 																   //フォグをかける
 	//col.a = 0.5f;
 	//col = lerp(o.fogColor, col, o.fog);
-	float4 col = _tex.Sample(_samplerState, o.uv*5);
+	float4 col;
 	col = lerp(col0, col1, f);
-	float4 subCol = _subTex.Sample(_samplerState, o.uv);
 	col.rgb=col.rgb*bright;
 	col.a = 0.4f;
 	return col;
