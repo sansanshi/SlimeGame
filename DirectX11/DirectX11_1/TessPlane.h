@@ -18,9 +18,9 @@ private:
 
 	ID3D11SamplerState* _samplerState_Wrap;
 public:
-	TessPlane(const std::shared_ptr<Camera>& cam);
+	TessPlane(const std::shared_ptr<Camera> cam);
 	~TessPlane();
-	TessPlane(float width, float height, Vector3 normal, const std::shared_ptr<Camera>& camera);
+	TessPlane(float width, float height, Vector3 normal, const std::shared_ptr<Camera> camera);
 
 	ID3D11Buffer* VertexBuffer(){ return _vertexBuffer; };
 

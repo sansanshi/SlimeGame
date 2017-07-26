@@ -106,7 +106,7 @@ private:
 
 
 public:
-	Player(const std::shared_ptr<Camera>& cam);
+	Player(const std::shared_ptr<Camera> cam);
 	~Player();
 	PMDMesh* GetMesh(){ return _mesh; };
 

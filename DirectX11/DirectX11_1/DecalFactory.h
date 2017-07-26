@@ -11,7 +11,7 @@ class DecalBox;
 class DecalFactory
 {
 public:
-	DecalFactory(const std::shared_ptr<Camera>& cameraPtr);
+	DecalFactory(const std::shared_ptr<Camera> cameraPtr);
 	~DecalFactory();
 
 	void CreateDecalBox(const XMFLOAT3& pos);

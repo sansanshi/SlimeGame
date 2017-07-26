@@ -8,7 +8,7 @@ class Camera;
 class HUD
 {
 public:
-	HUD(const std::shared_ptr<Camera>& camPtr,const float top,const float left,const float width,const float height);
+	HUD(const std::shared_ptr<Camera> camPtr,const float top,const float left,const float width,const float height);
 	~HUD();
 
 	void SetPos(XMFLOAT3&);

@@ -130,8 +130,6 @@ DS_OUTPUT TessDS(HS_CONSTANT_DATA_OUTPUT In, float2 UV:SV_DomainLocation, const 
 	matrix lvp = mul(mul(_lightProj,_lightView),_world);
 	o.shadowposCS = mul(lvp, postemp);
 	o.shadowposVS = mul(mul(_lightView, _world), postemp);
-	o.shadowposVS = mul(_world, postemp);
-	o.shadowposVS = mul(_lightView, o.shadowposVS);
 
 	o.normal = float3(0, 1, 0);//Ç∆ÇËÇ†Ç¶Ç∏ïΩñ Ç»ÇÃÇ≈ç°ÇÕ0,1,0Ç≈Ç‚Ç¡Ç∆Ç≠
 

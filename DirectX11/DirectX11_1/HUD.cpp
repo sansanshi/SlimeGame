@@ -4,7 +4,7 @@
 #include"ResourceManager.h"
 #include"Camera.h"
 
-HUD::HUD(const std::shared_ptr<Camera>& cam,const float top,const float left,const float width,const float height):_cameraPtr(cam)
+HUD::HUD(const std::shared_ptr<Camera> cam,const float top,const float left,const float width,const float height):_cameraPtr(cam)
 {
 	DeviceDx11& dev = DeviceDx11::Instance();
 	ResourceManager& resourceMgr = ResourceManager::Instance();

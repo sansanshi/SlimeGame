@@ -5,7 +5,7 @@
 #include"Camera.h"
 #include"ResourceManager.h"
 
-Sphere::Sphere(unsigned int divNum,float radius,const std::shared_ptr<Camera>& camera) 
+Sphere::Sphere(unsigned int divNum,float radius,const std::shared_ptr<Camera> camera) 
 {
 	_cameraPtr = camera;
 	InitTransform();

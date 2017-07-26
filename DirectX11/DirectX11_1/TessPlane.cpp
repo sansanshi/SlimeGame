@@ -5,11 +5,11 @@
 #include"Camera.h"
 #include"ResourceManager.h"
 
-TessPlane::TessPlane(const std::shared_ptr<Camera>& camera) 
+TessPlane::TessPlane(const std::shared_ptr<Camera> camera) 
 {
 };
 
-TessPlane::TessPlane(float width, float depth, Vector3 normal, const std::shared_ptr<Camera>& camera) 
+TessPlane::TessPlane(float width, float depth, Vector3 normal, const std::shared_ptr<Camera> camera) 
 {
 	_cameraPtr = camera;
 	InitTransform();

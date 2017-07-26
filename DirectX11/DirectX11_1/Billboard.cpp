@@ -6,11 +6,13 @@
 #include"ResourceManager.h"
 
 
-Billboard::Billboard(const std::shared_ptr<Camera>& cam, float width, float height) :_cameraPtr(cam)
+Billboard::Billboard(const std::shared_ptr<Camera> cam, float width, float height) :_cameraPtr(cam)
 {
 	DeviceDx11& dev = DeviceDx11::Instance();
 	HRESULT result = S_OK;
 	ResourceManager& resourceMgr = ResourceManager::Instance();
+
+	_pos = { 0,0,0 };
 	
 	//ビルボードテスト
 	_vertexBuffer = nullptr;
@@ -73,11 +75,12 @@ Billboard::Billboard(const std::shared_ptr<Camera>& cam, float width, float heig
 
 }
 
-Billboard::Billboard(const std::string textureName ,const std::shared_ptr<Camera>& cam, float width, float height) :_cameraPtr(cam)
+Billboard::Billboard(const std::string textureName ,const std::shared_ptr<Camera> cam, float width, float height) :_cameraPtr(cam)
 {
 	DeviceDx11& dev = DeviceDx11::Instance();
 	HRESULT result = S_OK;
 	ResourceManager& resourceMgr = ResourceManager::Instance();
+	_pos = { 0,0,0 };
 
 	//ビルボードテスト
 	_vertexBuffer = nullptr;
@@ -198,7 +201,7 @@ Billboard::Update()
 
 	dev.Context()->VSSetConstantBuffers(0, 1, &_matrixBuffer);
 	//world書き換え（hudMatrixに）
-	_worldAndCamera.world = XMMatrixTranslation(-10, 15, 10);
+	_worldAndCamera.world = XMMatrixTranslation(_pos.x, _pos.y, _pos.z);
 
 	XMMATRIX w = _worldAndCamera.world;
 	XMMATRIX view = _cameraPtr.lock()->CameraView();
@@ -291,4 +294,8 @@ Billboard::CreateBillBoardVertexBuffer(float width, float height)
 
 }
 
-
+void
+Billboard::SetPos(const XMFLOAT3& pos)
+{
+	_pos = pos;
+}

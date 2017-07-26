@@ -3,6 +3,7 @@
 #include<xnamath.h>
 #include"Define.h"
 #include<memory>
+#include<string>
 
 class Camera;
 
@@ -33,8 +34,8 @@ public:
 	};
 #pragma pack()
 
-	Billboard(const std::shared_ptr<Camera>& cameraPtr,float width,float height);
-	Billboard(const std::string textureName, const std::shared_ptr<Camera>& cameraPtr, float width, float height);
+	Billboard(const std::shared_ptr<Camera> cameraPtr,float width,float height);
+	Billboard(const std::string textureName, const std::shared_ptr<Camera> cameraPtr, float width, float height);
 	~Billboard();
 
 	void SetPos(XMFLOAT3&);
@@ -46,6 +47,7 @@ public:
 
 	ID3D11Buffer* CreateBillBoardVertexBuffer(float width, float height);
 
+	void SetPos(const XMFLOAT3& pos);
 	
 };
 

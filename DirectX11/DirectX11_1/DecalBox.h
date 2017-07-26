@@ -26,9 +26,9 @@ private:
 
 
 public:
-	DecalBox(float width,float height,float length,const std::shared_ptr<Camera>& cameraPtr);
+	DecalBox(float width,float height,float length,const std::shared_ptr<Camera> cameraPtr);
 	DecalBox(const XMFLOAT3& pos, const XMFLOAT3& rot,const XMFLOAT3& scale,
-		const std::shared_ptr<Camera>& cameraPtr,std::shared_ptr<ID3D11ShaderResourceView*> texPtr,
+		const std::shared_ptr<Camera> cameraPtr,std::shared_ptr<ID3D11ShaderResourceView*> texPtr,
 		std::weak_ptr<ID3D11VertexShader*> vs,std::weak_ptr<ID3D11PixelShader*> ps,std::weak_ptr<ID3D11InputLayout*> lauout,
 		ID3D11Buffer* vertBuff,ID3D11Buffer* indexBuff,unsigned int indicesCnt);
 	~DecalBox();

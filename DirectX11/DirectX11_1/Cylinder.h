@@ -28,8 +28,8 @@ private:
 	void CalculateTangentBinormal();
 
 public:
-	Cylinder(float radius,float height,unsigned int div,const std::shared_ptr<Camera>& camera);
-	Cylinder(const std::shared_ptr<Camera>& camera);
+	Cylinder(float radius,float height,unsigned int div,const std::shared_ptr<Camera> camera);
+	Cylinder(const std::shared_ptr<Camera> camera);
 	~Cylinder();
 
 	ID3D11Buffer* VertexBuffer(){ return _vertexBuffer; };

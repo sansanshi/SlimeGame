@@ -65,10 +65,6 @@ private:
 	void UnlockCursor();
 
 
-	ID3D11RenderTargetView* _rtvlight;
-	ID3D11DepthStencilView* _lightDSV;
-	ID3D11ShaderResourceView* _shaderResourceViewForShadow;//レンダリング結果をテクスチャとして扱う
-
 	std::weak_ptr<ID3D11ShaderResourceView*> _makerSRV;
 
 	//HUD表示フラグ
@@ -77,6 +73,7 @@ private:
 
 	//ビルボードテスト
 	std::unique_ptr<Billboard> _billBoard;
+	std::unique_ptr<Billboard> _lightBillboard;
 	std::unique_ptr<HUD> _debugHUD;
 	std::unique_ptr<HUD> _makerHUD;
 
@@ -85,9 +82,6 @@ private:
 	BYTE keystate[256];
 	BYTE lastkeystate[256];
 
-	WorldAndCamera _worldAndCamera;
-	ID3D11Buffer* _matrixBuffer;
-	D3D11_MAPPED_SUBRESOURCE _mem;
 
 	Effect _effect;
 	XMFLOAT3 _effectMov;

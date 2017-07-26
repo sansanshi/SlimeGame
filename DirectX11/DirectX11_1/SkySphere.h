@@ -41,7 +41,7 @@ private:
 		std::vector<PrimitiveVertex>& vertsForBuff, const std::vector<unsigned short>& indices, int idx);*/
 
 public:
-	SkySphere(unsigned int divNum, float radius,const std::shared_ptr<Camera>& cam);
+	SkySphere(unsigned int divNum, float radius,const std::shared_ptr<Camera> cam);
 	~SkySphere();
 
 	ID3D11Buffer* VertexBuffer() { return _vertexBuffer; };

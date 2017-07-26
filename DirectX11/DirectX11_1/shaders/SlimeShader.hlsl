@@ -197,9 +197,6 @@ float4 SlimePS(Output o) :SV_Target
 	//return float4(bright, bright, bright, 1);
 	float4 col = _tex.Sample(_samplerState, heightUV);
 		col = float4(0.6, 0.6, 0.4, 1);
-	col.r *= cos((float)o.timer*0.1f*o.uv.x*bright);
-	col.g *= sin((float)o.timer*0.1f*o.uv.y);
-	col.b *= cos((float)o.timer*(o.uv.x+o.uv.y)*0.002f);
 	float3 sphCol = _sph.Sample(_samplerState, o.normal.xy / 2 * float2(1, -1) + float2(0.5f, 0.5f));
 	col = float4(col.rgb
 	/*+ 0.3f*pow(max(0, dot(ref, o.lightVec)), 8)*/, 0.8f);//VSSetConstantBufferで渡ってきたデータは直接ピクセルシェーダでは使えないっぽい　全部の値が0になっている

@@ -66,9 +66,7 @@ Output WaterVS(float4 pos:POSITION, float4 normal : NORMAL, float2 uv : TEXCOORD
 	//o.lightVec = float4(normalize(lightPos.xyz - posWorld), 0);
 	o.eyeVec = float4(normalize(eyePos.xyz - posWorld), 1);
 
-	//matrix invTang = InvTangentMatrix(float4(1, 0, 0, 0), float4(0, 1, 0, 0), float4(0, 0, 1, 0));
-	//o.lightVec = mul(invTang, o.lightVec);
-	o.lightVec =float4( normalize(directionalLightVec.xyz),1);//float4(lightPos.xyz-posWorld.xyz, 1);
+	o.lightVec =float4(lightPos.xyz-posWorld.xyz, 1);//float4( normalize(directionalLightVec.xyz),1);//
 	
 	float4 tang, binorm, norm;
 	norm =  normalize(mul(model_noTrans, normal));
@@ -80,11 +78,9 @@ Output WaterVS(float4 pos:POSITION, float4 normal : NORMAL, float2 uv : TEXCOORD
 
 	o.postest = mul(pos, m);
 	matrix _lightVP = mul(_lightProj, _lightView);
-	matrix lightview = mul(_lightView, _world);//_lightView
+	matrix lightWV = mul(_lightView, _world);//_lightView
 	o.shadowposCS = mul(mul(_lightVP, _world), pos);
-	o.shadowposVS = mul(_world, pos);
-	o.shadowposVS = mul(_lightView, o.shadowposVS);
-	o.texcoord = (float2(1, 1) + (o.pos.xy / o.pos.w)*float2(1, -1))*0.5f;
+	o.shadowposVS = mul(lightWV, pos);
 
 	o.farZ = farZ;
 	o.nearZ = nearZ;
@@ -100,55 +96,47 @@ Output WaterVS(float4 pos:POSITION, float4 normal : NORMAL, float2 uv : TEXCOORD
 float4 WaterPS(Output o) :SV_Target
 {
 	float Phase = 2.5f;
-float halfPhase = 2.5f / 2.0f;
+	float halfPhase = 2.5f / 2.0f;
 
-//ノイズテクスチャ
-float noise = _subTex.Sample(_samplerState, o.uv*5).r;
-//フロートテクスチャ
-float2 flowVector = _flowTex.Sample(_samplerState, o.uv).rg;
-flowVector = flowVector*2.0f - 1.0f;
-flowVector.x *= -1.0f;
-float Time = o.timer / 60.0f + noise;
+	//ノイズテクスチャ
+	float noise = _subTex.Sample(_samplerState, o.uv*5).r;
+	//フロートテクスチャ
+	float2 flowVector = _flowTex.Sample(_samplerState, o.uv).rg;
+	flowVector = flowVector*2.0f - 1.0f;
+	flowVector.x *= -1.0f;
+	float Time = o.timer / 60.0f + noise;
 
-float flowOffs0 = fmod(Time, Phase);
-float flowOffs1 = fmod(Time + halfPhase, Phase);
+	float flowOffs0 = fmod(Time, Phase);
+	float flowOffs1 = fmod(Time + halfPhase, Phase);
 
-float phase0 =  flowOffs0;
-float phase1 =  flowOffs1;
+	float phase0 =  flowOffs0;
+	float phase1 =  flowOffs1;
+
+	
+	float3 norm0 = _normalTex.Sample(_samplerState, (o.uv * 5) + flowVector*phase0);
+	float3 norm1 = _normalTex.Sample(_samplerState, (o.uv * 5) + flowVector*phase1);
+	norm0 = norm0*2.0f - 1.0f;
+	norm1 = norm1*2.0f - 1.0f;
+	
+	float4 col0 = _tex.Sample(_samplerState, o.uv*5 + flowVector*phase0 );
+	float4 col1 = _tex.Sample(_samplerState, o.uv*5 + flowVector*phase1 );
+	float f = (abs(halfPhase - flowOffs0) / halfPhase);
+	
+	float3 normT = lerp(norm0, norm1, f);
+	//normT = normT*2.0f - 1.0f;
+	normT = normalize(normT);
+	float3 lightVec = normalize(o.lightVec.xyz);
+	//normT = mul(o.tangentMatrix, normT);
 
 
-float3 norm0 = _normalTex.Sample(_samplerState, (o.uv * 5) + flowVector*phase0);
-float3 norm1 = _normalTex.Sample(_samplerState, (o.uv * 5) + flowVector*phase1);
-norm0 = norm0*2.0f - 1.0f;
-norm1 = norm1*2.0f - 1.0f;
-
-float4 col0 = _tex.Sample(_samplerState, o.uv*5 + flowVector*phase0 );
-float4 col1 = _tex.Sample(_samplerState, o.uv*5 + flowVector*phase1 );
-float f = (abs(halfPhase - flowOffs0) / halfPhase);
-
-float3 normT = lerp(norm0, norm1, f);
-//normT = normT*2.0f - 1.0f;
-normT = normalize(normT);
-float3 lightVec = normalize(o.lightVec.xyz);
-//normT = mul(o.tangentMatrix, normT);
-
-
-	float bright = saturate(dot(-lightVec, normT));//saturate(dot(-o.lightVec, normalVec));
+	float bright = saturate(dot(lightVec, normT));//saturate(dot(-o.lightVec, normalVec));
 	o.shadowposCS = float4(o.shadowposCS.xyz / o.shadowposCS.w, 1.0f);
 	float2 shadowUV = (float2(1, 1) + (o.shadowposCS.xy)*float2(1, -1))*0.5f;
 	shadowUV += float2(0.5f / o.windowSize.x, 0.5f / o.windowSize.y);
-	float lightviewDepth = _shadowTex.Sample(_samplerState_clamp, shadowUV).r;
 
 	float ld = o.shadowposVS.z / o.farZ;
-	float2 satUV = saturate(shadowUV);
 	float shadowWeight = 1.0f;
-	if (shadowUV.x == satUV.x&&shadowUV.y == satUV.y&&ld > lightviewDepth + 0.01f) {
-		shadowWeight = 0.1f;
-		//return float4(lightviewDepth, 0, 0, 1);
-	}
 	shadowWeight = CalcVSWeight(shadowUV, ld);
-	//return float4(normalVec, 1);
-	//return float4(bright, bright, bright, 1);
 
 	bright = min(bright, shadowWeight);
 																   //フォグをかける

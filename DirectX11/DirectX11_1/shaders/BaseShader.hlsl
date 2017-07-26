@@ -172,19 +172,11 @@ float4 BasePS(Output o) :SV_Target
 	
 	o.shadowposCS = float4(o.shadowposCS.xyz / o.shadowposCS.w, 1.0f);
 	float2 shadowUV = (float2(1, 1) + (o.shadowposCS.xy )*float2(1, -1))*0.5f;
-	float lightviewDepth = _shadowTex.Sample(_samplerState_clamp, shadowUV).r;
 
 	float ld = o.shadowposVS.z / o.farZ;
 	float shadowWeight = 1.0f;
-	if (ld > lightviewDepth+0.005f){
-		shadowWeight = 0.1f;
-	}
 	shadowWeight = CalcVSWeight(shadowUV, ld);
 
-	//ジラジラ表現テスト
-	float rand = GetRandomNumber(o.uv,(int)(o.timer));
-	float _dot = saturate(dot(o.eyeVec.xyz, o.normal));
-	rand = rand * _dot;
 
 	bright = min(bright, shadowWeight);
 	//return float4(bright, bright, bright, 1);

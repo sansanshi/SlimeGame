@@ -7,7 +7,7 @@
 
 const int MAX_DECAL_NUM = 300;
 
-DecalFactory::DecalFactory(const std::shared_ptr<Camera>& cameraPtr):_cameraPtr(cameraPtr),_decalBoxCnt(0)
+DecalFactory::DecalFactory(const std::shared_ptr<Camera> cameraPtr):_cameraPtr(cameraPtr),_decalBoxCnt(0)
 {
 	HRESULT result = S_OK;
 	DeviceDx11& dev = DeviceDx11::Instance();

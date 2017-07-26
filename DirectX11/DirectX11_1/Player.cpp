@@ -450,7 +450,7 @@ void DeformBones(PMDMesh* mesh, VMDData* vmddata, unsigned int frameNo)
 }
 
 
-Player::Player(const std::shared_ptr<Camera>& camera) :dev(DeviceDx11::Instance()), _cameraPtr(camera)
+Player::Player(const std::shared_ptr<Camera> camera) :dev(DeviceDx11::Instance()), _cameraPtr(camera)
 {
 	_pos = XMFLOAT3(0, 0, 0);
 	_scale = XMFLOAT3(1, 1, 1);

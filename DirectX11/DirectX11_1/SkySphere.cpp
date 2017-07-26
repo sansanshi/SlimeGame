@@ -5,7 +5,7 @@
 #include"Camera.h"
 #include"ResourceManager.h"
 
-SkySphere::SkySphere(unsigned int divNum, float radius,const std::shared_ptr<Camera>& cam) 
+SkySphere::SkySphere(unsigned int divNum, float radius,const std::shared_ptr<Camera> cam) 
 {
 	InitTransform();
 	_cameraPtr = cam;

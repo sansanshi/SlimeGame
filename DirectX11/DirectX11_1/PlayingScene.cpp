@@ -136,6 +136,11 @@ PlayingScene::PlayingScene(HWND hwnd)
 	_oldCursorPoint = { 0 };
 
 	_billBoard = std::make_unique<Billboard>(_camera, 10, 10);//new Billboard(_camera,10,10);
+	_lightBillboard = std::make_unique<Billboard>("light.png", _camera, 10, 10);
+	_billBoard->SetPos(XMFLOAT3( 10, 30, -5));
+	XMFLOAT4 temp = _camera->GetLightPos();
+	_lightBillboard->SetPos(XMFLOAT3(temp.x,temp.y,temp.z));
+
 	_debugHUD = std::make_unique<HUD>(_camera, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);//new HUD(_camera,0,0,320,240);
 	_makerHUD = std::make_unique<HUD>(_camera, -8, -8, 16, 16);// new HUD(_camera, -8, -8, 16, 16);
 
@@ -422,6 +427,7 @@ PlayingScene::Update(int mouseWheelDelta)
 	_skySphere->SetPos(_camera->GetPos());
 	_skySphere->Update();
 	_billBoard->Update();
+	_lightBillboard->Update();
 	_debugHUD->Update();
 	_makerHUD->Update();
 
@@ -522,6 +528,7 @@ PlayingScene::Update(int mouseWheelDelta)
 	_renderer->CullBack();
 	_plane->Draw();//°
 	_billBoard->Draw();
+	_lightBillboard->Draw();
 
 
 

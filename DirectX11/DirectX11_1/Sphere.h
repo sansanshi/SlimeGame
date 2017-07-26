@@ -45,7 +45,7 @@ private:
 
 	
 public:
-	Sphere(unsigned int divNum,float radius,const std::shared_ptr<Camera>& cam );
+	Sphere(unsigned int divNum,float radius,const std::shared_ptr<Camera> cam );
 	~Sphere();
 
 	ID3D11Buffer* VertexBuffer(){ return _vertexBuffer; };

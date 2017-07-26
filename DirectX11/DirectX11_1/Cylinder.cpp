@@ -7,7 +7,7 @@
 #include"ShaderDefine.h"
 #include"ResourceManager.h"
 
-Cylinder::Cylinder(float radius, float height, unsigned int div,const std::shared_ptr<Camera>& camera) 
+Cylinder::Cylinder(float radius, float height, unsigned int div,const std::shared_ptr<Camera> camera) 
 {
 	InitTransform();
 	_cameraPtr = camera;
@@ -147,7 +147,7 @@ Cylinder::Cylinder(float radius, float height, unsigned int div,const std::share
 	ApplyConstantBuffer(_matrixBuffer, _mappedMatrixies, _worldAndCamera);
 
 }
-Cylinder::Cylinder(const std::shared_ptr<Camera>& camera)
+Cylinder::Cylinder(const std::shared_ptr<Camera> camera)
 {
 }
 
