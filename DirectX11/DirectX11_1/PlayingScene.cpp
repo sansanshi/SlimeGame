@@ -117,12 +117,20 @@ PlayingScene::PlayingScene(HWND hwnd)
 	_cylinder2->SetRotate(XMFLOAT3(90, 0, 0));
 
 	_sphere = std::make_unique<Sphere>(100, 5, _camera);//new Sphere(100, 5, _camera);
+	_sphere->SetPos(XMFLOAT3( 0, 0, -5));
 	_tessPlane = std::make_unique<TessPlane>(600, 600, Vector3(0, 1, 0), _camera);//new TessPlane(400, 400, Vector3(0, 1, 0), _camera);
 	_decalBox = std::make_unique<DecalBox>(1, 1, 1, _camera);//new DecalBox(1, 1, 1, _camera);
 
 	_skySphere = std::make_unique<SkySphere>(100, SKYSPHERE_RADIUS, _camera);//new SkySphere(100, SKYSPHERE_RADIUS, _camera);
 
 	_soundManager.Init();//サウンドマネージャ初期化
+
+
+	_plane->SetPos(XMFLOAT3(0.0f, -5.0f, 0.0f));
+	_player->SetPos(XMFLOAT3(-10, 0, -10));
+	_cylinder2->SetPos(XMFLOAT3(-20, 0, 15));
+	_cylinder3->SetPos(XMFLOAT3(10, 0, 10));
+	_cylinder4->SetPos(XMFLOAT3(-10, 0, 10));
 
 	HRESULT result;
 
@@ -204,7 +212,7 @@ PlayingScene::PlayingScene(HWND hwnd)
 
 	dev.Context()->VSSetConstantBuffers(5, 1, &_globalBuffer);
 
-	debugToggle = true;
+	debugToggle = false;
 }
 
 
@@ -404,16 +412,11 @@ PlayingScene::Update(int mouseWheelDelta)
 
 	_camera->Update();
 
-	_player->SetPos(XMFLOAT3( 0, 0, -5.0f));
 	_player->Update();
-	_plane->SetPos(XMFLOAT3(0.0f, -5.0f, 0.0f));
 	_plane->Update();
 
-	_cylinder2->SetPos(XMFLOAT3(-20,0,15));
 	_cylinder2->Rotate(XMFLOAT3(0,1,0));
-	_cylinder3->SetPos(XMFLOAT3(10, 0, 10));
 	_cylinder3->Rotate(XMFLOAT3(0,1,0));
-	_cylinder4->SetPos(XMFLOAT3(-10, 0, 10));
 	_cylinder2->SetScale(XMFLOAT3(1, 1.5, 1));
 
 	_cylinder->Update();
@@ -539,18 +542,6 @@ PlayingScene::Update(int mouseWheelDelta)
 	_effect.SetCamera(_camera->CameraView(), _camera->CameraProjection());
 	_effect.Update();
 
-#pragma region HUD描画
-	_renderer->ChangeRT_Camera();
-	if (debugToggle)
-	{
-		resource = _renderer->PostEffectShaderResource();//_renderer->CameraDepthShaderResource();
-		//resource = _renderer->BlurYShaderResource();
-		dev.Context()->PSSetShaderResources(TEXTURE_LIGHT_DEPTH, 1, &resource);
-		_debugHUD->Draw();
-
-	}
-#pragma endregion
-
 	{
 		//ikボーンの場所取ってくる
 		int ikboneIdx = _player->GetMesh()->GetBoneMap()["右足ＩＫ"];
@@ -584,10 +575,23 @@ PlayingScene::Update(int mouseWheelDelta)
 
 
 		_renderer->ChangePTForPrimitive();
-		dev.Context()->PSSetShaderResources(TEXTURE_LIGHT_DEPTH, 1, _makerSRV._Get());
+		dev.Context()->PSSetShaderResources(TEXTURE_MAIN, 1, _makerSRV._Get());
 		_makerHUD->Offset(ikScreenPos.x, ikScreenPos.y);
 		_makerHUD->Draw();
 	}
+
+#pragma region 最終描画
+	_renderer->ChangeRT_Camera();
+	resource = _renderer->PostEffectShaderResource();//
+	if (debugToggle)
+	{
+		resource = _renderer->CameraDepthShaderResource();
+	}
+	dev.Context()->PSSetShaderResources(TEXTURE_MAIN, 1, &resource);
+	_debugHUD->Draw();
+#pragma endregion
+
+	
 
 	dev.SwapChain()->Present(1, 0);
 }

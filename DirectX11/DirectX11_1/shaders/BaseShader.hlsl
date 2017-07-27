@@ -308,7 +308,7 @@ HUDOut HUDVS(float4 pos:POSITION,float2 uv : TEXCOORD)
 float4 HUDPS(HUDOut o):SV_Target
 {
 	//return (0,0,0,0);
-	float4 col = _shadowTex.Sample(_samplerState_clamp, o.uv);
+	float4 col = _tex.Sample(_samplerState_clamp, o.uv);
 	//col = float4(1.0f - col.r, 1.0f - col.g, 1.0f - col.b, col.a);
 	return col;
 	//r = pow(r, 2);

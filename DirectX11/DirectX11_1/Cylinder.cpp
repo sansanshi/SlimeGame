@@ -120,7 +120,7 @@ Cylinder::Cylinder(float radius, float height, unsigned int div,const std::share
 	//問題が起きた時はLightview用に新しくバーテックスバッファ作ってこの辺も書き換える
 	resourceMgr.LoadVS("Cylinder_lightVS",
 		"lightview.hlsl", "PrimitiveLightViewVS", "vs_5_0",
-		_lightviewVS, lightViewInputElementDescs, sizeof(lightViewInputElementDescs) / sizeof(D3D11_INPUT_ELEMENT_DESC),
+		_lightviewVS, inputElementDescs, sizeof(inputElementDescs) / sizeof(D3D11_INPUT_ELEMENT_DESC),
 		_lightviewInputLayout);
 	resourceMgr.LoadPS("Cylinder_lightPS",
 		"lightview.hlsl", "PrimitiveLightViewPS", "ps_5_0",
@@ -242,6 +242,18 @@ Cylinder::DrawCameraDepth()
 	dev.Context()->IASetVertexBuffers(0, 1, &_vertexBuffer, &stride, &offset);
 	dev.Context()->Draw(_vertexCnt, 0);
 	dev.Context()->IASetVertexBuffers(0, 1, &_hatchBuffer, &stride, &offset);
+	dev.Context()->Draw(_hatchVertCnt, 0);
+
+	XMMATRIX trans = XMMatrixTranslation(_pos.x, _pos.y, _pos.z);
+	float calcRad = XM_PI / 180.0f;
+	XMMATRIX temp = XMMatrixTranslation(0, -_height, 0);
+	XMMATRIX rot = XMMatrixRotationRollPitchYaw(_rot.x*calcRad, _rot.y*calcRad, (_rot.z + 180.0f)*calcRad);
+	XMMATRIX scal = XMMatrixScaling(_scale.x, _scale.y, _scale.z);
+
+	XMMATRIX t = XMMatrixMultiply(temp, XMMatrixMultiply(rot, scal));
+
+	_worldAndCamera.world = XMMatrixMultiply(t, trans);
+	ApplyConstantBuffer(_matrixBuffer, _mappedMatrixies, _worldAndCamera);
 	dev.Context()->Draw(_hatchVertCnt, 0);
 
 }

@@ -248,6 +248,8 @@ Sphere::Sphere(unsigned int divNum,float radius,const std::shared_ptr<Camera> ca
 	//視差マッピング用テクスチャ
 	_heightMap = resourceMgr.LoadSRV("Slime_height", "height1_.png");
 
+	_subTex = resourceMgr.LoadSRV("Slime_noise", "noise_.png");
+
 
 	//サンプラの設定
 	D3D11_SAMPLER_DESC samplerDesc = {};
@@ -345,6 +347,7 @@ Sphere::Draw()
 	ApplyConstantBuffer(_matrixBuffer, _mappedMaterial, _worldAndCamera);
 	ApplyCameraShaders();
 	ApplyTextures();
+	dev.Context()->VSSetShaderResources(TEXTURE_SUB, 1, _subTex._Get());
 
 	dev.Context()->IASetVertexBuffers(0, 1, &_vertexBuffer, &stride, &offset);
 	dev.Context()->IASetIndexBuffer(_indexBuffer, DXGI_FORMAT_R16_UINT, 0);

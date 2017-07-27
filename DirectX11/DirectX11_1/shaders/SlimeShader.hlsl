@@ -198,8 +198,7 @@ float4 SlimePS(Output o) :SV_Target
 	float4 col = _tex.Sample(_samplerState, heightUV);
 		col = float4(0.6, 0.6, 0.4, 1);
 	float3 sphCol = _sph.Sample(_samplerState, o.normal.xy / 2 * float2(1, -1) + float2(0.5f, 0.5f));
-	col = float4(col.rgb
-	/*+ 0.3f*pow(max(0, dot(ref, o.lightVec)), 8)*/, 0.8f);//VSSetConstantBufferで渡ってきたデータは直接ピクセルシェーダでは使えないっぽい　全部の値が0になっている
+	col = float4(col.rgb*bright, 0.6f);//VSSetConstantBufferで渡ってきたデータは直接ピクセルシェーダでは使えないっぽい　全部の値が0になっている
 	
 	//フォグかける
 	col = lerp(o.fogColor, col, o.fog);

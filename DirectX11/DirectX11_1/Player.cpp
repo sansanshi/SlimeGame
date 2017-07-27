@@ -464,6 +464,9 @@ Player::Init()
 	ResourceManager& resourceMgr = ResourceManager::Instance();
 	
 
+	_pos = { 0.f,0.0f, 0.f };
+	rotAngle = 0.f;
+
 	//pmxはデフォルトでutf16（Unicode）を使うのでL付けてワイド文字列にする
 	//PMXLoader pmxloader;
 	//pmxloader.LoadPMX(L"models/shame/shame.pmx");
@@ -694,8 +697,6 @@ Player::Init()
 	_transMatrix = XMMatrixIdentity();
 	_rotMatrix = XMMatrixIdentity();
 	_scaleMatrix = XMMatrixIdentity();
-	_pos = { 0.f,0.0f, 0.f };
-	rotAngle = 0.f;
 
 	_frameNo = 0;
 
