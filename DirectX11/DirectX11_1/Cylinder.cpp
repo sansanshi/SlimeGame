@@ -87,8 +87,43 @@ Cylinder::Cylinder(float radius, float height, unsigned int div,const std::share
 	hatchDesc.MiscFlags = 0;
 	hatchDesc.StructureByteStride = sizeof(PrimitiveVertex);
 
-
 	result = dev.Device()->CreateBuffer(&hatchDesc, &hatchData, &_hatchBuffer);
+
+
+
+	rad = 0;
+	_bottomVertCnt = div;
+	std::vector<PrimitiveVertex> bottomVerts(div);
+	for (int i = 0; i < (int)bottomVerts.size(); i += 2)
+	{
+		bottomVerts[i+1].pos = { XMFLOAT3(cos(rad)*radius, 0, sin(rad)*radius) };
+		bottomVerts[i+1].normal = XMFLOAT3(0, -1, 0);
+		bottomVerts[i+1].uv.x = (bottomVerts[i+1].pos.x / radius + 1.0f) / 2.0f;
+		bottomVerts[i+1].uv.y = -(bottomVerts[i+1].pos.z / radius + 1.0f) / 2.0f;
+		bottomVerts[i+1].tangent = XMFLOAT3(1, 0, 0);
+		bottomVerts[i+1].binormal = XMFLOAT3(0, 0, -1);
+		rad += (360 / div)*XM_PI / 180;
+		bottomVerts[i].pos = { XMFLOAT3(cos(-rad)*radius,0,sin(-rad)*radius) };
+		bottomVerts[i].normal = XMFLOAT3(0, -1, 0);
+		bottomVerts[i].uv.x = (bottomVerts[i].pos.x / radius + 1.0f) / 2.0f;
+		bottomVerts[i].uv.y = -(bottomVerts[i].pos.z / radius + 1.0f) / 2.0f;
+		bottomVerts[i].tangent = XMFLOAT3(1, 0, 0);
+		bottomVerts[i].binormal = XMFLOAT3(0, 0, -1);
+	}
+	D3D11_SUBRESOURCE_DATA bottomData;
+	bottomData.pSysMem = &bottomVerts[0];
+
+	D3D11_BUFFER_DESC bottomDesc = {};
+	bottomDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	bottomDesc.ByteWidth = sizeof(PrimitiveVertex)*bottomVerts.size();
+	bottomDesc.Usage = D3D11_USAGE_DEFAULT;
+	bottomDesc.CPUAccessFlags = 0;
+	bottomDesc.MiscFlags = 0;
+	bottomDesc.StructureByteStride = sizeof(PrimitiveVertex);
+
+
+	result = dev.Device()->CreateBuffer(&bottomDesc, &bottomData, &_bottomBuffer);
+
 
 
 	D3D11_INPUT_ELEMENT_DESC inputElementDescs[] =
@@ -182,17 +217,9 @@ Cylinder::Draw()
 	dev.Context()->IASetVertexBuffers(0, 1, &_hatchBuffer, &stride, &offset);
 	dev.Context()->Draw(_hatchVertCnt, 0);
 
-	XMMATRIX trans = XMMatrixTranslation(_pos.x, _pos.y , _pos.z);
-	float calcRad = XM_PI / 180.0f;
-	XMMATRIX temp = XMMatrixTranslation(0, -_height, 0);
-	XMMATRIX rot = XMMatrixRotationRollPitchYaw(_rot.x*calcRad, _rot.y*calcRad , (_rot.z+180.0f)*calcRad );
-	XMMATRIX scal = XMMatrixScaling(_scale.x, _scale.y, _scale.z);
+	dev.Context()->IASetVertexBuffers(0, 1, &_bottomBuffer, &stride, &offset);
+	dev.Context()->Draw(_bottomVertCnt,0);
 
-	XMMATRIX t = XMMatrixMultiply(temp, XMMatrixMultiply(rot,scal));
-
-	_worldAndCamera.world = XMMatrixMultiply(t, trans);
-	ApplyConstantBuffer(_matrixBuffer, _mappedMatrixies, _worldAndCamera);
-	dev.Context()->Draw(_hatchVertCnt, 0);
 
 }
 void
@@ -244,17 +271,9 @@ Cylinder::DrawCameraDepth()
 	dev.Context()->IASetVertexBuffers(0, 1, &_hatchBuffer, &stride, &offset);
 	dev.Context()->Draw(_hatchVertCnt, 0);
 
-	XMMATRIX trans = XMMatrixTranslation(_pos.x, _pos.y, _pos.z);
-	float calcRad = XM_PI / 180.0f;
-	XMMATRIX temp = XMMatrixTranslation(0, -_height, 0);
-	XMMATRIX rot = XMMatrixRotationRollPitchYaw(_rot.x*calcRad, _rot.y*calcRad, (_rot.z + 180.0f)*calcRad);
-	XMMATRIX scal = XMMatrixScaling(_scale.x, _scale.y, _scale.z);
+	dev.Context()->IASetVertexBuffers(0, 1, &_bottomBuffer, &stride, &offset);
+	dev.Context()->Draw(_bottomVertCnt, 0);
 
-	XMMATRIX t = XMMatrixMultiply(temp, XMMatrixMultiply(rot, scal));
-
-	_worldAndCamera.world = XMMatrixMultiply(t, trans);
-	ApplyConstantBuffer(_matrixBuffer, _mappedMatrixies, _worldAndCamera);
-	dev.Context()->Draw(_hatchVertCnt, 0);
 
 }
 

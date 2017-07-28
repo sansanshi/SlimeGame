@@ -738,7 +738,7 @@ Player::Update()
 
 	//LookAtのテスト
 	XMMATRIX transMatrix = XMMatrixTranslation(_pos.x, _pos.y, _pos.z);//LookAt(0, 1, 1);//
-	XMMATRIX rotMat = LookAt(1, 0, 0);
+	XMMATRIX rotMat = XMMatrixRotationRollPitchYaw(_rot.x, _rot.y, _rot.z);//LookAt(1, 0, 0);
 	XMMATRIX scaleMat = XMMatrixScaling(_scale.x, _scale.y, _scale.z);
 	XMMATRIX world = XMMatrixMultiply( XMMatrixMultiply(rotMat,scaleMat),transMatrix);
 
@@ -798,9 +798,21 @@ Player::Update()
 		dev.Context()->PSSetShader(*_pixelShader.lock(), nullptr, 0);//PMDモデル表示用シェーダセット		dev.Context()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	}
 
+	if ((_key[VK_LSHIFT] & 0x80) && (_key[VK_NUMPAD8] & 0x80))
+	{
+		int j = 0;
+	}
 	if (_key[VK_UP] & 0x80)
 	{
-		_ikOffset.y += 0.1f;
+		if (_key[VK_NUMPAD8] & 0x80)
+		{
+			int jj = 0;
+		}
+		if (!((_key[VK_LSHIFT] & 0x80) && (_key[VK_NUMPAD8]&0x80)))
+		{
+			_ikOffset.y += 0.1f;
+			
+		}
 	}
 	if (_key[VK_DOWN] & 0x80)
 	{

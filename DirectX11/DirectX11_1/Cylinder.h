@@ -11,6 +11,9 @@ private:
 	ID3D11Buffer* _hatchBuffer;//ŠW
 	unsigned int _hatchVertCnt;
 
+	ID3D11Buffer* _bottomBuffer;
+	unsigned int _bottomVertCnt;
+
 
 	unsigned int _vertexCnt;
 	

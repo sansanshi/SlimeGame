@@ -146,7 +146,6 @@ float4 WaterPS(Output o) :SV_Target
 	float4 col;
 	col = lerp(col0, col1, f);
 	col.rgb=col.rgb*bright;
-	col = lerp(col,lightCol, noise*bright);
 	col.a = 0.4f;
 	return col;
 }
