@@ -108,10 +108,10 @@ Output SkySphereVS(float4 pos:POSITION, float4 normal : NORMAL, float2 uv : TEXC
 
 	o.posWorld = mul(_world, pos);
 	//高さフォグ　とりあえず決め打ちでやってみる
-	float heightFog = clamp((300.0f - o.posWorld.y) / (300.0f - 30.0f), 0.0f, 1.0f);
-	heightFog = pow(heightFog,3);
-	heightFog = (1.0f - heightFog);
-	o.fog = clamp(heightFog * o.fog, 0.0f, 1.0f);
+	float heightFog = saturate((300.0f - o.posWorld.y) / (300.0f - 40.0f));
+	//heightFog = pow(heightFog,3);
+	heightFog = 2.5f * heightFog * (1.0f - heightFog);
+	o.fog = saturate(heightFog * o.fog);
 	
 	o.windowSize = windowSize;
 
@@ -121,7 +121,7 @@ Output SkySphereVS(float4 pos:POSITION, float4 normal : NORMAL, float2 uv : TEXC
 float4 SkySpherePS(Output o) :SV_Target
 {
 	
-	float4 col = _tex.Sample(_samplerState, o.uv);
+	float4 col = _tex.Sample(_samplerState, o.uv*5.0f);
 	//フォグをかける
 	col = lerp(o.fogColor, col, o.fog);
 	return col;

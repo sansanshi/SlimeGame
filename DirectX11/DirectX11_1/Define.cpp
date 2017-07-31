@@ -9,7 +9,7 @@ extern const float FAR_Z = 350.0f;
 
 extern const float FOG_START = 200.0f;
 extern const float FOG_END = 300.0f;
-extern const XMFLOAT4 FOG_COLOR = { 0.5f, 0.9f, 1.0f, 1.0f };
+extern const XMFLOAT4 FOG_COLOR = { 0.5f, 0.8f, 1.0f, 1.0f };
 
 extern const float SKYSPHERE_RADIUS = 300.0f;
 

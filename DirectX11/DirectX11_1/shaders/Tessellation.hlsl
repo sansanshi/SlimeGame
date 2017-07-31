@@ -127,6 +127,7 @@ DS_OUTPUT TessDS(HS_CONSTANT_DATA_OUTPUT In, float2 UV:SV_DomainLocation, const 
 
 	matrix wvp = mul(mul(_cameraProj,_cameraView), _world);
 	o.pos = mul(wvp,postemp );
+	o.worldPos = mul(_world, postemp).xyz;
 	matrix lvp = mul(mul(_lightProj,_lightView),_world);
 	o.shadowposCS = mul(lvp, postemp);
 	o.shadowposVS = mul(mul(_lightView, _world), postemp);
@@ -156,8 +157,6 @@ float4 TessPS(DS_OUTPUT o):SV_Target
 
 	float ld = o.shadowposVS.z / o.farZ;
 	float shadowWeight = 1.0f;
-	
-	
 	shadowWeight = CalcVSWeight(shadowUV, ld);
 
 	//return dep;

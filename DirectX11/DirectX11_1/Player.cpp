@@ -798,33 +798,24 @@ Player::Update()
 		dev.Context()->PSSetShader(*_pixelShader.lock(), nullptr, 0);//PMDモデル表示用シェーダセット		dev.Context()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	}
 
-	if ((_key[VK_LSHIFT] & 0x80) && (_key[VK_NUMPAD8] & 0x80))
+	if (_key[VK_CONTROL] & 0x80)
 	{
-		int j = 0;
-	}
-	if (_key[VK_UP] & 0x80)
-	{
-		if (_key[VK_NUMPAD8] & 0x80)
-		{
-			int jj = 0;
-		}
-		if (!((_key[VK_LSHIFT] & 0x80) && (_key[VK_NUMPAD8]&0x80)))
+		if (_key[VK_UP] & 0x80)
 		{
 			_ikOffset.y += 0.1f;
-			
 		}
-	}
-	if (_key[VK_DOWN] & 0x80)
-	{
-		_ikOffset.y -= 0.1f;
-	}
-	if (_key[VK_RIGHT] & 0x80)
-	{
-		_ikOffset.x += 0.1f;
-	}
-	if (_key[VK_LEFT] & 0x80)
-	{
-		_ikOffset.x -= 0.1f;
+		if (_key[VK_DOWN] & 0x80)
+		{
+			_ikOffset.y -= 0.1f;
+		}
+		if (_key[VK_RIGHT] & 0x80)
+		{
+			_ikOffset.x += 0.1f;
+		}
+		if (_key[VK_LEFT] & 0x80)
+		{
+			_ikOffset.x -= 0.1f;
+		}
 	}
 
 	DeformBones(_mesh, _currentVMD, _frameNo/2);// /2はモーションを遅くするために付けてるだけ

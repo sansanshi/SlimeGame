@@ -212,7 +212,7 @@ SkySphere::SkySphere(unsigned int divNum, float radius,const std::shared_ptr<Cam
 	dev.Context()->VSSetConstantBuffers(0, 1, &_matrixBuffer);
 
 	//テクスチャ
-	_mainTex = resourceMgr.LoadSRV("Skysphere_main", "height00.png");
+	_mainTex = resourceMgr.LoadSRV("Skysphere_main", "sky.png");
 
 
 
