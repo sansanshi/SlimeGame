@@ -1,4 +1,4 @@
-﻿  PlayingScene.cpp
+﻿  Camera.cpp
 c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2662): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
 c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2663): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
 c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamath.h(2664): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
@@ -38,54 +38,6 @@ c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamathvector.i
 c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamathmisc.inl(518): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
 c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamathmisc.inl(519): warning C4838: 'unsigned int' から 'INT' への変換には縮小変換が必要です
 c:\users\1401349\documents\workinggames\slimegame\directx11\directx11_1\define.h(62): warning C4244: 'return': 'double' から 'float' への変換です。データが失われる可能性があります。
-c:\users\1401349\documents\workinggames\slimegame\directx11\directx11_1\playingscene.cpp(89): warning C4101: 'result': ローカル変数は 1 度も使われていません。
-c:\users\1401349\documents\workinggames\slimegame\directx11\directx11_1\playingscene.cpp(322): warning C4244: '引数': 'LONG' から 'float' への変換です。データが失われる可能性があります。
-c:\users\1401349\documents\workinggames\slimegame\directx11\directx11_1\playingscene.cpp(605): warning C4838: 'float' から 'LONG' への変換には縮小変換が必要です
-c:\users\1401349\documents\workinggames\slimegame\directx11\directx11_1\playingscene.cpp(605): warning C4244: '初期化中': 'float' から 'LONG' への変換です。データが失われる可能性があります。
-c:\program files (x86)\microsoft visual studio 14.0\vc\include\memory(1630): warning C4316: 'Player': ヒープで割り当てられたオブジェクトが 16 にアラインメントされていない可能性があります
-  c:\users\1401349\documents\workinggames\slimegame\directx11\directx11_1\playingscene.cpp(106): note: コンパイル対象の関数 テンプレート インスタンス化 'std::unique_ptr<Player,std::default_delete<_Ty>> std::make_unique<Player,std::shared_ptr<Camera>&>(std::shared_ptr<Camera> &)' のリファレンスを確認してください
-          with
-          [
-              _Ty=Player
-          ]
-c:\program files (x86)\microsoft visual studio 14.0\vc\include\memory(1630): warning C4244: '引数': 'int' から 'float' への変換です。データが失われる可能性があります。
-  c:\users\1401349\documents\workinggames\slimegame\directx11\directx11_1\playingscene.cpp(109): note: コンパイル対象の関数 テンプレート インスタンス化 'std::unique_ptr<Plane,std::default_delete<_Ty>> std::make_unique<Plane,int,int,Vector3,std::shared_ptr<Camera>&>(int &&,int &&,Vector3 &&,std::shared_ptr<Camera> &)' のリファレンスを確認してください
-          with
-          [
-              _Ty=Plane
-          ]
-c:\program files (x86)\microsoft visual studio 14.0\vc\include\memory(1630): warning C4316: 'Plane': ヒープで割り当てられたオブジェクトが 16 にアラインメントされていない可能性があります
-c:\program files (x86)\microsoft visual studio 14.0\vc\include\memory(1630): warning C4316: 'Cylinder': ヒープで割り当てられたオブジェクトが 16 にアラインメントされていない可能性があります
-c:\program files (x86)\microsoft visual studio 14.0\vc\include\memory(1630): warning C4316: 'Sphere': ヒープで割り当てられたオブジェクトが 16 にアラインメントされていない可能性があります
-c:\program files (x86)\microsoft visual studio 14.0\vc\include\memory(1630): warning C4316: 'TessPlane': ヒープで割り当てられたオブジェクトが 16 にアラインメントされていない可能性があります
-c:\program files (x86)\microsoft visual studio 14.0\vc\include\memory(1630): warning C4316: 'DecalBox': ヒープで割り当てられたオブジェクトが 16 にアラインメントされていない可能性があります
-c:\program files (x86)\microsoft visual studio 14.0\vc\include\memory(1630): warning C4316: 'SkySphere': ヒープで割り当てられたオブジェクトが 16 にアラインメントされていない可能性があります
-  c:\users\1401349\documents\workinggames\slimegame\directx11\directx11_1\playingscene.cpp(124): note: コンパイル対象の関数 テンプレート インスタンス化 'std::unique_ptr<SkySphere,std::default_delete<_Ty>> std::make_unique<SkySphere,int,const float&,std::shared_ptr<Camera>&>(int &&,const float &,std::shared_ptr<Camera> &)' のリファレンスを確認してください
-          with
-          [
-              _Ty=SkySphere
-          ]
-c:\program files (x86)\microsoft visual studio 14.0\vc\include\memory(1630): warning C4316: 'DecalFactory': ヒープで割り当てられたオブジェクトが 16 にアラインメントされていない可能性があります
-  c:\users\1401349\documents\workinggames\slimegame\directx11\directx11_1\playingscene.cpp(138): note: コンパイル対象の関数 テンプレート インスタンス化 'std::unique_ptr<DecalFactory,std::default_delete<_Ty>> std::make_unique<DecalFactory,std::shared_ptr<Camera>&>(std::shared_ptr<Camera> &)' のリファレンスを確認してください
-          with
-          [
-              _Ty=DecalFactory
-          ]
-c:\program files (x86)\microsoft visual studio 14.0\vc\include\memory(1630): warning C4316: 'Billboard': ヒープで割り当てられたオブジェクトが 16 にアラインメントされていない可能性があります
-c:\program files (x86)\microsoft visual studio 14.0\vc\include\memory(1630): warning C4244: '引数': 'int' から 'const float' への変換です。データが失われる可能性があります。
-  c:\users\1401349\documents\workinggames\slimegame\directx11\directx11_1\playingscene.cpp(152): note: コンパイル対象の関数 テンプレート インスタンス化 'std::unique_ptr<HUD,std::default_delete<_Ty>> std::make_unique<HUD,std::shared_ptr<Camera>&,int,int,const float&,const float&>(std::shared_ptr<Camera> &,int &&,int &&,const float &,const float &)' のリファレンスを確認してください
-          with
-          [
-              _Ty=HUD
-          ]
-c:\program files (x86)\microsoft visual studio 14.0\vc\include\memory(1630): warning C4316: 'HUD': ヒープで割り当てられたオブジェクトが 16 にアラインメントされていない可能性があります
-c:\program files (x86)\microsoft visual studio 14.0\vc\include\memory(1630): warning C4316: 'BlurFilter': ヒープで割り当てられたオブジェクトが 16 にアラインメントされていない可能性があります
-  c:\users\1401349\documents\workinggames\slimegame\directx11\directx11_1\playingscene.cpp(156): note: コンパイル対象の関数 テンプレート インスタンス化 'std::unique_ptr<BlurFilter,std::default_delete<_Ty>> std::make_unique<BlurFilter,>(void)' のリファレンスを確認してください
-          with
-          [
-              _Ty=BlurFilter
-          ]
-c:\users\1401349\documents\workinggames\slimegame\directx11\directx11_1\camera.h(28): warning C4172: ローカル変数またはテンポラリのアドレスを返します
 cl : コマンド ライン warning D9028: 簡易リビルド時のエラーです、通常のビルドに戻します
   DirectX11_1.vcxproj -> C:\Users\1401349\Documents\WorkingGames\SlimeGame\DirectX11\Debug\DirectX11_1.exe
   DirectX11_1.vcxproj -> C:\Users\1401349\Documents\WorkingGames\SlimeGame\DirectX11\Debug\DirectX11_1.pdb (Full PDB)

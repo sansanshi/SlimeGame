@@ -103,7 +103,7 @@ private:
 	XMFLOAT3 _ikpos;
 	XMFLOAT3 _ikOffset;
 
-
+	bool _motionToggle;
 
 public:
 	Player(const std::shared_ptr<Camera> cam);
@@ -139,5 +139,7 @@ public:
 
 	const XMFLOAT3& GetPos() { return _pos; };
 	void SetPos(const XMFLOAT3 pos);
+
+	void MotionToggle();
 };
 

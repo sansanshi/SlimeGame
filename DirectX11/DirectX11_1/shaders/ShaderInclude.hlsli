@@ -96,7 +96,7 @@ float CalcVSWeight(float2 shadowUV, float ld)
 {
 	float2 satUV = saturate(shadowUV);
 	float4 d = _blurShadowTex.Sample(_samplerState, shadowUV);
-	if (shadowUV.x == satUV.x&&shadowUV.y == satUV.y&&d.r < ld - 0.005f
+	if (shadowUV.x == satUV.x&&shadowUV.y == satUV.y&&d.r < ld - 0.0025f
 		&&satUV.x<0.95f&&satUV.y>0.05f)
 	{
 		//↑ライトからのビューの切れ目に影ができるので応急処置
@@ -106,7 +106,6 @@ float CalcVSWeight(float2 shadowUV, float ld)
 		float p = variance / (variance + (md*md));
 
 		float ret = saturate(max(p, 0.3f));
-		//ret = lerp(0.2f,1.0f, ret);
 		return ret;
 	}
 	return 1.0f;

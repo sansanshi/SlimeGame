@@ -95,31 +95,39 @@ Output WaterVS(float4 pos:POSITION, float4 normal : NORMAL, float2 uv : TEXCOORD
 }
 float4 WaterPS(Output o) :SV_Target
 {
-	float Phase = 2.5f;
-	float halfPhase = 2.5f / 2.0f;
+	//周期　決め打ち　後でCPU側に移す
+	float Phase = 1.5f;
+	float halfPhase = 1.5f / 2.0f;
 
-	//ノイズテクスチャ
+	//ノイズテクスチャ（0.0f ~ 1.0f)
 	float noise = _subTex.Sample(_samplerState, o.uv*5).r;
-	//フロートテクスチャ
+	//フローテクスチャ
 	float2 flowVector = _flowTex.Sample(_samplerState, o.uv).rg;
 	flowVector = flowVector*2.0f - 1.0f;
+	//右方向にuv座標をオフセット＝テクスチャは左に流れるように見える
+	//ので反転させる　ｙ成分がそのままなのはよく分からない
 	flowVector.x *= -1.0f;
-	float Time = o.timer / 60.0f + noise;
+	float Time = o.timer / 60.0f ;
 
 	float flowOffs0 = fmod(Time, Phase);
 	float flowOffs1 = fmod(Time + halfPhase, Phase);
 
-	float phase0 =  flowOffs0;
-	float phase1 =  flowOffs1;
-
 	
-	float3 norm0 = _normalTex.Sample(_samplerState, (o.uv * 5) + flowVector*phase0);
-	float3 norm1 = _normalTex.Sample(_samplerState, (o.uv * 5) + flowVector*phase1);
+	float3 norm0 = _normalTex.Sample(_samplerState, (o.uv * 5) + flowVector*flowOffs0);
+	float3 norm1 = _normalTex.Sample(_samplerState, (o.uv * 5) + flowVector*flowOffs1);
 	norm0 = norm0*2.0f - 1.0f;
 	norm1 = norm1*2.0f - 1.0f;
 	
-	float4 col0 = _tex.Sample(_samplerState, o.uv*5 + flowVector*phase0 );
-	float4 col1 = _tex.Sample(_samplerState, o.uv*5 + flowVector*phase1 );
+	float4 col0 = _tex.Sample(_samplerState, o.uv*5 + flowVector*flowOffs0 );
+	float4 col1 = _tex.Sample(_samplerState, o.uv*5 + flowVector*flowOffs1 );
+	//ノイズマップでピクセルごとに周期をズラすだけだと目立つ
+	//fを使って半周期先の参照テクセルと補間する
+	//flowOffs0が0＝ぴったり周期分進んだ＝全くuvオフセットしていないテクセルの色を取りたい＝fは1.0
+	//flowOffs0は0.0f(f=1)→halfPhase(f=0)→Phase(f=1)→halfPhase(f=0)...
+	//Time+noiseが半周期分進んだ→元のテクセル
+	//↑↓の間を補間
+	//Time+noiseが周期分進んだ→半周期先のテクセル
+	//lerp(x,y,a)=x+a(y-x)
 	float f = (abs(halfPhase - flowOffs0) / halfPhase);
 	
 	float3 normT = lerp(norm0, norm1, f);

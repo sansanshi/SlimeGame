@@ -42,6 +42,7 @@ private:
 	std::unique_ptr<Cylinder> _cylinder2;
 	std::unique_ptr<Cylinder> _cylinder3;
 	std::unique_ptr<Cylinder> _cylinder4;
+	std::unique_ptr<Cylinder> _cylinderLarge;
 	std::unique_ptr<Sphere> _sphere;
 	std::unique_ptr<TessPlane> _tessPlane;
 	std::unique_ptr<SkySphere> _skySphere;
@@ -81,6 +82,7 @@ private:
 
 	BYTE keystate[256];
 	BYTE lastkeystate[256];
+	float _mouseWheelDelta;
 
 
 	Effect _effect;
@@ -104,6 +106,13 @@ public:
 	ID3D11RenderTargetView* g_pRTV;
 	ID3D11Texture2D* g_pDS;
 	ID3D11DepthStencilView* g_pDSV;
+
+	void UpdateObjects();
+	void DrawObjectsLightView();
+	void DrawObjectsDepth();
+	void DrawObjects();
+	void InitObjects();
+	void Input();
 
 	
 };

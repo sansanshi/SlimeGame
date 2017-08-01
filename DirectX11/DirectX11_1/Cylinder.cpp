@@ -148,7 +148,7 @@ Cylinder::Cylinder(float radius, float height, unsigned int div,const std::share
 	
 	_mainTex = resourceMgr.LoadSRV("Cylinder_main", "wood.png");
 	_subTex = resourceMgr.LoadSRV("Cylinder_sub", "noise.png");
-	_normalTex = resourceMgr.LoadSRV("Cylinder_normal", "normal3.png");
+	_normalTex = resourceMgr.LoadSRV("Cylinder_normal", "normal1.png");
 
 	
 	//ƒJƒƒ‰‚©‚ç‚Ì•`‰æ‚ÉŽg‚Á‚½inputElementDescs‚ðŽg‚Á‚Ä‚à•`‰æ‚Å‚«‚½
@@ -243,7 +243,8 @@ Cylinder::DrawLightView()//ŒãXƒvƒŒƒCƒ„[‚©‚çƒJƒƒ‰‚ð˜M‚Á‚½ê‡‚Í‚±‚±‚Å‚àƒJƒƒ‰‚
 	dev.Context()->Draw(_vertexCnt, 0);
 	dev.Context()->IASetVertexBuffers(0, 1, &_hatchBuffer, &stride, &offset);
 	dev.Context()->Draw(_hatchVertCnt, 0);
-
+	dev.Context()->IASetVertexBuffers(0, 1, &_bottomBuffer, &stride, &offset);
+	dev.Context()->Draw(_bottomVertCnt, 0);
 
 }
 

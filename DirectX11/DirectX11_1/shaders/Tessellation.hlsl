@@ -159,8 +159,6 @@ float4 TessPS(DS_OUTPUT o):SV_Target
 	float shadowWeight = 1.0f;
 	shadowWeight = CalcVSWeight(shadowUV, ld);
 
-	//return dep;
-	//return float4(shadowWeight, shadowWeight, shadowWeight, 1);
 
 	
 	//ŒõŒ¹‚©‚ç‚Ì‹——£‚É‚æ‚Á‚Ä–¾‚é‚³‚ðŒˆ‚ß‚é

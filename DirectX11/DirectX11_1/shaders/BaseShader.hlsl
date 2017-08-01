@@ -168,13 +168,20 @@ float4 BasePS(Output o) :SV_Target
 
 	//saturate→0～1にクランプする関数
 	//　※　光線ベクトルの「逆」ベクトルとの内積を取る
-	float bright = saturate(dot(-o.lightVec, o.normal/*n_local*/));
+	//モデルに適用するには少し暗くなり過ぎたので下駄をはかせる
+	float bright = saturate(dot(-o.lightVec, o.normal))+0.2f;
 	
 	o.shadowposCS = float4(o.shadowposCS.xyz / o.shadowposCS.w, 1.0f);
 	float2 shadowUV = (float2(1, 1) + (o.shadowposCS.xy )*float2(1, -1))*0.5f;
 
 	float ld = o.shadowposVS.z / o.farZ;
 	float shadowWeight = 1.0f;
+	//float2 satUV = saturate(shadowUV);
+	//float lightviewDepth = _shadowTex.Sample(_samplerState_clamp, shadowUV).r;
+	//if (shadowUV.x == satUV.x&&shadowUV.y == satUV.y&&ld > lightviewDepth + 0.0025f) {
+	//	shadowWeight = 0.2f;
+	//	//return float4(lightviewDepth, 0, 0, 1);
+	//}
 	shadowWeight = CalcVSWeight(shadowUV, ld);
 
 
@@ -182,7 +189,7 @@ float4 BasePS(Output o) :SV_Target
 	//return float4(bright, bright, bright, 1);
 	float4 texcol = _tex.Sample(_samplerState, o.uv);
 		float3 sphCol = _sph.Sample(_samplerState, o.normal.xy / 2 * float2(1, -1) + float2(0.5f, 0.5f));
-		float4 col= float4((bright*o.diffuse.rgb + o.ambient.rgb)*texcol.rgb*sphCol
+		float4 col= float4((o.diffuse.rgb + o.ambient.rgb)*texcol.rgb*sphCol*bright
 			/*+ 0.3f*pow(max(0, dot(ref, o.lightVec)), 8)*/, 1.0f);//VSSetConstantBufferで渡ってきたデータは直接ピクセルシェーダでは使えないっぽい　全部の値が0になっている
 		//フォグをかける
 		col = lerp(o.fogColor, col, o.fog);

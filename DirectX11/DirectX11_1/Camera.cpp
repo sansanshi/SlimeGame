@@ -178,7 +178,7 @@ Camera::Rotate(float pitch, float yaw, float roll)
 void
 Camera::Rotate(const XMFLOAT3& rotPYR)
 {
-	_pitch += rotPYR.x;
+	_pitch = max(min(_pitch + rotPYR.x,20.0f*XM_PI/180.0f),-60.0f*XM_PI/180.0f);
 	_yaw += rotPYR.y;
 	_roll += rotPYR.z;
 

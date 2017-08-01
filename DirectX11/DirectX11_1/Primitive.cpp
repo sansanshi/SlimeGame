@@ -75,7 +75,7 @@ Primitive::UpdateMatrixies()
 	float calcRad = XM_PI / 180.0f;
 	XMMATRIX rotMat = XMMatrixRotationRollPitchYaw(_rot.x*calcRad, _rot.y*calcRad, _rot.z*calcRad);
 
-	modelMatrix = XMMatrixMultiply(XMMatrixMultiply(rotMat, scaleMat),transMatrix);
+	modelMatrix = XMMatrixMultiply(XMMatrixMultiply( scaleMat,rotMat),transMatrix);
 
 
 	_worldAndCamera.world = modelMatrix;

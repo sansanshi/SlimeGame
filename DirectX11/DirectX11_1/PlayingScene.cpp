@@ -97,63 +97,16 @@ PlayingScene::Init()
 PlayingScene::PlayingScene(HWND hwnd) 
 	:_hwnd(hwnd),_result(InitDirect3D(_hwnd)),dev(DeviceDx11::Instance())
 {
+	HRESULT result;
 	//InitDirect3D(_hwnd);//初期化子で既に呼んでいる
 	Init();
-	_camera = std::make_shared<Camera>();
-	_renderer = std::make_unique<Renderer>();
-	_renderer->Init();//レンダラー初期化
-
-	_player = std::make_unique<Player>(_camera);
-	_player->Init();
-
-	_plane = std::make_unique<Plane>(600, 600, Vector3(0, 1, 0), _camera);
-	//_plane = new Plane(300, 300, Vector3(0, 1, 0), &_camera);
-	_cylinder = std::make_unique<Cylinder>(4, 20, 20, _camera);// new Cylinder(4, 20, 20, _camera);
-
-	_cylinder2 = std::make_unique<Cylinder>(4, 20, 20, _camera);
-	_cylinder3 = std::make_unique<Cylinder>(4, 20, 20, _camera);
-	_cylinder4 = std::make_unique<Cylinder>(4, 20, 20, _camera);
-
-	_cylinder2->SetRotate(XMFLOAT3(90, 0, 0));
-
-	_sphere = std::make_unique<Sphere>(100, 5, _camera);//new Sphere(100, 5, _camera);
-	_sphere->SetPos(XMFLOAT3( 0, 0, -5));
-	_tessPlane = std::make_unique<TessPlane>(600, 600, Vector3(0, 1, 0), _camera);//new TessPlane(400, 400, Vector3(0, 1, 0), _camera);
-	_decalBox = std::make_unique<DecalBox>(1, 1, 1, _camera);//new DecalBox(1, 1, 1, _camera);
-
-	_skySphere = std::make_unique<SkySphere>(100, SKYSPHERE_RADIUS, _camera);//new SkySphere(100, SKYSPHERE_RADIUS, _camera);
-
-	_soundManager.Init();//サウンドマネージャ初期化
-
-
-	_plane->SetPos(XMFLOAT3(0.0f, -5.0f, 0.0f));
-	_player->SetPos(XMFLOAT3(-10, 0, -10));
-	_cylinder2->SetPos(XMFLOAT3(-20, 0, 15));
-	_cylinder3->SetPos(XMFLOAT3(10, 0, 10));
-	_cylinder4->SetPos(XMFLOAT3(-10, 0, 10));
-
-	HRESULT result;
-
-	//デカールファクトリ
-	_decalFac = std::make_unique<DecalFactory>(_camera);//new DecalFactory(_camera);
-	_decalBoxPitch = 45.0f*XM_PI / 180.0f;
-	_oldPitch = _decalBoxPitch;
+	
+	InitObjects();
 
 	_isLockCursor = true;
 	_cursorPoint = { 0 };
 	_oldCursorPoint = { 0 };
 
-	_billBoard = std::make_unique<Billboard>(_camera, 10, 10);//new Billboard(_camera,10,10);
-	_lightBillboard = std::make_unique<Billboard>("light.png", _camera, 10, 10);
-	_billBoard->SetPos(XMFLOAT3( 10, 30, -5));
-	XMFLOAT4 temp = _camera->GetLightPos();
-	_lightBillboard->SetPos(XMFLOAT3(temp.x,temp.y,temp.z));
-
-	_debugHUD = std::make_unique<HUD>(_camera, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);//new HUD(_camera,0,0,320,240);
-	_makerHUD = std::make_unique<HUD>(_camera, -8, -8, 16, 16);// new HUD(_camera, -8, -8, 16, 16);
-
-
-	_blurFilter = std::make_unique<BlurFilter>();
 
 	_effect.Emit();
 	_effectMov = { 0, 0, 0 };
@@ -228,173 +181,10 @@ PlayingScene::Update(int mouseWheelDelta)
 {
 	_soundManager.Update();
 
-	
+	_mouseWheelDelta = mouseWheelDelta;
 
 #pragma region 入力（仮
-	std::copy(keystate, keystate + sizeof(keystate), lastkeystate);
-	GetKeyboardState(keystate);
-
-
-	//マウスカーソル位置算出
-	/*_oldCursorPoint = _cursorPoint;
-	GetCursorPos(&_cursorPoint);
-	ScreenToClient(_hwnd, &_cursorPoint);
-	POINT center = { WINDOW_WIDTH / 2,WINDOW_HEIGHT / 2 };
-	ClientToScreen(_hwnd, &center);
-	
-	SetCursorPos(center.x,center.y);*/
-
-	
-
-	if (keystate['M']&0x80)
-	{
-		if (!(lastkeystate['M']&0x80))
-		{
-			debugToggle = !debugToggle;
-		}
-	}
-
-	if (keystate['L'] & 0x80)
-	{
-		if (!(lastkeystate['L'] & 0x80))
-		{
-			_effect.Emit();
-		}
-	}
-	if (keystate[VK_SPACE] & 0x80)
-	{
-		_camera->Move(0.0f, SPEED_RISING, 0.0f);
-	}
-	if (keystate[VK_SHIFT] & 0x80)
-	{
-		_camera->Move(0.0f, -SPEED_RISING, 0.0f);
-	}
-
-#pragma region デカールボックス回転
-
-	int mouseWheel = mouseWheelDelta / WHEEL_DELTA;
-	if (keystate['R'] & 0x80)
-	{
-		if (mouseWheel != 0)
-		{
-			_decalBoxPitch += mouseWheel*5*XM_PI / 180.0f;
-			int jk = 0;
-			
-		}
-	}
-	if (keystate['X'] & 0x80)
-	{
-		if (mouseWheel != 0)
-		{
-			_decalBox->ChangeScale(mouseWheel*0.5f);
-
-		}
-	}
-	/*if (keystate[VK_ADD] & 0x80)
-	{
-		_decalBoxPitch += 1 * XM_PI / 180.0f;
-	}
-	if (keystate[VK_SUBTRACT] & 0x80)
-	{
-		_decalBoxPitch -= 1.0f*XM_PI / 180.0f;
-	}*/
-	
-	XMFLOAT3 test = _camera->GetRotation();
-	_decalBox->SetPYR(XMFLOAT3(_decalBoxPitch, _camera->GetRotation().y, 0));
-	if (_decalBoxPitch - _oldPitch > 0.000f)
-	{
-		int jj = 0;
-	}
-
-#pragma endregion
-
-	if (keystate[VK_LBUTTON]&0x80)//マウス左
-	{
-		//レイを計算する　far - near  XMVectorUnProj~~
-		//d カメラのポジションと平面の法線の内積をとる
-		//t レイと平面の法線の内積をとる
-		//
-		POINT p;
-		GetCursorPos(&p);
-		ScreenToClient(_hwnd, &p);
-
-
-		XMVECTOR ray = _camera->CalculateCursorVector(p.x, p.y);
-		ray = XMVector3Normalize(ray);
-
-		XMVECTOR camerapos = XMLoadFloat3(&_camera->GetPos());
-
-		float d;
-		XMStoreFloat(&d, XMVector3Dot(camerapos, _plane->Normal()));
-		float t;
-		XMStoreFloat(&t, XMVector3Dot(-ray, _plane->Normal()));
-
-		ray = XMVectorScale(ray, d / t);
-
-		XMFLOAT3 pos;
-		XMStoreFloat3(&pos, camerapos + ray);
-		//pos.y += 5;
-		
-		//_effect.Emit(pos);
-
-		//デカールボックスの位置セット
-		_decalBox->SetPos(pos);
-		int j = 0;
-		
-		if (keystate[VK_RBUTTON] & 0x80)
-		{
-			if (!(lastkeystate[VK_RBUTTON] & 0x80)) 
-			{
-				_decalFac->CreateDecalBox(_decalBox->GetWorldMatrix());
-				//_decalFac->CreateDecalBox(_decalBox.GetPos(), _decalBox.GetRotation(), _decalBox.GetScale());
-			}
-		}
-
-	}
-
-	float moveFront = 0.0f, moveRight = 0.0f;
-	if (keystate['W'] & 0x80)
-	{
-		moveFront += 1.0f;//_camera->MoveTPS(0.5f, 0);
-	}
-	if (keystate['S'] & 0x80)
-	{
-		moveFront -= 1.0f;//_camera->MoveTPS(-0.5f, 0);
-	}
-	if (keystate['A'] & 0x80)
-	{
-		moveRight -= 1.0f;//_camera->MoveTPS(0, -0.5f);
-	}
-	if (keystate['D'] & 0x80)
-	{
-		moveRight += 1.0f;//_camera->MoveTPS(0, 0.5f);
-	}
-	_camera->MoveTPS(moveFront, moveRight);
-
-	XMFLOAT3 camRot = {0.0f,0.0f,0.0f};//それぞれx,y,x軸基準の回転
-	if (keystate[VK_NUMPAD6]&0x80/*||keystate['X']&0x80*/)
-	{
-		camRot.y += 1;
-	}
-	if (keystate[VK_NUMPAD4] & 0x80/*||keystate['Z']&0x80*/)
-	{
-		camRot.y -= 1;
-	}
-	if (keystate[VK_NUMPAD2] & 0x80)
-	{
-		camRot.x += 1;
-	}
-	if (keystate[VK_NUMPAD8] & 0x80)
-	{
-		camRot.x -= 1;
-	}
-	float calcRadian= XM_PI / 180.0f;
-	camRot.x *= calcRadian;
-	camRot.y *= calcRadian;
-	if (camRot.x != 0 || camRot.y != 0 || camRot.z != 0)
-	{
-		_camera->Rotate(camRot);
-	}
+	Input();
 
 
 #pragma endregion
@@ -409,31 +199,8 @@ PlayingScene::Update(int mouseWheelDelta)
 	dev.Context()->Unmap(_globalBuffer, 0);
 	dev.Context()->VSSetConstantBuffers(5, 1, &_globalBuffer);
 
-
-	_camera->Update();
-
-	_player->Update();
-	_plane->Update();
-
-	_cylinder2->Rotate(XMFLOAT3(0,1,0));
-	_cylinder3->Rotate(XMFLOAT3(0,1,0));
-	_cylinder2->SetScale(XMFLOAT3(1, 1.5, 1));
-
-	_cylinder->Update();
-	_cylinder2->Update();
-	_cylinder3->Update();
-	_cylinder4->Update();
-	_tessPlane->Update();
-	_sphere->Update();
-	_decalBox->Update();
-	_decalFac->Update();
-	_skySphere->SetPos(_camera->GetPos());
-	_skySphere->Update();
-	_billBoard->Update();
-	_lightBillboard->Update();
-	_debugHUD->Update();
-	_makerHUD->Update();
-
+	UpdateObjects();
+	
 	float color[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
 
 
@@ -446,93 +213,19 @@ PlayingScene::Update(int mouseWheelDelta)
 #pragma region ライトビュー描画
 	_renderer->ChangeRT_Light();
 
-	//_renderer->ZWriteOff();
-	_renderer->ChangePTForPrimitive();
-	//_plane.DrawLightView();
-	_tessPlane->DrawLightView();
-	_cylinder->DrawLightView();
-	_cylinder2->DrawLightView();
-	_cylinder3->DrawLightView();
-	_cylinder4->DrawLightView();
-
-	_renderer->ChangePTForPMD();
-	_player->DrawLightView();
-	_sphere->DrawLightView();
-	//_renderer->ZWriteOn();
-
-
-	_renderer->ChangeRT_BlurX();
-	resource = _renderer->LightDepthShaderResource();
-	dev.Context()->PSSetShaderResources(TEXTURE_MAIN, 1, &resource);
-	_blurFilter->DrawBlurX();
-	_renderer->ChangeRT_BlurY();
-	resource = _renderer->BlurXShaderResource();
-	dev.Context()->PSSetShaderResources(TEXTURE_MAIN, 1, &resource);
-	_blurFilter->DrawBlurY();
+	DrawObjectsLightView();
 
 
 #pragma endregion
 
 #pragma region カメラデプス描画
-	_renderer->ChangeRT_CameraDepth();
-	_player->DrawCameraDepth();
-	//_plane.DrawCameraDepth();
-	_tessPlane->DrawCameraDepth();
-	_cylinder->DrawCameraDepth();
-	_cylinder2->DrawCameraDepth();
-	_cylinder3->DrawCameraDepth();
-	_cylinder4->DrawCameraDepth();
-	_sphere->DrawCameraDepth();
+	DrawObjectsDepth();
 
 #pragma endregion
 	
 
 #pragma region カメラビュー描画
-	//_renderer->ChangeRT_Camera();
-	_renderer->ChangeRT_PostEffect();
-	_renderer->ZWriteOn();
-	_skySphere->Draw();
-	//ライトビューからのレンダリング結果をテクスチャとしてGPUに渡す
-	//SetRenderTargetした後でSetShaderResourcesしないと渡らない
-	resource = _renderer->BlurYShaderResource();
-	dev.Context()->PSSetShaderResources(TEXTURE_BLUR_LIGHT_DEPTH, 1, &resource);
-	resource = _renderer->LightDepthShaderResource();
-	dev.Context()->PSSetShaderResources(TEXTURE_LIGHT_DEPTH, 1, &resource);
-
-	_renderer->ChangePTForPMD();
-	_player->Draw();//プレイヤーのメイン描画
-
-	_renderer->ChangePTForPrimitive();
-	_cylinder->Draw();//柱
-	_cylinder2->Draw();
-	_cylinder3->Draw();
-	_cylinder4->Draw();
-
-	
-	_renderer->ChangePTForPMD();
-	dev.Context()->DSSetConstantBuffers(5, 1, &_globalBuffer);
-	_tessPlane->Draw();//テッセレーション平面
-
-	//デカールボックスが頂点シェーダで深度バッファテクスチャ使うので渡す
-	resource = _renderer->LightDepthShaderResource();
-	dev.Context()->VSSetShaderResources(TEXTURE_CAMERA_DEPTH, 1, &resource);
-
-
-	_renderer->CullNone();//両面描画させる
-	_sphere->Draw();//半透明スライム
-
-	//カメラからの深度バッファテクスチャ
-	resource = _renderer->CameraDepthShaderResource();
-	dev.Context()->PSSetShaderResources(TEXTURE_CAMERA_DEPTH, 1, &resource);
-	_renderer->ZWriteOff();
-	_decalFac->Draw();//デカールボックス
-	_decalBox->DebugDraw();//デバッグ用デカールボックス
-	_renderer->ZWriteOn();
-	_renderer->CullBack();
-	_plane->Draw();//床
-	_billBoard->Draw();
-	_lightBillboard->Draw();
-
+	DrawObjects();
 
 
 #pragma endregion
@@ -613,5 +306,354 @@ PlayingScene::LockCursorToggle()
 	else
 	{
 		ShowCursor(true);
+	}
+}
+
+void
+PlayingScene::InitObjects()
+{
+	HRESULT result;
+	_camera = std::make_shared<Camera>();
+	_renderer = std::make_unique<Renderer>();
+	_renderer->Init();//レンダラー初期化
+
+	_player = std::make_unique<Player>(_camera);
+	_player->Init();
+
+	_plane = std::make_unique<Plane>(600, 600, Vector3(0, 1, 0), _camera);
+	
+	_cylinder = std::make_unique<Cylinder>(4, 20, 20, _camera);
+
+	_cylinder2 = std::make_unique<Cylinder>(4, 20, 20, _camera);
+	_cylinder3 = std::make_unique<Cylinder>(4, 20, 20, _camera);
+	_cylinder4 = std::make_unique<Cylinder>(4, 20, 20, _camera);
+	_cylinderLarge = std::make_unique<Cylinder>(6, 30, 20, _camera);
+	_cylinderLarge->SetScale(XMFLOAT3(5.0f, 2.0f, 3.0f));
+	_cylinderLarge->SetPos(XMFLOAT3(0.0f, 0.0f, 100.0f));
+
+	_cylinder2->SetRotate(XMFLOAT3(90, 0, 0));
+
+	_sphere = std::make_unique<Sphere>(100, 5, _camera);
+	_sphere->SetPos(XMFLOAT3(0, 0, -5));
+	_tessPlane = std::make_unique<TessPlane>(600, 600, Vector3(0, 1, 0), _camera);
+	_decalBox = std::make_unique<DecalBox>(1, 1, 1, _camera);
+
+	_skySphere = std::make_unique<SkySphere>(100, SKYSPHERE_RADIUS, _camera);
+
+	_soundManager.Init();//サウンドマネージャ初期化
+
+
+	_plane->SetPos(XMFLOAT3(0.0f, -5.0f, 0.0f));
+	_player->SetPos(XMFLOAT3(-10, 0, -10));
+	_cylinder2->SetPos(XMFLOAT3(-20, 10, 15));
+	_cylinder3->SetPos(XMFLOAT3(10, 0, 10));
+	_cylinder4->SetPos(XMFLOAT3(-10, 0, 10));
+
+
+	//デカールファクトリ
+	_decalFac = std::make_unique<DecalFactory>(_camera);
+	_decalBoxPitch = 45.0f*XM_PI / 180.0f;
+	_oldPitch = _decalBoxPitch;
+
+
+	_billBoard = std::make_unique<Billboard>(_camera, 10, 10);
+	_lightBillboard = std::make_unique<Billboard>("light.png", _camera, 10, 10);
+	_billBoard->SetPos(XMFLOAT3(10, 30, -5));
+	XMFLOAT4 temp = _camera->GetLightPos();
+	_lightBillboard->SetPos(XMFLOAT3(temp.x, temp.y, temp.z));
+
+	_debugHUD = std::make_unique<HUD>(_camera, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
+	_makerHUD = std::make_unique<HUD>(_camera, -8, -8, 16, 16);
+
+
+	_blurFilter = std::make_unique<BlurFilter>();
+}
+
+void
+PlayingScene::UpdateObjects()
+{
+	_camera->Update();
+
+	_player->Update();
+	_plane->Update();
+
+	_cylinder2->Rotate(XMFLOAT3(0, 1, 0));
+	_cylinder3->Rotate(XMFLOAT3(0, 1, 0));
+
+	_cylinder->Update();
+	_cylinder2->Update();
+	_cylinder3->Update();
+	_cylinder4->Update();
+	_cylinderLarge->Update();
+	_tessPlane->Update();
+	_sphere->Update();
+	_decalBox->Update();
+	_decalFac->Update();
+	_skySphere->SetPos(_camera->GetPos());
+	_skySphere->Update();
+	_billBoard->Update();
+	_lightBillboard->Update();
+	_debugHUD->Update();
+	_makerHUD->Update();
+
+}
+void
+PlayingScene::DrawObjects()
+{
+	ID3D11ShaderResourceView* resource = nullptr;
+	//_renderer->ChangeRT_Camera();
+	_renderer->ChangeRT_PostEffect();
+	_renderer->ZWriteOn();
+	_skySphere->Draw();
+	//ライトビューからのレンダリング結果をテクスチャとしてGPUに渡す
+	//SetRenderTargetした後でSetShaderResourcesしないと渡らない
+	resource = _renderer->BlurYShaderResource();
+	dev.Context()->PSSetShaderResources(TEXTURE_BLUR_LIGHT_DEPTH, 1, &resource);
+	resource = _renderer->LightDepthShaderResource();
+	dev.Context()->PSSetShaderResources(TEXTURE_LIGHT_DEPTH, 1, &resource);
+
+	_renderer->ChangePTForPMD();
+	_player->Draw();//プレイヤーのメイン描画
+
+	_renderer->ChangePTForPrimitive();
+	_cylinder->Draw();//柱
+	_cylinder2->Draw();
+	_cylinder3->Draw();
+	_cylinder4->Draw();
+	_cylinderLarge->Draw();
+
+
+	_renderer->ChangePTForPMD();
+	dev.Context()->DSSetConstantBuffers(5, 1, &_globalBuffer);
+	_tessPlane->Draw();//テッセレーション平面
+
+					   //デカールボックスが頂点シェーダで深度バッファテクスチャ使うので渡す
+	resource = _renderer->LightDepthShaderResource();
+	dev.Context()->VSSetShaderResources(TEXTURE_CAMERA_DEPTH, 1, &resource);
+
+
+	_renderer->CullNone();//両面描画させる
+	_sphere->Draw();//半透明スライム
+
+					//カメラからの深度バッファテクスチャ
+	resource = _renderer->CameraDepthShaderResource();
+	dev.Context()->PSSetShaderResources(TEXTURE_CAMERA_DEPTH, 1, &resource);
+	
+	_renderer->CullBack();
+	_plane->Draw();//床
+	_billBoard->Draw();
+	_lightBillboard->Draw();
+
+	_renderer->ZWriteOff();
+	_decalFac->Draw();//デカールボックス
+	_decalBox->DebugDraw();//デバッグ用デカールボックス
+	_renderer->ZWriteOn();
+
+}
+void PlayingScene::DrawObjectsDepth()
+{
+	_renderer->ChangeRT_CameraDepth();
+	_player->DrawCameraDepth();
+	//_plane.DrawCameraDepth();
+	_tessPlane->DrawCameraDepth();
+	_cylinder->DrawCameraDepth();
+	_cylinder2->DrawCameraDepth();
+	_cylinder3->DrawCameraDepth();
+	_cylinder4->DrawCameraDepth();
+	_cylinderLarge->DrawCameraDepth();
+	_sphere->DrawCameraDepth();
+}
+void
+PlayingScene::DrawObjectsLightView()
+{
+	ID3D11ShaderResourceView* resource = nullptr;
+	//_renderer->ZWriteOff();
+	_renderer->ChangePTForPrimitive();
+	//_plane.DrawLightView();
+	_tessPlane->DrawLightView();
+	_cylinder->DrawLightView();
+	_cylinder2->DrawLightView();
+	_cylinder3->DrawLightView();
+	_cylinder4->DrawLightView();
+	_cylinderLarge->DrawLightView();
+
+	_renderer->ChangePTForPMD();
+	_player->DrawLightView();
+	_sphere->DrawLightView();
+	//_renderer->ZWriteOn();
+
+
+	_renderer->ChangeRT_BlurX();
+	resource = _renderer->LightDepthShaderResource();
+	dev.Context()->PSSetShaderResources(TEXTURE_MAIN, 1, &resource);
+	_blurFilter->DrawBlurX();
+	_renderer->ChangeRT_BlurY();
+	resource = _renderer->BlurXShaderResource();
+	dev.Context()->PSSetShaderResources(TEXTURE_MAIN, 1, &resource);
+	_blurFilter->DrawBlurY();
+}
+
+void
+PlayingScene::Input()
+{
+	std::copy(keystate, keystate + sizeof(keystate), lastkeystate);
+	GetKeyboardState(keystate);
+
+
+	//マウスカーソル位置算出
+	/*_oldCursorPoint = _cursorPoint;
+	GetCursorPos(&_cursorPoint);
+	ScreenToClient(_hwnd, &_cursorPoint);
+	POINT center = { WINDOW_WIDTH / 2,WINDOW_HEIGHT / 2 };
+	ClientToScreen(_hwnd, &center);
+
+	SetCursorPos(center.x,center.y);*/
+
+
+
+	if (keystate['N'] & 0x80)
+	{
+		if (!(lastkeystate['N'] & 0x80))
+		{
+			debugToggle = !debugToggle;
+		}
+	}
+
+	if (keystate['L'] & 0x80)
+	{
+		if (!(lastkeystate['L'] & 0x80))
+		{
+			_effect.Emit();
+		}
+	}
+	if (keystate[VK_SPACE] & 0x80)
+	{
+		_camera->Move(0.0f, SPEED_RISING, 0.0f);
+	}
+	if (keystate[VK_SHIFT] & 0x80)
+	{
+		_camera->Move(0.0f, -SPEED_RISING, 0.0f);
+	}
+
+#pragma region デカールボックス回転
+
+	int mouseWheel = _mouseWheelDelta / WHEEL_DELTA;
+	if (keystate['R'] & 0x80)
+	{
+		if (mouseWheel != 0)
+		{
+			_decalBoxPitch += mouseWheel * 5 * XM_PI / 180.0f;
+			int jk = 0;
+
+		}
+	}
+	if (keystate['X'] & 0x80)
+	{
+		if (mouseWheel != 0)
+		{
+			_decalBox->ChangeScale(mouseWheel*0.5f);
+
+		}
+	}
+	/*if (keystate[VK_ADD] & 0x80)
+	{
+	_decalBoxPitch += 1 * XM_PI / 180.0f;
+	}
+	if (keystate[VK_SUBTRACT] & 0x80)
+	{
+	_decalBoxPitch -= 1.0f*XM_PI / 180.0f;
+	}*/
+
+	XMFLOAT3 test = _camera->GetRotation();
+	_decalBox->SetPYR(XMFLOAT3(_decalBoxPitch, _camera->GetRotation().y, 0));
+
+#pragma endregion
+
+	if (keystate[VK_LBUTTON] & 0x80)//マウス左
+	{
+		//レイを計算する　far - near  XMVectorUnProj~~
+		//d カメラのポジションと平面の法線の内積をとる
+		//t レイと平面の法線の内積をとる
+		//
+		POINT p;
+		GetCursorPos(&p);
+		ScreenToClient(_hwnd, &p);
+
+
+		XMVECTOR ray = _camera->CalculateCursorVector(p.x, p.y);
+		ray = XMVector3Normalize(ray);
+
+		XMVECTOR camerapos = XMLoadFloat3(&_camera->GetPos());
+
+		float d;
+		XMStoreFloat(&d, XMVector3Dot(camerapos, _plane->Normal()));
+		float t;
+		XMStoreFloat(&t, XMVector3Dot(-ray, _plane->Normal()));
+
+		ray = XMVectorScale(ray, d / t);
+
+		XMFLOAT3 pos;
+		XMStoreFloat3(&pos, camerapos + ray);
+		//pos.y += 5;
+
+		//_effect.Emit(pos);
+
+		//デカールボックスの位置セット
+		_decalBox->SetPos(pos);
+		int j = 0;
+
+		if (keystate[VK_RBUTTON] & 0x80)
+		{
+			if (!(lastkeystate[VK_RBUTTON] & 0x80))
+			{
+				_decalFac->CreateDecalBox(_decalBox->GetWorldMatrix());
+				//_decalFac->CreateDecalBox(_decalBox.GetPos(), _decalBox.GetRotation(), _decalBox.GetScale());
+			}
+		}
+
+	}
+
+	float moveFront = 0.0f, moveRight = 0.0f;
+	if (keystate['W'] & 0x80)
+	{
+		moveFront += 1.0f;//_camera->MoveTPS(0.5f, 0);
+	}
+	if (keystate['S'] & 0x80)
+	{
+		moveFront -= 1.0f;//_camera->MoveTPS(-0.5f, 0);
+	}
+	if (keystate['A'] & 0x80)
+	{
+		moveRight -= 1.0f;//_camera->MoveTPS(0, -0.5f);
+	}
+	if (keystate['D'] & 0x80)
+	{
+		moveRight += 1.0f;//_camera->MoveTPS(0, 0.5f);
+	}
+	_camera->MoveTPS(moveFront, moveRight);
+
+	XMFLOAT3 camRot = { 0.0f,0.0f,0.0f };//それぞれx,y,x軸基準の回転
+	if (keystate[VK_NUMPAD6] & 0x80/*||keystate['X']&0x80*/)
+	{
+		camRot.y += 1;
+	}
+	if (keystate[VK_NUMPAD4] & 0x80/*||keystate['Z']&0x80*/)
+	{
+		camRot.y -= 1;
+	}
+	if (keystate[VK_NUMPAD2] & 0x80)
+	{
+		camRot.x += 1;
+	}
+	if (keystate[VK_NUMPAD8] & 0x80)
+	{
+		camRot.x -= 1;
+	}
+	float calcRadian = XM_PI / 180.0f;
+	camRot.x *= calcRadian;
+	camRot.y *= calcRadian;
+	if (camRot.x != 0 || camRot.y != 0 || camRot.z != 0)
+	{
+		_camera->Rotate(camRot);
 	}
 }

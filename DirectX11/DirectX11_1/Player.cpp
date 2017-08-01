@@ -455,6 +455,7 @@ Player::Player(const std::shared_ptr<Camera> camera) :dev(DeviceDx11::Instance()
 	_pos = XMFLOAT3(0, 0, 0);
 	_scale = XMFLOAT3(1, 1, 1);
 	_rot = XMFLOAT3(0, 0, 0);
+	_motionToggle = false;
 }
 
 void
@@ -467,9 +468,6 @@ Player::Init()
 	_pos = { 0.f,0.0f, 0.f };
 	rotAngle = 0.f;
 
-	//pmxはデフォルトでutf16（Unicode）を使うのでL付けてワイド文字列にする
-	//PMXLoader pmxloader;
-	//pmxloader.LoadPMX(L"models/shame/shame.pmx");
 
 	//pmdファイルの読み込み
 	PMDLoader loader;
@@ -481,7 +479,7 @@ Player::Init()
 	//vmd側にリピートフラグを持たせる
 	//VMDファイルの読み込み
 	VMDLoader vmdLoader;
-	_vmd = vmdLoader.Load("neutral.vmd",true);
+	_vmd = vmdLoader.Load("charge.vmd",true);
 	RegisterAnim("charge", _vmd);
 	VMDData* run = vmdLoader.Load("run.vmd",true);
 	RegisterAnim("run", run);
@@ -489,7 +487,8 @@ Player::Init()
 	RegisterAnim("neutral", neutral);
 
 
-	_currentVMD = _animations["charge"];//_vmd の部分を_currentVMDに変える
+	_currentVMD = _animations["charge"];
+
 
 	unsigned int stride = _mesh->GetVertexStride();
 	unsigned int offset = 0;
@@ -599,22 +598,6 @@ Player::Init()
 
 	//シェーダに渡すボーン行列
 	
-	/*for (auto& bonemat : _boneMatrixies)
-	{
-		bonemat = XMMatrixIdentity();
-	}
-	D3D11_BUFFER_DESC boneMatrixBuffDesc = {};
-	boneMatrixBuffDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	boneMatrixBuffDesc.ByteWidth = sizeof(XMMATRIX) * 512;
-	boneMatrixBuffDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	boneMatrixBuffDesc.MiscFlags = 0;
-	boneMatrixBuffDesc.Usage = D3D11_USAGE_DYNAMIC;
-	boneMatrixBuffDesc.StructureByteStride = sizeof(XMMATRIX);
-
-	D3D11_SUBRESOURCE_DATA boneMatData;
-	boneMatData.pSysMem = &_boneMatrixies[0];
-
-	dev.Device()->CreateBuffer(&boneMatrixBuffDesc, &boneMatData, &_boneMatrixBuff);*/
 	ID3D11Buffer* buf = _mesh->GetBoneMatrixBuffer();
 	dev.Context()->VSSetConstantBuffers(3, 1, &buf);
 
@@ -709,15 +692,6 @@ Player::Init()
 	MatrixTransmission(0, XMMatrixIdentity(), _mesh->BoneMatrixies(), _boneTree, _mesh->GetBones());
 
 
-	//LookAtテスト
-	XMFLOAT3 t = { 0, 1, 0 };
-	XMFLOAT3 ori = { 0, 1, 0 };
-	XMFLOAT3 target = { 1, 0, 0 };
-
-	XMMATRIX te = LookAtMatrix(ori, target, XMFLOAT3(0, 1, 0), XMFLOAT3(1, 0, 0));
-	XMVECTOR v = XMVector3Transform(XMLoadFloat3(&t), te);
-	int kj = 0;
-
 	_ikpos = { 0, 0, 0 };
 
 }
@@ -774,6 +748,13 @@ Player::Update()
 		if (!(_oldkey[VK_RETURN] & 0x80))
 		{
 			_isBoneView = !_isBoneView;
+		}
+	}
+	if (_key['M'] & 0x80)
+	{
+		if (!(_oldkey['M'] & 0x80))
+		{
+			MotionToggle();
 		}
 	}
 
@@ -836,6 +817,7 @@ Player::Update()
 	//ボーンの変換行列を子のボーンに伝播
 	MatrixTransmission(0, XMMatrixIdentity(), _mesh->BoneMatrixies(), _boneTree, _mesh->GetBones());
 	
+
 }
 
 void
@@ -1058,4 +1040,19 @@ void
 Player::SetPos(const XMFLOAT3 pos)
 {
 	_pos = pos;
+}
+
+void
+Player::MotionToggle()
+{
+	_motionToggle = !_motionToggle;
+	if (_motionToggle)
+	{
+		_currentVMD = _animations["neutral"];
+	}
+	else
+	{
+		_currentVMD = _animations["charge"];
+	}
+	return;
 }
