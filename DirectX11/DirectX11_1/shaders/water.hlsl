@@ -96,8 +96,8 @@ Output WaterVS(float4 pos:POSITION, float4 normal : NORMAL, float2 uv : TEXCOORD
 float4 WaterPS(Output o) :SV_Target
 {
 	//周期　決め打ち　後でCPU側に移す
-	float Phase = 1.5f;
-	float halfPhase = 1.5f / 2.0f;
+	float Phase = 2.5f;
+	float halfPhase = 2.5f / 2.0f;
 
 	//ノイズテクスチャ（0.0f ~ 1.0f)
 	float noise = _subTex.Sample(_samplerState, o.uv*5).r;

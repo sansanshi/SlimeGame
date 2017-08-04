@@ -141,27 +141,39 @@ float4 PrimitiveLightViewPS(Output o):SV_Target
 Output SlimeLightViewVS(float4 pos:POSITION, float4 normal : NORMAL, float2 uv : TEXCOORD)
 {
 	Output o;
-	float2 uvOffset = float2(0, (float)timer*0.01f);
-		float displaysment = _dispMap.SampleLevel(_samplerStateDisp, uv + uvOffset, 0).r;//_dispMap.Sample(_samplerState, uv);
-	//黒い部分は0、白い部分は1が入ってくる
-	displaysment = displaysment * 2 - 1.0f;//-1.0～1.0の範囲に
+	//dispMapはもうちょい大雑把な波にしてみる
+	float2 uvOffset = float2((float)timer*0.002f, (float)timer*0.001f);
+	float displaysment = _dispMap.SampleLevel(_samplerStateDisp, uv + uvOffset, 0).r;//_dispMap.Sample(_samplerState, uv);
+																					 //黒い部分は0、白い部分は1が入ってくる
+	displaysment = displaysment * 2 - 1.0f;//テクスチャから取った値を-1.0～1.0の範囲に
 
 
-	float f = (sin((float)timer*0.05f) + 1.0f) / 2;//0.0～1.0の範囲に
-	f *= 0.5f;//0.0～0.3の範囲に
+										   //適用率？的な値
+	uvOffset = float2(/*sin((float)timer*0.0005f)*/0, (float)timer*0.002f);
+	float dispMask = _dispMask.SampleLevel(_samplerStateDisp, uv + uvOffset, 0).r;
+	dispMask = dispMask*2.0f;
+	//dispMask *= 2.0f;
+
+	//タイマーそのままだと速すぎるので適当に小さくする
+	float f = 1;// (sin((float)timer*0.0005f) + 1.0f) / 2;//タイマーを0.0～1.0の範囲に
+	f *= dispMask;//2.0f;//0.0～0.3の範囲に
 	displaysment *= f;
 
-	matrix world = _world;
-
 	float4 normalTemp = float4(normal.xyz * displaysment, 1.0);
-		float4 posTemp = pos;//posTemp = pos + normalTemp;←こうするとx,y,z,wの[w]の要素まで加算されてしまう
-		posTemp.xyz += normalTemp.xyz;//posTemp=float4(pos.xyz+normalTemp.xyz, 1.0)でも可
+	float t = cos(timer*(1.0f / 60.0f)*6.0f);
+	t = t*0.4f;
+	/*if (t < -0.2f)
+	{
+	t = t*0.5f;
+	}*/
+	normalTemp.xyz = normalTemp.xyz + normal.xyz*t;
 
-		matrix scale = Scalling(1.02f, 1.02f, 1.02f);
-	world = mul(world, scale);
+	//normalTemp.w = 1.0f;
+	float4 posTemp = pos;//posTemp = pos + normalTemp;←こうするとx,y,z,wの[w]の要素まで加算されてしまう
+	posTemp.xyz += normalTemp.xyz;//posTemp=float4(pos.xyz+normalTemp.xyz, 1.0)でも可
 
 	matrix _lightVP = mul(_lightProj, _lightView);
-	matrix tmp = mul(_lightVP/*_lightview*/, world);
+	matrix tmp = mul(_lightVP, _world);
 
 	o.pos = mul(tmp, posTemp);//lightVecの後からズレてるっぽい？
 	tmp = mul(_lightView, _world);

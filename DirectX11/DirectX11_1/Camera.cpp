@@ -21,6 +21,7 @@ Camera::Init()
 	_pitch = 0.0f;
 	_yaw = 0.0f;
 	_roll = 0.0f;
+	_view = XMMatrixIdentity();
 
 	_rotAngle = 0.0f;
 	_eyePoint = { 0, 20, -25 };//{ 15.3f, 25.3f, -14.3f };

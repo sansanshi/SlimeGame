@@ -108,9 +108,6 @@ PlayingScene::PlayingScene(HWND hwnd)
 	_oldCursorPoint = { 0 };
 
 
-	_effect.Emit();
-	_effectMov = { 0, 0, 0 };
-	_effect.SetCamera(_camera->CameraView(), _camera->CameraProjection());
 
 	//ƒrƒ…[s—ñ‚Í‰ñ“]‚Æ•½sˆÚ“®‚µ‚©‚È‚¢iŠg‘å‚Í‚È‚¢
 	//‰ñ“]s—ñ‚Í“]’u‚·‚é‚Æ‹ts—ñ‚Ì«Ž¿‚ðŽ¦‚·
@@ -231,9 +228,6 @@ PlayingScene::Update(int mouseWheelDelta)
 #pragma endregion
 
 
-	
-	_effect.SetCamera(_camera->CameraView(), _camera->CameraProjection());
-	_effect.Update();
 
 	{
 		//ikƒ{[ƒ“‚ÌêŠŽæ‚Á‚Ä‚­‚é
@@ -519,13 +513,6 @@ PlayingScene::Input()
 		}
 	}
 
-	if (keystate['L'] & 0x80)
-	{
-		if (!(lastkeystate['L'] & 0x80))
-		{
-			_effect.Emit();
-		}
-	}
 	if (keystate[VK_SPACE] & 0x80)
 	{
 		_camera->Move(0.0f, SPEED_RISING, 0.0f);

@@ -428,15 +428,18 @@ void DeformBones(PMDMesh* mesh, VMDData* vmddata, unsigned int frameNo)
 
 		auto it = revit.base();
 		float t = 0.0f;
-		XMVECTOR v;
+		XMVECTOR v = {};
 		if (it != frames.second.end())
 		{
 			t = (float)(frameNo - revit->frameNo) / (float)(it->frameNo - revit->frameNo);//‚±‚Ì•Ó
-			v = XMQuaternionSlerp(revit->quaternion, it->quaternion, t);
+			XMVECTOR revQuat = revit->quaternion;
+			XMVECTOR quat = it->quaternion;
+			v = XMQuaternionSlerp(revQuat, quat, t);
 		}
 		else
 		{
-			v = revit->quaternion;
+			XMVECTOR temp = revit->quaternion;
+			v = temp;
 		}
 
 
@@ -456,6 +459,13 @@ Player::Player(const std::shared_ptr<Camera> camera) :dev(DeviceDx11::Instance()
 	_scale = XMFLOAT3(1, 1, 1);
 	_rot = XMFLOAT3(0, 0, 0);
 	_motionToggle = false;
+
+	XMMATRIX temp = XMMatrixIdentity();
+	_worldAndCamera.world = temp;
+	_worldAndCamera.cameraView = temp;
+	_worldAndCamera.cameraProj = temp;
+	_worldAndCamera.lightView = temp;
+	_worldAndCamera.lightProj = temp;
 }
 
 void

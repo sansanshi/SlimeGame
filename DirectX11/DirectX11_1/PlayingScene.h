@@ -1,7 +1,6 @@
 #pragma once
 #include "Scene.h"
 #include"Define.h"
-#include"Effect.h"
 #include"SoundManager.h"
 #include"DeviceDx11.h"
 #include<memory>
@@ -85,8 +84,6 @@ private:
 	float _mouseWheelDelta;
 
 
-	Effect _effect;
-	XMFLOAT3 _effectMov;
 
 	D3D11_VIEWPORT _viewport;
 
